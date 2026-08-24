@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit - Perfil de Atleta</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body
+    class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen justify-between">
+
+    <!-- NAVBAR -->
+    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="font-black text-2xl tracking-wider text-white">POWERFIT</div>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+                <a href="index.html" class="hover:text-white transition">Inicio</a>
+                <a href="index.html#planes" class="hover:text-white transition">Membresía</a>
+                <a href="tienda.html" class="hover:text-white transition">Tienda</a>
+                <a href="reservaClases.html" class="hover:text-white transition">Clases</a>
+                <a href="perfilUsuario.html" class="text-white border-b-2 border-indigo-400 pb-1">Perfil</a>
+                <!-- <a href="#" class="hover:text-white transition">Admin</a> -->
+            </nav>
+            <div class="flex items-center gap-4 text-zinc-400">
+                <button class="hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg></button>
+                <button class="hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg></button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700">
+                    <img src="imagenes/perfil-baki.jpg" alt="Avatar"
+                        class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-6 py-10 w-full">
+        <!-- TITULO -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-black uppercase tracking-wider text-zinc-100">PERFIL DE ATLETA</h1>
+            <p class="text-zinc-400 text-xs mt-1">Gestiona tu membresía, mira el historial de clases y haz seguimiento a
+                tu progreso.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- COLUMNA IZQUIERDA (Info Atleta + Membresía) -->
+            <div class="lg:col-span-4 space-y-6">
+
+                <!-- Tarjeta Perfil -->
+                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-zinc-700">
+                            <img src="imagenes/perfil-baki.jpg"
+                                class="w-full h-full object-cover" alt="Baki Hanma">
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black uppercase tracking-wide text-zinc-100">BAKI HANMA</h2>
+                            <p class="text-zinc-500 text-[11px]">Miembro desde 2022</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 text-xs border-t border-zinc-800/80 pt-4 mb-6">
+                        <div>
+                            <span class="block text-zinc-500 text-[10px] uppercase font-medium">Correo</span>
+                            <span class="text-zinc-200">baki.hanma@gmail.com</span>
+                        </div>
+                        <div>
+                            <span class="block text-zinc-500 text-[10px] uppercase font-medium">Teléfono</span>
+                            <span class="text-zinc-200">+51 999 999 999</span>
+                        </div>
+                        <div>
+                            <span class="block text-zinc-500 text-[10px] uppercase font-medium">Contacto de
+                                Emergencia</span>
+                            <span class="text-zinc-200">Yujiro Hanma (Padre)</span>
+                        </div>
+                    </div>
+
+                    <button
+                        class="w-full py-2.5 bg-transparent border border-zinc-700 hover:border-zinc-500 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded transition">
+                        Editar Perfil
+                    </button>
+                </div>
+
+                <!-- Tarjeta Membresía -->
+                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-black uppercase tracking-wider text-zinc-400">MEMBRESÍA</span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                            Activa
+                        </span>
+                    </div>
+
+                    <div class="mb-6">
+                        <span class="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 block">Plan
+                            Actual</span>
+                        <h3 class="text-3xl font-black uppercase tracking-wider text-indigo-200">NIVEL ELITE</h3>
+                    </div>
+
+                    <div class="space-y-2 text-xs border-t border-zinc-800/80 pt-4 mb-6">
+                        <div class="flex justify-between">
+                            <span class="text-zinc-500">Ciclo de Facturación</span>
+                            <span class="text-zinc-300 font-medium">Mensual</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-zinc-500">Próximo Pago</span>
+                            <span class="text-zinc-300 font-medium">4 Sep, 2026</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-zinc-500">Monto</span>
+                            <span class="text-zinc-300 font-medium">S/ 129.00</span>
+                        </div>
+                    </div>
+
+                    <button
+                        class="w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded transition">
+                        Gestionar Suscripción
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- COLUMNA DERECHA (Próximas Clases + Historial de Pagos) -->
+            <div class="lg:col-span-8 space-y-6">
+
+                <!-- Próximas Clases -->
+                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <h2 class="text-sm font-black uppercase tracking-wider text-zinc-200">PRÓXIMAS CLASES</h2>
+                        </div>
+                        <a href="#" class="text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition">Ver
+                            Horario</a>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Clase 1 -->
+                        <div
+                            class="bg-zinc-900/60 border border-zinc-800/80 rounded-lg p-4 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="bg-zinc-800 rounded-lg px-3 py-2 text-center shrink-0 border border-zinc-700/50">
+                                    <span
+                                        class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest">OCT</span>
+                                    <span class="block text-base font-black text-white leading-tight">12</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-black uppercase tracking-wide text-zinc-100">HIIT VELOCITY
+                                    </h4>
+                                    <p class="text-zinc-400 text-xs flex items-center gap-1.5 mt-0.5">
+                                        <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        18:00 - 19:00
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                class="px-4 py-2 bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 border border-zinc-700 hover:border-red-500/30 text-zinc-300 font-bold text-[10px] uppercase tracking-wider rounded transition">
+                                Cancelar
+                            </button>
+                        </div>
+
+                        <!-- Clase 2 -->
+                        <div
+                            class="bg-zinc-900/60 border border-zinc-800/80 rounded-lg p-4 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="bg-zinc-800 rounded-lg px-3 py-2 text-center shrink-0 border border-zinc-700/50">
+                                    <span
+                                        class="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest">OCT</span>
+                                    <span class="block text-base font-black text-white leading-tight">14</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-black uppercase tracking-wide text-zinc-100">HEAVY LIFTING
+                                        CORE</h4>
+                                    <p class="text-zinc-400 text-xs flex items-center gap-1.5 mt-0.5">
+                                        <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        07:00 - 08:30
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                class="px-4 py-2 bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 border border-zinc-700 hover:border-red-500/30 text-zinc-300 font-bold text-[10px] uppercase tracking-wider rounded transition">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historial de Pagos -->
+                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <h2 class="text-sm font-black uppercase tracking-wider text-zinc-200">HISTORIAL DE PAGOS</h2>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 border-b border-zinc-800/80">
+                                    <th class="pb-3 font-semibold">Fecha</th>
+                                    <th class="pb-3 font-semibold">Descripción</th>
+                                    <th class="pb-3 font-semibold">Monto</th>
+                                    <th class="pb-3 font-semibold">Estado</th>
+                                    <th class="pb-3 font-semibold text-right">Factura</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs divide-y divide-zinc-800/50 text-zinc-300">
+                                <tr>
+                                    <td class="py-3.5">4 Ago, 2026</td>
+                                    <td class="py-3.5 text-zinc-400">Nivel Elite - Mensual</td>
+                                    <td class="py-3.5 font-semibold text-zinc-200">S/ 129.00</td>
+                                    <td class="py-3.5">
+                                        <span
+                                            class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-zinc-800 text-zinc-300 border border-zinc-700">PAGADO</span>
+                                    </td>
+                                    <td class="py-3.5 text-right">
+                                        <button class="text-zinc-400 hover:text-white transition">
+                                            <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="py-3.5">4 Jul, 2026</td>
+                                    <td class="py-3.5 text-zinc-400">Nivel Elite - Mensual</td>
+                                    <td class="py-3.5 font-semibold text-zinc-200">S/ 129.00</td>
+                                    <td class="py-3.5">
+                                        <span
+                                            class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-zinc-800 text-zinc-300 border border-zinc-700">PAGADO</span>
+                                    </td>
+                                    <td class="py-3.5 text-right">
+                                        <button class="text-zinc-400 hover:text-white transition">
+                                            <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="py-3.5">4 Jun, 2026</td>
+                                    <td class="py-3.5 text-zinc-400">Nivel Elite - Mensual</td>
+                                    <td class="py-3.5 font-semibold text-zinc-200">S/ 129.00</td>
+                                    <td class="py-3.5">
+                                        <span
+                                            class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-zinc-800 text-zinc-300 border border-zinc-700">PAGADO</span>
+                                    </td>
+                                    <td class="py-3.5 text-right">
+                                        <button class="text-zinc-400 hover:text-white transition">
+                                            <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="font-black text-sm text-white">POWERFIT</div>
+            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
+                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
+                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
+                <a href="#" class="hover:text-zinc-300">Contactar Soporte</a>
+                <a href="#" class="hover:text-zinc-300">Instagram</a>
+                <a href="#" class="hover:text-zinc-300">Twitter</a>
+            </div>
+            <div>© 2026 POWERFIT KINETIC. TODOS LOS DERECHOS RESERVADOS.</div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

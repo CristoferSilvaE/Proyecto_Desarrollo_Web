@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit - Login</title>
+    <!-- CDN Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            accent: '#a5b4fc', // Azul claro/violáceo del botón
+                            hover: '#818cf8',
+                            dark: '#0a0a0c',
+                            card: '#121216',
+                            border: '#1f2028',
+                            textMuted: '#9ca3af'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-brand-dark text-white font-sans min-h-screen flex items-center justify-center relative overflow-hidden bg-cover bg-center"
+    style="background-image: linear-gradient(to bottom, rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.95)), url('imagenes/login1.jpg');">
+
+    <!-- Watermark Marca de Agua Fondo -->
+    <div
+        class="absolute right-10 top-10 text-white/5 font-black text-78xl tracking-widest pointer-events-none select-none hidden lg:block text-8xl">
+        PowerFit
+    </div>
+
+    <!-- Contenedor Login -->
+    <div
+        class="w-full max-w-md p-8 bg-brand-card/90 backdrop-blur-md border border-brand-border rounded-lg shadow-2xl z-10 mx-4">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-black tracking-wider text-white">POWERFIT</h1>
+            <p class="text-[10px] tracking-[0.2em] text-brand-textMuted uppercase mt-1">Rendimiento Máximo</p>
+        </div>
+
+        <!-- Formulario -->
+        <form class="space-y-5" onsubmit="event.preventDefault();">
+
+            <!-- Correo -->
+            <div>
+                <label class="block text-[11px] font-bold tracking-wider text-brand-textMuted uppercase mb-1">
+                    Correo Electrónico
+                </label>
+                <input type="email" placeholder="atleta@ejemplo.com"
+                    class="w-full px-4 py-2.5 bg-white text-gray-900 rounded font-medium text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent placeholder-gray-400"
+                    required>
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="block text-[11px] font-bold tracking-wider text-brand-textMuted uppercase">
+                        Contraseña
+                    </label>
+                    <a href="#"
+                        class="text-[10px] text-brand-textMuted hover:text-white transition-colors">¿Olvidaste?</a>
+                </div>
+                <input type="password" placeholder="••••••••"
+                    class="w-full px-4 py-2.5 bg-white text-gray-900 rounded font-medium text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent placeholder-gray-400"
+                    required>
+            </div>
+
+            <!-- Botón Submit -->
+            <button type="submit"
+                class="w-full py-3 bg-brand-accent hover:bg-brand-hover text-gray-950 font-black text-xs tracking-widest uppercase rounded transition-all duration-200 mt-2 shadow-lg">
+                <a href="index.html">
+                    Ingresar
+                </a>
+            </button>
+        </form>
+
+        <!-- Opciones Secundarias -->
+        <div
+            class="flex justify-between items-center mt-8 pt-6 border-t border-brand-border/60 text-[10px] text-brand-textMuted font-semibold">
+            <a href="#" class="flex items-center gap-1 hover:text-white transition-colors uppercase tracking-wider">
+                <span>👤</span> Cliente Iniciar Sesión
+            </a>
+            <a href="#" class="flex items-center gap-1 hover:text-white transition-colors uppercase tracking-wider">
+                <span>🔒</span> Admin Iniciar Sesión
+            </a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

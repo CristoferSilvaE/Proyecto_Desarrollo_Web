@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit - Reserva de Clases</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body
+    class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen justify-between">
+
+    <!-- NAVBAR -->
+    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="font-black text-2xl tracking-wider text-white">POWERFIT</div>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+                <a href="index.html" class="hover:text-white transition">Inicio</a>
+                <a href="index.html#planes" class="hover:text-white transition">Membresía</a>
+                <a href="tienda.html" class="hover:text-white transition">Tienda</a>
+                <a href="reservaClases.html" class="text-white border-b-2 border-indigo-400 pb-1">Clases</a>
+                <a href="perfilUsuario.html" class="hover:text-white transition">Perfil</a>
+                <!-- <a href="#" class="hover:text-white transition">Admin</a> -->
+            </nav>
+            <div class="flex items-center gap-4 text-zinc-400">
+                <button class="hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg></button>
+                <button class="hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg></button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700">
+                    <img src="imagenes/perfil-baki.jpg" alt="Avatar"
+                        class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-6 py-12 w-full">
+        <!-- TITULO -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-black uppercase tracking-wider text-zinc-100">RESERVA UNA CLASE</h1>
+            <p class="text-zinc-400 text-xs mt-1">Selecciona tu sesión y asegura tu lugar en la pista.</p>
+        </div>
+
+        <!-- FILTROS DE CATEGORÍA -->
+        <div class="flex flex-wrap gap-3 mb-10">
+            <button
+                class="px-5 py-2 bg-indigo-200 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded-md transition">Todas
+                las Clases</button>
+            <button
+                class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 font-semibold text-xs uppercase tracking-wider rounded-md transition">Musculación</button>
+            <button
+                class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 font-semibold text-xs uppercase tracking-wider rounded-md transition">Spinning</button>
+            <button
+                class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 font-semibold text-xs uppercase tracking-wider rounded-md transition">Funcional</button>
+            <button
+                class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 font-semibold text-xs uppercase tracking-wider rounded-md transition">Zumba</button>
+        </div>
+
+        <!-- GRID DE CLASES -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- CLASE 1: HEAVY METAL -->
+            <div
+                class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row h-full">
+                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600"
+                        class="w-full h-full object-cover" alt="Heavy Metal">
+                    <span
+                        class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Musculación</span>
+                </div>
+                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-1">Heavy Metal</h3>
+                        <p class="text-zinc-400 text-xs mb-4">Instructor: Marcus T.</p>
+
+                        <div class="space-y-1.5 text-xs font-semibold mb-6">
+                            <div class="flex items-center gap-2 text-zinc-300">
+                                <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                18:00 - 19:30
+                            </div>
+                            <div class="flex items-center gap-2 text-amber-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                5 cupos disponibles
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">Reservar
+                        Ahora</button>
+                </div>
+            </div>
+
+            <!-- CLASE 2: VELOCITY RIDE -->
+            <div
+                class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row h-full">
+                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=600"
+                        class="w-full h-full object-cover" alt="Velocity Ride">
+                    <span
+                        class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Spinning</span>
+                </div>
+                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-1">Velocity Ride</h3>
+                        <p class="text-zinc-400 text-xs mb-4">Instructor: Sarah K.</p>
+
+                        <div class="space-y-1.5 text-xs font-semibold mb-6">
+                            <div class="flex items-center gap-2 text-zinc-300">
+                                <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                19:00 - 19:45
+                            </div>
+                            <div class="flex items-center gap-2 text-emerald-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                12 cupos disponibles
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">Reservar
+                        Ahora</button>
+                </div>
+            </div>
+
+            <!-- CLASE 3: METCON X -->
+            <div
+                class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row h-full">
+                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600"
+                        class="w-full h-full object-cover" alt="Metcon X">
+                    <span
+                        class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Funcional</span>
+                </div>
+                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-1">Metcon X</h3>
+                        <p class="text-zinc-400 text-xs mb-4">Instructor: David R.</p>
+
+                        <div class="space-y-1.5 text-xs font-semibold mb-6">
+                            <div class="flex items-center gap-2 text-zinc-300">
+                                <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                20:00 - 21:00
+                            </div>
+                            <div class="flex items-center gap-2 text-rose-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                2 cupos disponibles
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">Reservar
+                        Ahora</button>
+                </div>
+            </div>
+
+            <!-- CLASE 4: RHYTHM FLOW -->
+            <div
+                class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row h-full">
+                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600"
+                        class="w-full h-full object-cover" alt="Rhythm Flow">
+                    <span
+                        class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Zumba</span>
+                </div>
+                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-1">Rhythm Flow</h3>
+                        <p class="text-zinc-400 text-xs mb-4">Instructor: Elena G.</p>
+
+                        <div class="space-y-1.5 text-xs font-semibold mb-6">
+                            <div class="flex items-center gap-2 text-zinc-300">
+                                <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                20:30 - 21:30
+                            </div>
+                            <div class="flex items-center gap-2 text-emerald-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                8 cupos disponibles
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">Reservar
+                        Ahora</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-zinc-800/80 mt-12 py-8 text-zinc-500 text-[10px]">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="font-black text-sm text-white">POWERFIT</div>
+            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
+                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
+                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
+                <a href="#" class="hover:text-zinc-300">Soporte Técnico</a>
+                <a href="#" class="hover:text-zinc-300">Instagram</a>
+                <a href="#" class="hover:text-zinc-300">Twitter</a>
+            </div>
+            <div>© 2026 POWERFIT KINETIC. TODOS LOS DERECHOS RESERVADOS.</div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

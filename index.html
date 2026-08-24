@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit - Inicio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- NAVBAR -->
+    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="font-black text-2xl tracking-wider text-white">POWERFIT</div>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+                <a href="#" class="text-white border-b-2 border-indigo-400 pb-1">Inicio</a>
+                <a href="#planes" class="hover:text-white transition">Membresía</a>
+                <a href="tienda.html" class="hover:text-white transition">Tienda</a>
+                <a href="reservaClases.html" class="hover:text-white transition">Clases</a>
+                <a href="perfilUsuario.html" class="hover:text-white transition">Perfil</a>
+                <!-- <a href="#" class="hover:text-white transition">Admin</a> -->
+            </nav>
+            <div class="flex items-center gap-4 text-zinc-400">
+                <button class="hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg></button>
+                <button class="hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg></button>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700">
+                    <img src="imagenes/perfil-baki.jpg" alt="Avatar"
+                        class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative h-[80vh] flex items-center justify-center text-center bg-cover bg-center"
+        style="background-image: linear-gradient(to bottom, rgba(11, 12, 16, 0.6), rgba(11, 12, 16, 1)), url('imagenes/CBum-pgPrincipal1.jpg');">
+        <div class="max-w-4xl px-6">
+            <h1 class="text-5xl md:text-7xl font-black tracking-tight uppercase mb-4 drop-shadow-lg">
+                Supera tus Límites
+            </h1>
+            <p class="text-zinc-300 text-sm md:text-base max-w-xl mx-auto mb-8 font-light">
+                Entra en el estado de flujo. Transforma tu potencial en poder medible. Únete a la élite.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#"
+                    class="w-full sm:w-auto px-8 py-3.5 bg-indigo-200 text-zinc-950 font-semibold text-xs tracking-wider uppercase rounded-sm hover:bg-indigo-300 transition">Conseguir
+                    Prueba Gratis</a>
+                <a href="#planes"
+                    class="w-full sm:w-auto px-8 py-3.5 border border-zinc-600 bg-black/40 text-white font-semibold text-xs tracking-wider uppercase rounded-sm hover:bg-zinc-800 transition">Ver
+                    Planes</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NUESTRAS DISCIPLINAS (GRID ASIMÉTRICO) -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+        <h2 class="text-2xl font-bold uppercase tracking-wide">Nuestras Disciplinas</h2>
+        <p class="text-zinc-400 text-xs mb-8">Domina cada aspecto del acondicionamiento físico.</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Tarjeta Grande (Izquierda) -->
+            <div class="lg:col-span-2 relative h-[420px] rounded-lg overflow-hidden border border-zinc-800 group">
+                <img src="imagenes/disciplina-musculación.jpg"
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-60"
+                    alt="Musculación">
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-6 flex flex-col justify-between">
+                    <span
+                        class="self-start text-[10px] uppercase font-semibold px-2.5 py-1 bg-zinc-900/80 border border-zinc-700 rounded text-zinc-300">Hipertrofia</span>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase mb-1">Musculación</h3>
+                        <p class="text-zinc-400 text-xs max-w-md">Construye fuerza bruta y masa muscular magra con
+                            equipo de élite y programación específica.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2 Tarjetas Pequeñas (Derecha) -->
+            <div class="flex flex-col gap-6">
+                <!-- Cardio -->
+                <div class="relative h-[200px] rounded-lg overflow-hidden border border-zinc-800 group">
+                    <img src="imagenes/disciplina-cardio.jpg"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-60"
+                        alt="Cardio">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-5 flex flex-col justify-between">
+                        <span
+                            class="self-start text-[10px] uppercase font-semibold px-2.5 py-1 bg-zinc-900/80 border border-zinc-700 rounded text-zinc-300">Resistencia</span>
+                        <div>
+                            <h3 class="text-base font-bold uppercase">Cardio</h3>
+                            <p class="text-zinc-400 text-xs">Lleva tus límites cardiovasculares al máximo.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Personal Training -->
+                <div class="relative h-[200px] rounded-lg overflow-hidden border border-zinc-800 group">
+                    <img src="imagenes/disciplina-entrenamientoPersonal.jpg"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-60"
+                        alt="Entrenamiento Personal">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-5 flex flex-col justify-between">
+                        <span
+                            class="self-start text-[10px] uppercase font-semibold px-2.5 py-1 bg-zinc-900/80 border border-zinc-700 rounded text-zinc-300">1
+                            a 1</span>
+                        <div>
+                            <h3 class="text-base font-bold uppercase">Entrenamiento Personal</h3>
+                            <p class="text-zinc-400 text-xs">Guía experta para un progreso medible.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NUESTROS PLANES -->
+    <section id="planes" class="max-w-7xl mx-auto px-6 py-16 text-center">
+        <h2 class="text-3xl font-black uppercase tracking-wider mb-2">Nuestros Planes</h2>
+        <p class="text-zinc-400 text-xs mb-12">Selecciona el nivel que coincida con tu intensidad. Sin compromisos.
+            Progreso medible.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-stretch">
+            <!-- BÁSICO -->
+            <div class="bg-[#121318] border border-zinc-800 rounded-xl p-8 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-black uppercase mb-1">Básico</h3>
+                    <p class="text-zinc-500 text-xs mb-6">Entrenamiento Base</p>
+                    <div class="text-3xl font-extrabold mb-6">S/ 59<span class="text-xs text-zinc-500 font-normal">
+                            /mes</span></div>
+                    <ul class="space-y-3 text-xs text-zinc-300">
+                        <li class="flex items-center gap-2"><span class="text-zinc-500">✓</span> Acceso a la sala de
+                            pesas principal</li>
+                        <li class="flex items-center gap-2"><span class="text-zinc-500">✓</span> Equipamiento de cardio
+                            estándar</li>
+                        <li class="flex items-center gap-2"><span class="text-zinc-500">✓</span> Acceso a vestuarios
+                        </li>
+                    </ul>
+                </div>
+                <button
+                    class="w-full mt-8 py-3 border border-zinc-700 text-zinc-300 font-semibold text-xs tracking-wider uppercase rounded hover:bg-zinc-800 transition">Seleccionar
+                    Plan</button>
+            </div>
+
+            <!-- PREMIUM (DESTACADO) -->
+            <div
+                class="bg-[#151722] border-2 border-indigo-500/50 rounded-xl p-8 flex flex-col justify-between relative shadow-2xl shadow-indigo-950/40 scale-105">
+                <span
+                    class="absolute -top-3 right-6 bg-indigo-300 text-zinc-950 font-bold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded">Popular</span>
+                <div>
+                    <h3 class="text-xl font-black uppercase mb-1">Premium</h3>
+                    <p class="text-zinc-500 text-xs mb-6">Rendimiento Avanzado</p>
+                    <div class="text-3xl font-extrabold mb-6">S/ 89<span class="text-xs text-zinc-500 font-normal">
+                            /mes</span></div>
+                    <ul class="space-y-3 text-xs text-zinc-300">
+                        <li class="flex items-center gap-2"><span class="text-indigo-400">✓</span> Todo lo de Básico
+                        </li>
+                        <li class="flex items-center gap-2"><span class="text-indigo-400">✓</span> Clases grupales
+                            ilimitadas</li>
+                        <li class="flex items-center gap-2"><span class="text-indigo-400">✓</span> Acceso a zona de
+                            recuperación</li>
+                        <li class="flex items-center gap-2"><span class="text-indigo-400">✓</span> Pase de invitado
+                            (5/mes)</li>
+                    </ul>
+                </div>
+                <button
+                    class="w-full mt-8 py-3 bg-indigo-200 text-zinc-950 font-bold text-xs tracking-wider uppercase rounded hover:bg-indigo-300 transition">Seleccionar
+                    Plan</button>
+            </div>
+
+            <!-- ELITE -->
+            <div class="bg-[#121318] border border-zinc-800 rounded-xl p-8 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-black uppercase mb-1">Elite</h3>
+                    <p class="text-zinc-500 text-xs mb-6">Rendimiento Máximo</p>
+                    <div class="text-3xl font-extrabold mb-6">S/ 129<span class="text-xs text-zinc-500 font-normal">
+                            /mes</span></div>
+                    <ul class="space-y-3 text-xs text-zinc-300">
+                        <li class="flex items-center gap-2"><span class="text-zinc-500">✓</span> Todo lo de Premium</li>
+                        <li class="flex items-center gap-2"><span class="text-zinc-500">✓</span> Entrenamiento Personal
+                            1 a 1 (8x/mes)</li>
+                        <li class="flex items-center gap-2"><span class="text-zinc-500">✓</span> Seguimiento de
+                            analíticas biométricas</li>
+                        <li class="flex items-center gap-2"><span class="text-zinc-500">✓</span> Rutina personaizada</li>
+                    </ul>
+                </div>
+                <button
+                    class="w-full mt-8 py-3 border border-zinc-700 text-zinc-300 font-semibold text-xs tracking-wider uppercase rounded hover:bg-zinc-800 transition">Seleccionar
+                    Plan</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-zinc-800/80 mt-12 py-8 text-zinc-500 text-[10px]">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="font-black text-sm text-white">POWERFIT</div>
+            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
+                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
+                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
+                <a href="#" class="hover:text-zinc-300">Soporte Técnico</a>
+                <a href="#" class="hover:text-zinc-300">Instagram</a>
+                <a href="#" class="hover:text-zinc-300">Twitter</a>
+            </div>
+            <div>© 2026 POWERFIT KINETIC. TODOS LOS DERECHOS RESERVADOS.</div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
