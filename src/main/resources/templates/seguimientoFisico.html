@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit - Seguimiento Físico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a th:href="@{/}" class="font-black text-2xl tracking-wider text-white">POWERFIT</a>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+                <a th:href="@{/}" class="hover:text-white transition">Inicio</a>
+                <a th:href="@{/membresia}" class="hover:text-white transition">Membresía</a>
+                <a th:href="@{/tienda}" class="hover:text-white transition">Tienda</a>
+                <a th:href="@{/clases}" class="hover:text-white transition">Clases</a>
+                <a th:href="@{/perfil}" class="text-white border-b-2 border-indigo-400 pb-1">Perfil</a>
+            </nav>
+
+            <div class="flex items-center gap-5 text-zinc-400">
+                <a th:href="@{/carrito}" class="hover:text-white transition relative" title="Carrito">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                    </svg>
+                </a>
+
+                <a th:href="@{/perfil}"
+                    class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition"
+                    title="Mi perfil">
+                    <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="w-full h-full object-cover">
+                </a>
+            </div>
+        </div>
+    </header>
+
+        <!-- MENSAJE PARA USUARIO NO AUTENTICADO -->
+        <section th:if="${cliente == null}"
+            class="min-h-[65vh] flex items-center justify-center px-6">
+            <div class="max-w-lg w-full bg-[#121318] border border-zinc-800 rounded-xl p-10 text-center shadow-2xl">
+                <div class="w-14 h-14 mx-auto mb-5 rounded-full bg-indigo-400/10 border border-indigo-400/20 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2zm3-10V7a3 3 0 016 0v4H9z"/>
+                    </svg>
+                </div>
+
+                <h1 class="text-2xl font-black uppercase tracking-wide text-white mb-3">
+                    Inicia sesión para continuar
+                </h1>
+
+                <p class="text-zinc-400 text-sm leading-6 mb-7">
+                    Esta sección contiene información personal de tu cuenta PowerFit.
+                    Inicia sesión para acceder.
+                </p>
+
+                <a th:href="@{/login}"
+                    class="inline-flex items-center justify-center px-8 py-3 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-black text-xs uppercase tracking-wider rounded transition">
+                    Iniciar sesión
+                </a>
+            </div>
+        </section>
+
+
+    <main th:if="${cliente != null}" class="max-w-7xl mx-auto px-6 py-12 w-full flex-1">
+
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
+            <div>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-indigo-300 mb-2">Mi progreso</p>
+                <h1 class="text-4xl font-black uppercase tracking-wider">Seguimiento Físico</h1>
+                <p class="text-zinc-400 text-sm mt-2">Monitorea tu evolución y progreso físico.</p>
+            </div>
+
+            <button
+                class="px-6 py-3 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-black text-xs uppercase tracking-wider rounded">
+                Registrar medición
+            </button>
+        </div>
+
+        <section th:if="${ultimoSeguimiento == null}"
+            class="bg-[#121318] border border-zinc-800 rounded-xl p-10 text-center mb-8">
+            <h2 class="text-xl font-black uppercase mb-3">Aún no tienes mediciones registradas</h2>
+            <p class="text-zinc-500 text-sm">
+                Registra tu primera medición para comenzar a visualizar tu progreso.
+            </p>
+        </section>
+
+        <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div class="bg-[#121318] border border-zinc-800 rounded-xl p-5">
+                <p class="text-[9px] uppercase tracking-wider text-zinc-500">Peso actual</p>
+                <p class="text-2xl font-black mt-2"
+                    th:text="${ultimoSeguimiento != null ? ultimoSeguimiento.peso + ' kg' : '--'}">--</p>
+            </div>
+
+            <div class="bg-[#121318] border border-zinc-800 rounded-xl p-5">
+                <p class="text-[9px] uppercase tracking-wider text-zinc-500">Altura</p>
+                <p class="text-2xl font-black mt-2"
+                    th:text="${ultimoSeguimiento != null ? ultimoSeguimiento.altura + ' m' : '--'}">--</p>
+            </div>
+
+            <div class="bg-[#121318] border border-zinc-800 rounded-xl p-5">
+                <p class="text-[9px] uppercase tracking-wider text-zinc-500">IMC</p>
+                <p class="text-2xl font-black mt-2"
+                    th:text="${imc != null ? #numbers.formatDecimal(imc, 1, 1) : '--'}">--</p>
+            </div>
+
+            <div class="bg-[#121318] border border-zinc-800 rounded-xl p-5">
+                <p class="text-[9px] uppercase tracking-wider text-zinc-500">Grasa corporal</p>
+                <p class="text-2xl font-black mt-2"
+                    th:text="${ultimoSeguimiento != null and ultimoSeguimiento.porcentajeGrasa != null ? ultimoSeguimiento.porcentajeGrasa + ' %' : '--'}">--</p>
+            </div>
+
+            <div class="bg-[#121318] border border-zinc-800 rounded-xl p-5">
+                <p class="text-[9px] uppercase tracking-wider text-zinc-500">Masa muscular</p>
+                <p class="text-2xl font-black mt-2"
+                    th:text="${ultimoSeguimiento != null and ultimoSeguimiento.masaMuscular != null ? ultimoSeguimiento.masaMuscular + ' kg' : '--'}">--</p>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <section class="lg:col-span-2 bg-[#121318] border border-zinc-800 rounded-xl p-6 min-h-80">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-sm font-black uppercase tracking-wider">Tendencia de composición corporal</h2>
+                    <span class="text-[9px] uppercase tracking-wider text-zinc-500">Datos reales del historial</span>
+                </div>
+
+                <div class="h-56 border border-dashed border-zinc-700 rounded-lg flex items-center justify-center text-center px-8">
+                    <p class="text-zinc-500 text-sm">
+                        La gráfica se mostrará cuando conectemos el historial de mediciones.
+                    </p>
+                </div>
+            </section>
+
+            <section class="bg-[#121318] border border-zinc-800 rounded-xl p-6">
+                <h2 class="text-sm font-black uppercase tracking-wider mb-5">Última observación</h2>
+
+                <p class="text-sm text-zinc-400 leading-6"
+                    th:text="${ultimoSeguimiento != null and ultimoSeguimiento.observaciones != null ? ultimoSeguimiento.observaciones : 'Sin observaciones registradas.'}">
+                    Sin observaciones registradas.
+                </p>
+            </section>
+        </div>
+
+        <section class="bg-[#121318] border border-zinc-800 rounded-xl p-6 mt-8">
+            <div class="mb-6">
+                <h2 class="text-sm font-black uppercase tracking-wider">Historial de mediciones</h2>
+            </div>
+
+            <div th:if="${seguimientos == null or #lists.isEmpty(seguimientos)}"
+                class="py-8 text-center text-sm text-zinc-500">
+                No hay mediciones para mostrar.
+            </div>
+
+            <div th:if="${seguimientos != null and !#lists.isEmpty(seguimientos)}" class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-zinc-800 text-[9px] uppercase tracking-wider text-zinc-500">
+                            <th class="pb-3">Fecha</th>
+                            <th class="pb-3">Peso</th>
+                            <th class="pb-3">Altura</th>
+                            <th class="pb-3">% Grasa</th>
+                            <th class="pb-3">Masa muscular</th>
+                            <th class="pb-3">Observaciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-xs text-zinc-300 divide-y divide-zinc-800/60">
+                        <tr th:each="registro : ${seguimientos}">
+                            <td class="py-4"
+                                th:text="${#temporals.format(registro.fechaRegistro, 'dd/MM/yyyy')}">--</td>
+
+                            <td class="py-4"
+                                th:text="${registro.peso != null ? registro.peso + ' kg' : '--'}">--</td>
+
+                            <td class="py-4"
+                                th:text="${registro.altura != null ? registro.altura + ' m' : '--'}">--</td>
+
+                            <td class="py-4"
+                                th:text="${registro.porcentajeGrasa != null ? registro.porcentajeGrasa + '%' : '--'}">--</td>
+
+                            <td class="py-4"
+                                th:text="${registro.masaMuscular != null ? registro.masaMuscular + ' kg' : '--'}">--</td>
+
+                            <td class="py-4 text-zinc-400"
+                                th:text="${registro.observaciones != null ? registro.observaciones : '-'}">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+
+    <footer class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="font-black text-sm text-white">POWERFIT</div>
+            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
+                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
+                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
+                <a href="#" class="hover:text-zinc-300">Soporte</a>
+                <a href="#" class="hover:text-zinc-300">Instagram</a>
+            </div>
+            <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit - Mis Pedidos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a th:href="@{/}" class="font-black text-2xl tracking-wider text-white">POWERFIT</a>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+                <a th:href="@{/}" class="hover:text-white transition">Inicio</a>
+                <a th:href="@{/membresia}" class="hover:text-white transition">Membresía</a>
+                <a th:href="@{/tienda}" class="hover:text-white transition">Tienda</a>
+                <a th:href="@{/clases}" class="hover:text-white transition">Clases</a>
+                <a th:href="@{/perfil}" class="hover:text-white transition">Perfil</a>
+            </nav>
+
+            <div class="flex items-center gap-5 text-zinc-400">
+                <a th:href="@{/carrito}" class="hover:text-white transition relative" title="Carrito">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                    </svg>
+                </a>
+
+                <a th:href="@{/perfil}"
+                    class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition"
+                    title="Mi perfil">
+                    <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="w-full h-full object-cover">
+                </a>
+            </div>
+        </div>
+    </header>
+
+        <!-- MENSAJE PARA USUARIO NO AUTENTICADO -->
+        <section th:if="${cliente == null}"
+            class="min-h-[65vh] flex items-center justify-center px-6">
+            <div class="max-w-lg w-full bg-[#121318] border border-zinc-800 rounded-xl p-10 text-center shadow-2xl">
+                <div class="w-14 h-14 mx-auto mb-5 rounded-full bg-indigo-400/10 border border-indigo-400/20 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2zm3-10V7a3 3 0 016 0v4H9z"/>
+                    </svg>
+                </div>
+
+                <h1 class="text-2xl font-black uppercase tracking-wide text-white mb-3">
+                    Inicia sesión para continuar
+                </h1>
+
+                <p class="text-zinc-400 text-sm leading-6 mb-7">
+                    Esta sección contiene información personal de tu cuenta PowerFit.
+                    Inicia sesión para acceder.
+                </p>
+
+                <a th:href="@{/login}"
+                    class="inline-flex items-center justify-center px-8 py-3 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-black text-xs uppercase tracking-wider rounded transition">
+                    Iniciar sesión
+                </a>
+            </div>
+        </section>
+
+
+    <main th:if="${cliente != null}" class="max-w-7xl mx-auto px-6 py-12 w-full flex-1">
+
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
+            <div>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-indigo-300 mb-2">Mi cuenta</p>
+                <h1 class="text-4xl font-black uppercase tracking-wider">Mis Pedidos</h1>
+                <p class="text-zinc-400 text-sm mt-2">Consulta el estado y detalle de tus compras.</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <button class="px-4 py-2 bg-indigo-200 text-zinc-950 text-[10px] font-bold uppercase rounded">Todos</button>
+                <button class="px-4 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase rounded">Pendientes</button>
+                <button class="px-4 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase rounded">En proceso</button>
+                <button class="px-4 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase rounded">Entregados</button>
+                <button class="px-4 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase rounded">Cancelados</button>
+            </div>
+        </div>
+
+        <section th:if="${pedidos == null or #lists.isEmpty(pedidos)}"
+            class="bg-[#121318] border border-zinc-800 rounded-xl p-12 text-center">
+            <h2 class="text-xl font-black uppercase mb-3">Aún no tienes pedidos</h2>
+            <p class="text-zinc-500 text-sm mb-6">Cuando realices una compra aparecerá aquí.</p>
+            <a th:href="@{/tienda}"
+                class="inline-block px-7 py-3 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded">
+                Ir a la tienda
+            </a>
+        </section>
+
+        <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}" class="space-y-5">
+
+            <article th:each="pedido : ${pedidos}"
+                class="bg-[#121318] border border-zinc-800 rounded-xl overflow-hidden">
+
+                <div class="p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 flex-1">
+                        <div>
+                            <p class="text-[9px] uppercase tracking-wider text-zinc-500 mb-1">Pedido</p>
+                            <p class="font-black text-sm"
+                                th:text="${'#PF-' + pedido.idPedido}">#PF-1</p>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] uppercase tracking-wider text-zinc-500 mb-1">Fecha</p>
+                            <p class="font-semibold text-sm"
+                                th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy')}">--</p>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] uppercase tracking-wider text-zinc-500 mb-1">Entrega</p>
+                            <p class="font-semibold text-sm"
+                                th:text="${pedido.metodoEntrega}">--</p>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] uppercase tracking-wider text-zinc-500 mb-1">Total</p>
+                            <p class="font-black text-indigo-200 text-lg"
+                                th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 2)}">S/ 0.00</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border border-zinc-700 bg-zinc-900"
+                            th:text="${pedido.estado}">
+                            PENDIENTE
+                        </span>
+
+                        <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border border-indigo-400/30 bg-indigo-400/10 text-indigo-200"
+                            th:text="${pedido.estadoPago}">
+                            PENDIENTE
+                        </span>
+                    </div>
+                </div>
+
+                <div class="border-t border-zinc-800 px-6 py-4 flex flex-wrap justify-end gap-3">
+                    <button
+                        class="px-4 py-2 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded hover:border-indigo-300">
+                        Ver detalle
+                    </button>
+
+                    <button th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}"
+                        class="px-4 py-2 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded hover:border-indigo-300">
+                        Editar
+                    </button>
+
+                    <button th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}"
+                        class="px-4 py-2 border border-red-500/30 bg-red-500/5 text-red-300 text-[10px] font-bold uppercase tracking-wider rounded hover:bg-red-500/10">
+                        Cancelar pedido
+                    </button>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+
+    <footer class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="font-black text-sm text-white">POWERFIT</div>
+            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
+                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
+                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
+                <a href="#" class="hover:text-zinc-300">Soporte</a>
+                <a href="#" class="hover:text-zinc-300">Instagram</a>
+            </div>
+            <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,38 +1,69 @@
 package com.powerfit.powerfit.controller;
 
+import com.powerfit.powerfit.repository.PlanMembresiaRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class NavegacionController {
 
-    @GetMapping("/")
-    public String inicio() {
-        return "index";
-    }
+  private final PlanMembresiaRepository planMembresiaRepository;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
+  public NavegacionController(PlanMembresiaRepository planMembresiaRepository) {
+    this.planMembresiaRepository = planMembresiaRepository;
+  }
 
-    @GetMapping("/clases")
-    public String clases() {
-        return "reservaClases";
-    }
+  @GetMapping("/")
+  public String inicio(Model model) {
 
-    @GetMapping("/tienda")
-    public String tienda() {
-        return "tienda";
-    }
+    model.addAttribute("planes", planMembresiaRepository.findByEstadoOrderByPrecioAsc("ACTIVO"));
 
-    @GetMapping("/carrito")
-    public String carrito() {
-        return "carrito";
-    }
+    return "index";
+  }
 
-    @GetMapping("/perfil")
-    public String perfil() {
-        return "perfilUsuario";
-    }
+  @GetMapping("/login")
+  public String login() {
+    return "login";
+  }
+
+  @GetMapping("/registro")
+  public String registro() {
+    return "registro";
+  }
+
+  @GetMapping("/membresia")
+  public String membresia() {
+    return "membresia";
+  }
+
+  @GetMapping("/clases")
+  public String clases() {
+    return "reservaClases";
+  }
+
+  @GetMapping("/carrito")
+  public String carrito() {
+    return "carrito";
+  }
+
+  @GetMapping("/perfil")
+  public String perfil() {
+    return "perfilUsuario";
+  }
+
+  @GetMapping("/checkout")
+  public String checkout() {
+    return "checkout";
+  }
+
+  @GetMapping("/pedidos")
+  public String pedidos() {
+    return "pedidos";
+  }
+
+  @GetMapping("/seguimiento")
+  public String seguimiento() {
+    return "seguimientoFisico";
+  }
 }
