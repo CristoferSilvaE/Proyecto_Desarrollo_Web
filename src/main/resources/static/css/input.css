@@ -1,0 +1,1494 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0b0c10;
+  }
+}
+
+@layer components {
+  /* ===== GENERAL ===== */
+  .app-body {
+    @apply text-white font-sans antialiased min-h-screen flex flex-col;
+    background-color: #0b0c10;
+  }
+
+  .page-container {
+    @apply max-w-7xl mx-auto px-6 py-12 w-full;
+  }
+
+  .page-container-sm {
+    @apply max-w-6xl mx-auto px-6 py-12 w-full;
+  }
+
+  .page-header {
+    @apply mb-8;
+  }
+
+  .page-title {
+    @apply text-4xl font-black uppercase tracking-wider text-zinc-100;
+  }
+
+  .page-subtitle {
+    @apply text-zinc-400 text-xs mt-1;
+  }
+
+  .eyebrow {
+    @apply text-[10px] uppercase tracking-[0.22em] text-indigo-300 mb-2;
+  }
+
+  .powerfit-card {
+    @apply border border-zinc-800/80 rounded-xl;
+    background-color: #121318;
+  }
+
+  .section-card {
+    @apply border border-zinc-800 rounded-xl p-6;
+    background-color: #121318;
+  }
+
+  .section-card-soft {
+    @apply border border-zinc-800 rounded-lg p-6;
+    background-color: #18191f;
+  }
+
+  /* ===== NAVBAR ===== */
+  .navbar {
+    @apply border-b border-zinc-800/80 backdrop-blur-md sticky top-0 z-50;
+    background-color: rgb(11 12 16 / 0.8);
+  }
+
+  .navbar-container {
+    @apply max-w-7xl mx-auto px-6 h-20 flex items-center justify-between;
+  }
+
+  .navbar-logo {
+    @apply font-black text-2xl tracking-wider text-white;
+  }
+
+  .navbar-menu {
+    @apply hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400;
+  }
+
+  .nav-link {
+    @apply hover:text-white transition;
+  }
+
+  .nav-link-active {
+    @apply text-white border-b-2 border-indigo-400 pb-1;
+  }
+
+  .navbar-actions {
+    @apply flex items-center gap-5 text-zinc-400;
+  }
+
+  .cart-link {
+    @apply hover:text-white transition;
+  }
+
+  .cart-icon {
+    @apply w-5 h-5;
+  }
+
+  .avatar-link {
+    @apply w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition;
+  }
+
+  .avatar-image {
+    @apply w-full h-full object-cover;
+  }
+
+  /* ===== BOTONES ===== */
+  .btn-primary {
+    @apply inline-flex items-center justify-center text-center py-3 px-6 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition;
+  }
+
+  .btn-primary-block {
+    @apply block text-center w-full py-3 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-black text-xs uppercase tracking-wider rounded transition;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center border border-zinc-700 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded hover:border-indigo-300 hover:text-indigo-200 transition;
+  }
+
+  .btn-outline-block {
+    @apply block text-center w-full py-2.5 border border-zinc-700 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded hover:border-zinc-500 transition;
+  }
+
+  .btn-disabled {
+    @apply w-full py-3 bg-zinc-800 text-zinc-600 font-bold text-xs uppercase tracking-wider rounded cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 border border-red-500/30 bg-red-500/5 text-red-300 text-[10px] font-bold uppercase tracking-wider rounded hover:bg-red-500/10 transition;
+  }
+
+  /* ===== ESTADOS VACÍOS / LOGIN REQUERIDO ===== */
+  .empty-state {
+    @apply border border-zinc-800 rounded-xl p-12 text-center;
+    background-color: #121318;
+  }
+
+  .empty-title {
+    @apply text-xl font-black uppercase mb-3;
+  }
+
+  .empty-text {
+    @apply text-zinc-500 text-sm;
+  }
+
+  .login-gate {
+    @apply min-h-[65vh] flex items-center justify-center px-6;
+  }
+
+  .login-gate-card {
+    @apply max-w-lg w-full border border-zinc-800 rounded-xl p-10 text-center shadow-2xl;
+    background-color: #121318;
+  }
+
+  .login-gate-icon {
+    @apply w-14 h-14 mx-auto mb-5 rounded-full bg-indigo-400/10 border border-indigo-400/20 flex items-center justify-center;
+  }
+
+  .login-gate-title {
+    @apply text-2xl font-black uppercase tracking-wide text-white mb-3;
+  }
+
+  .login-gate-text {
+    @apply text-zinc-400 text-sm leading-6 mb-7;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    @apply border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12;
+  }
+
+  .footer-container {
+    @apply max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4;
+  }
+
+  .footer-logo {
+    @apply font-black text-sm text-white;
+  }
+
+  .footer-links {
+    @apply flex flex-wrap gap-6 uppercase tracking-wider;
+  }
+
+  .footer-link {
+    @apply hover:text-zinc-300;
+  }
+
+  /* ===== CLASES ===== */
+  .filter-container {
+    @apply flex flex-wrap gap-3 mb-10;
+  }
+
+  .filter-button {
+    @apply px-5 py-2 border border-zinc-800 text-zinc-400 font-semibold text-xs uppercase tracking-wider rounded-md hover:text-white transition;
+    background-color: #121318;
+  }
+
+  .filter-button-active {
+    @apply bg-indigo-200 text-zinc-950 border-indigo-200;
+  }
+
+  .class-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+  }
+
+  .class-card {
+    @apply border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row transition duration-300 hover:border-zinc-700;
+    background-color: #121318;
+  }
+
+  .class-image-container {
+    @apply sm:w-5/12 h-56 sm:h-auto relative shrink-0 bg-zinc-900;
+  }
+
+  .class-image {
+    @apply w-full h-full object-cover;
+  }
+
+  .image-placeholder {
+    @apply w-full h-full flex items-center justify-center text-zinc-500 text-xs uppercase tracking-wider;
+  }
+
+  .class-badge {
+    @apply absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 bg-black/80 border border-zinc-700 rounded text-zinc-300;
+  }
+
+  .class-content {
+    @apply p-6 sm:w-7/12 flex flex-col justify-between;
+  }
+
+  .class-title {
+    @apply text-xl font-black uppercase tracking-wide text-zinc-100 mb-2;
+  }
+
+  .class-description {
+    @apply text-xs text-zinc-500 leading-5 mb-5 min-h-[40px];
+  }
+
+  .class-data {
+    @apply space-y-2.5 text-xs text-zinc-400;
+  }
+
+  .data-label {
+    @apply text-zinc-500;
+  }
+
+  .data-value {
+    @apply text-zinc-200;
+  }
+
+  .available-value {
+    @apply text-emerald-300 font-semibold;
+  }
+
+  .limited-value {
+    @apply text-orange-300 font-bold;
+  }
+
+  .class-action {
+    @apply mt-6;
+  }
+
+  /* ===== TIENDA ===== */
+  .store-header {
+    @apply text-center mb-12;
+  }
+
+  .store-title {
+    @apply text-4xl md:text-5xl font-black uppercase tracking-wider text-zinc-100;
+  }
+
+  .store-subtitle {
+    @apply text-zinc-400 text-xs md:text-sm mt-2;
+  }
+
+  .section-heading {
+    @apply flex items-center gap-4 mb-8;
+  }
+
+  .section-title {
+    @apply text-sm font-black uppercase tracking-widest text-zinc-300 shrink-0;
+  }
+
+  .section-line {
+    @apply h-px bg-zinc-800/80 w-full;
+  }
+
+  .product-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  .product-card {
+    @apply border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between;
+    background-color: #121318;
+  }
+
+  .product-image-container {
+    @apply w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative;
+  }
+
+  .product-image {
+    @apply w-full h-full object-contain;
+  }
+
+  .product-placeholder {
+    @apply w-full h-full flex items-center justify-center bg-zinc-100 text-zinc-500 text-xs font-semibold uppercase;
+  }
+
+  .product-category {
+    @apply text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1;
+  }
+
+  .product-title {
+    @apply text-base font-bold tracking-wide text-zinc-100 mb-2;
+  }
+
+  .product-description {
+    @apply text-xs text-zinc-500 leading-5 min-h-[40px];
+  }
+
+  .product-footer {
+    @apply mt-5;
+  }
+
+  .stock-row {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .stock-label {
+    @apply text-[10px] uppercase tracking-wider text-zinc-500;
+  }
+
+  .stock-available {
+    @apply text-[10px] text-emerald-400 font-semibold;
+  }
+
+  .stock-out {
+    @apply text-[10px] text-red-400 font-semibold;
+  }
+
+  .product-bottom {
+    @apply flex items-center justify-between gap-4;
+  }
+
+  .product-price {
+    @apply text-lg font-extrabold text-indigo-200;
+  }
+
+  .product-button {
+    @apply px-4 py-2 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded flex items-center gap-2 transition;
+  }
+
+  .product-button-icon {
+    @apply w-4 h-4;
+  }
+
+  .product-button-disabled {
+    @apply px-4 py-2 bg-zinc-800 text-zinc-600 font-bold text-xs uppercase tracking-wider rounded cursor-not-allowed;
+  }
+
+  /* ===== INICIO ===== */
+  .hero {
+    @apply relative h-[80vh] flex items-center justify-center text-center bg-cover bg-center;
+  }
+
+  .hero-content {
+    @apply max-w-4xl px-6;
+  }
+
+  .hero-title {
+    @apply text-5xl md:text-7xl font-black tracking-tight uppercase mb-4 drop-shadow-lg;
+  }
+
+  .hero-text {
+    @apply text-zinc-300 text-sm md:text-base max-w-xl mx-auto mb-8 font-light;
+  }
+
+  .hero-actions {
+    @apply flex flex-col sm:flex-row items-center justify-center gap-4;
+  }
+
+  .hero-primary-button {
+    @apply w-full sm:w-auto px-8 py-3.5 bg-indigo-200 text-zinc-950 font-semibold text-xs tracking-wider uppercase rounded-sm hover:bg-indigo-300 transition;
+  }
+
+  .hero-secondary-button {
+    @apply w-full sm:w-auto px-8 py-3.5 border border-zinc-600 bg-black/40 text-white font-semibold text-xs tracking-wider uppercase rounded-sm hover:bg-zinc-800 transition;
+  }
+
+  .disciplines-section {
+    @apply max-w-7xl mx-auto px-6 py-16;
+  }
+
+  .disciplines-title {
+    @apply text-2xl font-bold uppercase tracking-wide;
+  }
+
+  .disciplines-subtitle {
+    @apply text-zinc-400 text-xs mb-8;
+  }
+
+  .disciplines-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+  }
+
+  .discipline-card-large {
+    @apply lg:col-span-2 relative h-[420px] rounded-lg overflow-hidden border border-zinc-800;
+  }
+
+  .discipline-side {
+    @apply flex flex-col gap-6;
+  }
+
+  .discipline-card-small {
+    @apply relative h-[200px] rounded-lg overflow-hidden border border-zinc-800;
+  }
+
+  .discipline-image {
+    @apply w-full h-full object-cover transition duration-500 opacity-60;
+  }
+
+  .discipline-card-large:hover .discipline-image,
+  .discipline-card-small:hover .discipline-image {
+    @apply scale-105;
+  }
+
+  .discipline-overlay-large {
+    @apply absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-6 flex flex-col justify-between;
+  }
+
+  .discipline-overlay-small {
+    @apply absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-5 flex flex-col justify-between;
+  }
+
+  .discipline-badge {
+    @apply self-start text-[10px] uppercase font-semibold px-2.5 py-1 bg-zinc-900/80 border border-zinc-700 rounded text-zinc-300;
+  }
+
+  .discipline-title-large {
+    @apply text-xl font-bold uppercase mb-1;
+  }
+
+  .discipline-title-small {
+    @apply text-base font-bold uppercase;
+  }
+
+  .discipline-text {
+    @apply text-zinc-400 text-xs;
+  }
+
+  .discipline-text-large {
+    @apply max-w-md;
+  }
+
+  .plans-section {
+    @apply max-w-7xl mx-auto px-6 py-20 text-center;
+  }
+
+  .plans-header {
+    @apply mb-14;
+  }
+
+  .plans-title {
+    @apply text-3xl md:text-4xl font-black uppercase tracking-wider mb-3;
+  }
+
+  .plans-subtitle {
+    @apply text-zinc-400 text-xs md:text-sm;
+  }
+
+  .plans-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-stretch;
+  }
+
+  .plan-card {
+    @apply relative border border-zinc-800 rounded-xl p-8 flex flex-col justify-between transition duration-300 hover:-translate-y-1 hover:border-zinc-700;
+    background-color: #121318;
+  }
+
+  .plan-card-premium {
+    @apply md:scale-105 border-indigo-500/50 shadow-2xl shadow-indigo-950/40;
+    background-color: #151722;
+  }
+
+  .plan-popular {
+    @apply absolute -top-3 right-6 bg-indigo-300 text-zinc-950 font-black text-[10px] tracking-wider uppercase px-3 py-1 rounded;
+  }
+
+  .plan-header {
+    @apply mb-7;
+  }
+
+  .plan-level {
+    @apply text-[9px] uppercase tracking-[0.22em] text-zinc-500 mb-2;
+  }
+
+  .plan-name {
+    @apply text-2xl font-black uppercase tracking-wide;
+  }
+
+  .plan-description {
+    @apply text-zinc-500 text-xs mt-2 min-h-[32px];
+  }
+
+  .plan-price-container {
+    @apply mb-7;
+  }
+
+  .plan-price-row {
+    @apply flex items-end gap-1;
+  }
+
+  .plan-price {
+    @apply text-4xl font-black;
+  }
+
+  .plan-period {
+    @apply text-xs text-zinc-500 mb-1;
+  }
+
+  .plan-divider {
+    @apply h-px bg-zinc-800 mb-6;
+  }
+
+  .plan-benefits {
+    @apply space-y-4 text-xs text-zinc-300;
+  }
+
+  .plan-benefit {
+    @apply flex items-start gap-3;
+  }
+
+  .plan-benefit-icon {
+    @apply w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-300 shrink-0 text-[10px];
+  }
+
+  .plan-benefit-icon-premium {
+    @apply w-5 h-5 rounded-full bg-indigo-400/10 text-indigo-300 flex items-center justify-center shrink-0 text-[10px];
+  }
+
+  .plan-duration {
+    @apply mt-7 pt-5 border-t border-zinc-800 flex justify-between text-[10px];
+  }
+
+  .plan-duration-label {
+    @apply uppercase tracking-wider text-zinc-500;
+  }
+
+  .plan-duration-value {
+    @apply font-semibold text-zinc-300;
+  }
+
+  .plan-button {
+    @apply text-center w-full mt-8 py-3.5 border border-zinc-700 text-zinc-300 font-bold text-xs tracking-wider uppercase rounded hover:bg-indigo-200 hover:border-indigo-200 hover:text-zinc-950 transition;
+  }
+
+  .plan-button-premium {
+    @apply bg-indigo-200 text-zinc-950 border-indigo-200 hover:bg-indigo-300;
+  }
+
+  /* ===== MEMBRESÍA ===== */
+  .membership-header {
+    @apply mb-10;
+  }
+
+  .membership-kicker {
+    @apply text-[10px] uppercase tracking-[0.25em] text-indigo-300 mb-3;
+  }
+
+  .membership-title {
+    @apply text-4xl font-black uppercase tracking-tight;
+  }
+
+  .membership-subtitle {
+    @apply text-zinc-400 mt-2 max-w-2xl;
+  }
+
+  .membership-shell {
+    @apply border border-zinc-800 rounded-xl overflow-hidden;
+    background-color: #121318;
+  }
+
+  .membership-top {
+    @apply px-8 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-b border-zinc-800;
+  }
+
+  .membership-name-row {
+    @apply flex items-center gap-4;
+  }
+
+  .membership-name {
+    @apply text-3xl font-black uppercase;
+  }
+
+  .status-active {
+    @apply px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold tracking-wider;
+  }
+
+  .membership-price-box {
+    @apply md:text-right;
+  }
+
+  .membership-price-label {
+    @apply text-[10px] uppercase tracking-wider text-zinc-400;
+  }
+
+  .membership-price {
+    @apply text-4xl font-black text-indigo-200 mt-1;
+  }
+
+  .membership-body {
+    @apply p-8 space-y-6;
+  }
+
+  .membership-section-title {
+    @apply text-xl font-bold uppercase mb-5;
+  }
+
+  .membership-period-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6 text-sm;
+  }
+
+  .membership-field-label {
+    @apply text-[10px] uppercase tracking-wider text-zinc-500 mb-1;
+  }
+
+  .membership-field-value {
+    @apply font-semibold;
+  }
+
+  .membership-field-value-accent {
+    @apply font-semibold text-indigo-200;
+  }
+
+  .benefits-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .benefit-box {
+    @apply p-5 border border-white/5;
+    background-color: #111216;
+  }
+
+  .benefit-title {
+    @apply font-bold text-sm;
+  }
+
+  /* ===== CARRITO ===== */
+  .cart-layout {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8 items-start;
+  }
+
+  .cart-items {
+    @apply lg:col-span-2 space-y-4;
+  }
+
+  .cart-item {
+    @apply border border-zinc-800/80 rounded-lg p-4 flex gap-4 items-center justify-between;
+    background-color: #121318;
+  }
+
+  .cart-item-main {
+    @apply flex gap-4 items-center;
+  }
+
+  .cart-thumb {
+    @apply w-20 h-20 bg-white rounded overflow-hidden shrink-0;
+  }
+
+  .cart-thumb-img {
+    @apply w-full h-full object-contain;
+  }
+
+  .cart-item-title {
+    @apply text-sm font-bold uppercase tracking-wide text-zinc-100;
+  }
+
+  .cart-item-category {
+    @apply text-zinc-500 text-[11px] mb-3;
+  }
+
+  .quantity-control {
+    @apply flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded px-2 py-1 w-max;
+  }
+
+  .quantity-button {
+    @apply text-zinc-400 hover:text-white px-1;
+  }
+
+  .quantity-value {
+    @apply text-xs font-semibold px-2;
+  }
+
+  .cart-item-side {
+    @apply text-right;
+  }
+
+  .cart-remove {
+    @apply text-zinc-500 hover:text-red-400 mb-5;
+  }
+
+  .cart-item-price {
+    @apply font-bold text-indigo-200;
+  }
+
+  .continue-shopping {
+    @apply inline-block text-xs text-zinc-400 hover:text-white mt-3;
+  }
+
+  .cart-summary {
+    @apply border border-zinc-800/80 rounded-lg p-6 lg:sticky lg:top-28;
+    background-color: #121318;
+  }
+
+  .cart-summary-title {
+    @apply text-lg font-black uppercase tracking-wide mb-6;
+  }
+
+  .cart-summary-list {
+    @apply space-y-4 text-sm;
+  }
+
+  .cart-summary-row {
+    @apply flex justify-between text-zinc-400;
+  }
+
+  .cart-summary-value {
+    @apply text-zinc-200;
+  }
+
+  .cart-total-row {
+    @apply border-t border-zinc-800 pt-4 flex justify-between items-end;
+  }
+
+  .cart-total-label {
+    @apply font-bold uppercase;
+  }
+
+  .cart-total {
+    @apply text-2xl font-black text-indigo-200;
+  }
+
+  /* ===== PERFIL ===== */
+  .profile-container {
+    @apply max-w-7xl mx-auto px-6 py-10 w-full;
+  }
+
+  .profile-grid {
+    @apply grid grid-cols-1 lg:grid-cols-12 gap-8 items-start;
+  }
+
+  .profile-left {
+    @apply lg:col-span-4 space-y-6;
+  }
+
+  .profile-right {
+    @apply lg:col-span-8 space-y-6;
+  }
+
+  .profile-card {
+    @apply border border-zinc-800/80 rounded-xl p-6;
+    background-color: #121318;
+  }
+
+  .profile-person {
+    @apply flex items-center gap-4 mb-6;
+  }
+
+  .profile-photo {
+    @apply w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-zinc-700;
+  }
+
+  .profile-photo-img {
+    @apply w-full h-full object-cover;
+  }
+
+  .profile-name {
+    @apply text-lg font-black uppercase tracking-wide text-zinc-100;
+  }
+
+  .profile-role {
+    @apply text-zinc-500 text-[11px];
+  }
+
+  .profile-data {
+    @apply space-y-4 text-xs border-t border-zinc-800/80 pt-4 mb-6;
+  }
+
+  .profile-data-label {
+    @apply block text-zinc-500 text-[10px] uppercase;
+  }
+
+  .profile-data-value {
+    @apply text-zinc-200;
+  }
+
+  .membership-summary-head {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .membership-summary-label {
+    @apply text-xs font-black uppercase tracking-wider text-zinc-400;
+  }
+
+  .membership-summary-status {
+    @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20;
+  }
+
+  .membership-summary-plan-label {
+    @apply text-[10px] uppercase text-zinc-500;
+  }
+
+  .membership-summary-plan {
+    @apply text-3xl font-black uppercase tracking-wider text-indigo-200 mb-6;
+  }
+
+  .membership-summary-data {
+    @apply space-y-2 text-xs border-t border-zinc-800/80 pt-4 mb-6;
+  }
+
+  .summary-row {
+    @apply flex justify-between;
+  }
+
+  .summary-label {
+    @apply text-zinc-500;
+  }
+
+  .summary-value {
+    @apply text-zinc-300;
+  }
+
+  .profile-shortcuts {
+    @apply grid grid-cols-2 gap-3;
+  }
+
+  .profile-shortcut {
+    @apply text-center p-4 border border-zinc-800 rounded-lg text-xs font-bold uppercase hover:border-indigo-300 transition;
+    background-color: #121318;
+  }
+
+  .panel-head {
+    @apply flex items-center justify-between mb-6;
+  }
+
+  .panel-title {
+    @apply text-sm font-black uppercase tracking-wider text-zinc-200;
+  }
+
+  .panel-link {
+    @apply text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition;
+  }
+
+  .upcoming-list {
+    @apply space-y-3;
+  }
+
+  .upcoming-item {
+    @apply bg-zinc-900/60 border border-zinc-800/80 rounded-lg p-4 flex items-center justify-between;
+  }
+
+  .upcoming-title {
+    @apply text-sm font-black uppercase tracking-wide text-zinc-100;
+  }
+
+  .upcoming-meta {
+    @apply text-zinc-400 text-xs mt-1;
+  }
+
+  .cancel-class-btn {
+    @apply px-4 py-2 bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 border border-zinc-700 text-zinc-300 font-bold text-[10px] uppercase rounded transition;
+  }
+
+  .table-wrap {
+    @apply overflow-x-auto;
+  }
+
+  .data-table {
+    @apply w-full text-left;
+  }
+
+  .data-table-head {
+    @apply text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800;
+  }
+
+  .data-table-head-cell {
+    @apply pb-3;
+  }
+
+  .data-table-body {
+    @apply text-xs divide-y divide-zinc-800/50 text-zinc-300;
+  }
+
+  .data-table-cell {
+    @apply py-3.5;
+  }
+
+  /* ===== CHECKOUT ===== */
+  .checkout-header {
+    @apply mb-10;
+  }
+
+  .checkout-layout {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8 items-start;
+  }
+
+  .checkout-form {
+    @apply lg:col-span-2 space-y-6;
+  }
+
+  .checkout-step-head {
+    @apply flex items-center gap-3 mb-6;
+  }
+
+  .checkout-step-number {
+    @apply w-7 h-7 rounded-full bg-indigo-200 text-zinc-950 font-black text-xs flex items-center justify-center;
+  }
+
+  .checkout-step-title {
+    @apply text-sm font-black uppercase tracking-wider;
+  }
+
+  .checkout-option-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .checkout-option {
+    @apply border border-zinc-700 rounded-lg p-4 cursor-pointer;
+  }
+
+  .checkout-option-active {
+    @apply border-indigo-300 bg-indigo-300/5;
+  }
+
+  .checkout-option-row {
+    @apply flex gap-3;
+  }
+
+  .checkout-option-title {
+    @apply font-bold text-sm;
+  }
+
+  .checkout-option-text {
+    @apply text-xs text-zinc-500 mt-1;
+  }
+
+  .form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .form-grid-hidden {
+    @apply hidden grid-cols-1 md:grid-cols-2 gap-4 mt-6;
+  }
+
+  .field-span-2 {
+    @apply md:col-span-2;
+  }
+
+  .field-label {
+    @apply block text-[10px] uppercase tracking-wider text-zinc-500 mb-2;
+  }
+
+  .field-input {
+    @apply w-full border border-zinc-700 rounded px-4 py-3 text-sm focus:outline-none focus:border-indigo-300;
+    background-color: #0d0e12;
+  }
+
+  .field-input-readonly {
+    @apply w-full border border-zinc-800 rounded px-4 py-3 text-sm text-zinc-400;
+    background-color: #0d0e12;
+  }
+
+  .radio-row {
+    @apply flex gap-6;
+  }
+
+  .radio-label {
+    @apply flex gap-2 text-sm;
+  }
+
+  .payment-options {
+    @apply space-y-3;
+  }
+
+  .payment-option {
+    @apply flex items-center gap-3 border border-zinc-700 rounded-lg p-4 cursor-pointer;
+  }
+
+  .payment-note {
+    @apply text-xs text-zinc-500 mt-4;
+  }
+
+  .checkout-summary {
+    @apply border border-zinc-800 rounded-xl p-6 lg:sticky lg:top-28;
+    background-color: #121318;
+  }
+
+  .checkout-summary-title {
+    @apply text-lg font-black uppercase mb-6;
+  }
+
+  .checkout-empty {
+    @apply text-sm text-zinc-500 py-5 text-center;
+  }
+
+  .checkout-items {
+    @apply space-y-5;
+  }
+
+  .checkout-item {
+    @apply flex justify-between gap-4 border-b border-zinc-800 pb-4;
+  }
+
+  .checkout-item-name {
+    @apply text-sm font-semibold;
+  }
+
+  .checkout-item-meta {
+    @apply text-xs text-zinc-500;
+  }
+
+  .checkout-item-price {
+    @apply text-sm font-bold text-indigo-200;
+  }
+
+  .checkout-summary-list {
+    @apply space-y-3 text-sm mt-6;
+  }
+
+  /* ===== PEDIDOS ===== */
+  .page-head-actions {
+    @apply flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10;
+  }
+
+  .order-filters {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .order-filter-active {
+    @apply px-4 py-2 bg-indigo-200 text-zinc-950 text-[10px] font-bold uppercase rounded;
+  }
+
+  .order-filter {
+    @apply px-4 py-2 border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase rounded;
+    background-color: #121318;
+  }
+
+  .orders-list {
+    @apply space-y-5;
+  }
+
+  .order-card {
+    @apply border border-zinc-800 rounded-xl overflow-hidden;
+    background-color: #121318;
+  }
+
+  .order-main {
+    @apply p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6;
+  }
+
+  .order-grid {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-6 flex-1;
+  }
+
+  .order-label {
+    @apply text-[9px] uppercase tracking-wider text-zinc-500 mb-1;
+  }
+
+  .order-value {
+    @apply font-semibold text-sm;
+  }
+
+  .order-id {
+    @apply font-black text-sm;
+  }
+
+  .order-total {
+    @apply font-black text-indigo-200 text-lg;
+  }
+
+  .order-statuses {
+    @apply flex flex-wrap items-center gap-3;
+  }
+
+  .order-status {
+    @apply px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border border-zinc-700 bg-zinc-900;
+  }
+
+  .payment-status {
+    @apply px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border border-indigo-400/30 bg-indigo-400/10 text-indigo-200;
+  }
+
+  .order-actions {
+    @apply border-t border-zinc-800 px-6 py-4 flex flex-wrap justify-end gap-3;
+  }
+
+  .order-action {
+    @apply px-4 py-2 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded hover:border-indigo-300 transition;
+  }
+
+  /* ===== SEGUIMIENTO ===== */
+  .tracking-header {
+    @apply flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10;
+  }
+
+  .metric-grid {
+    @apply grid grid-cols-2 md:grid-cols-5 gap-4 mb-8;
+  }
+
+  .metric-card {
+    @apply border border-zinc-800 rounded-xl p-5;
+    background-color: #121318;
+  }
+
+  .metric-label {
+    @apply text-[9px] uppercase tracking-wider text-zinc-500;
+  }
+
+  .metric-value {
+    @apply text-2xl font-black mt-2;
+  }
+
+  .tracking-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+  }
+
+  .chart-card {
+    @apply lg:col-span-2 border border-zinc-800 rounded-xl p-6 min-h-80;
+    background-color: #121318;
+  }
+
+  .chart-head {
+    @apply flex items-center justify-between mb-6;
+  }
+
+  .chart-title {
+    @apply text-sm font-black uppercase tracking-wider;
+  }
+
+  .chart-note {
+    @apply text-[9px] uppercase tracking-wider text-zinc-500;
+  }
+
+  .chart-placeholder {
+    @apply h-56 border border-dashed border-zinc-700 rounded-lg flex items-center justify-center text-center px-8;
+  }
+
+  .chart-placeholder-text {
+    @apply text-zinc-500 text-sm;
+  }
+
+  .observation-card {
+    @apply border border-zinc-800 rounded-xl p-6;
+    background-color: #121318;
+  }
+
+  .observation-title {
+    @apply text-sm font-black uppercase tracking-wider mb-5;
+  }
+
+  .observation-text {
+    @apply text-sm text-zinc-400 leading-6;
+  }
+
+  .history-card {
+    @apply border border-zinc-800 rounded-xl p-6 mt-8;
+    background-color: #121318;
+  }
+
+  .history-empty {
+    @apply py-8 text-center text-sm text-zinc-500;
+  }
+
+  /* ===== AUTH ===== */
+  .auth-body {
+    @apply text-white min-h-screen relative bg-cover bg-center;
+    background-color: #0a0a0c;
+    font-family: "Montserrat", sans-serif;
+  }
+
+  .login-body {
+    @apply flex items-center justify-center overflow-hidden;
+  }
+
+  .auth-watermark {
+    @apply absolute right-10 top-10 text-white/5 font-black tracking-widest pointer-events-none select-none hidden lg:block text-8xl;
+  }
+
+  .login-card {
+    @apply w-full max-w-md p-8 backdrop-blur-md border rounded-lg shadow-2xl z-10 mx-4;
+    background-color: rgb(18 18 22 / 0.9);
+    border-color: #1f2028;
+  }
+
+  .auth-brand {
+    @apply text-center mb-8;
+  }
+
+  .auth-brand-title {
+    @apply text-3xl font-black tracking-wider text-white;
+  }
+
+  .auth-brand-subtitle {
+    @apply text-[10px] tracking-[0.2em] uppercase mt-1;
+    color: #9ca3af;
+  }
+
+  .auth-form {
+    @apply space-y-5;
+  }
+
+  .auth-label {
+    @apply block text-[11px] font-bold tracking-wider uppercase mb-1;
+    color: #9ca3af;
+  }
+
+  .login-input {
+    @apply w-full px-4 py-2.5 bg-white text-gray-900 rounded font-medium text-sm focus:outline-none focus:ring-2 placeholder-gray-400;
+    --tw-ring-color: #a5b4fc;
+  }
+
+  .auth-submit {
+    @apply w-full py-3 text-gray-950 font-black text-xs tracking-widest uppercase rounded transition-all duration-200 mt-2 shadow-lg flex items-center justify-center;
+    background-color: #a5b4fc;
+  }
+
+  .auth-submit:hover {
+    background-color: #818cf8;
+  }
+
+  .auth-footer {
+    @apply text-center mt-8 pt-6 text-xs;
+    border-top: 1px solid rgb(31 32 40 / 0.6);
+    color: #9ca3af;
+  }
+
+  .auth-link {
+    @apply font-semibold hover:text-white transition;
+    color: #a5b4fc;
+  }
+
+  .register-topbar {
+    @apply absolute top-0 left-0 w-full flex justify-between items-center px-8 py-6 z-20;
+  }
+
+  .register-logo {
+    @apply text-xl font-black tracking-tight text-white;
+  }
+
+  .register-back {
+    @apply text-[10px] tracking-[0.2em] uppercase text-gray-300 transition;
+  }
+
+  .register-back:hover {
+    color: #a5b4fc;
+  }
+
+  .register-main {
+    @apply min-h-screen flex items-center justify-center px-4 py-28;
+  }
+
+  .register-card {
+    @apply w-full max-w-2xl backdrop-blur-md border rounded-lg shadow-2xl p-8 md:p-10;
+    background-color: rgb(24 24 27 / 0.95);
+    border-color: #303038;
+  }
+
+  .register-head {
+    @apply text-center mb-9;
+  }
+
+  .register-title {
+    @apply text-4xl font-black tracking-tight text-white;
+  }
+
+  .register-subtitle {
+    @apply mt-2 text-[10px] md:text-xs tracking-[0.22em] uppercase;
+    color: #a5b4fc;
+  }
+
+  .register-form {
+    @apply space-y-6;
+  }
+
+  .register-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-5;
+  }
+
+  .register-label {
+    @apply block text-[10px] font-bold tracking-[0.18em] uppercase text-gray-300 mb-2;
+  }
+
+  .register-input {
+    @apply w-full border-b-2 border-gray-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none transition;
+    background-color: #232326;
+  }
+
+  .register-input:focus {
+    border-color: #a5b4fc;
+  }
+
+  .terms-row {
+    @apply flex items-start gap-3 cursor-pointer text-sm text-gray-300;
+  }
+
+  .terms-checkbox {
+    @apply mt-1 w-4 h-4 accent-indigo-300;
+  }
+
+  .terms-link {
+    @apply underline;
+    color: #a5b4fc;
+  }
+
+  .register-submit {
+    @apply w-full py-4 text-gray-950 font-black text-sm tracking-wider uppercase rounded shadow-lg transition;
+    background-color: #a5b4fc;
+  }
+
+  .register-submit:hover {
+    background-color: #818cf8;
+  }
+
+  .register-footer {
+    @apply text-center mt-7 text-sm text-gray-400;
+  }
+
+  .form-error {
+    @apply border border-red-500/30 bg-red-500/10 text-red-300 text-sm rounded px-4 py-3;
+  }
+
+  .nav-login {
+    @apply text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition;
+  }
+
+  .avatar-initial {
+    @apply w-full h-full flex items-center justify-center bg-indigo-200 text-zinc-950 text-xs font-black uppercase;
+  }
+
+  .user-session {
+    @apply flex items-center gap-3;
+  }
+
+  .user-name {
+    @apply text-sm font-semibold text-zinc-200;
+  }
+
+  .user-name:hover {
+    @apply text-white;
+  }
+
+  .nav-login {
+    @apply text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition;
+  }
+
+  .avatar-link {
+    @apply w-9 h-9 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition;
+  }
+
+  .avatar-image {
+    @apply w-full h-full object-cover;
+  }
+
+  .alert-success {
+    @apply mb-6 border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-sm rounded px-4 py-3;
+  }
+
+  .alert-error {
+    @apply mb-6 border border-red-500/30 bg-red-500/10 text-red-300 text-sm rounded px-4 py-3;
+  }
+
+  .membership-empty {
+    @apply border border-zinc-800 rounded-xl p-8 mb-8;
+    background-color: #121318;
+  }
+
+  .membership-empty-title {
+    @apply text-xl font-black uppercase mb-2;
+  }
+
+  .membership-empty-text {
+    @apply text-zinc-500 text-sm;
+  }
+
+  .membership-plans-title {
+    @apply text-2xl font-black uppercase tracking-wide mb-2;
+  }
+
+  .membership-plans-text {
+    @apply text-zinc-500 text-sm mb-8;
+  }
+
+  .membership-plan-actions {
+    @apply mt-7;
+  }
+
+  .pending-badge {
+    @apply px-4 py-1 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-[10px] font-bold tracking-wider;
+  }
+
+  .pending-info {
+    @apply border border-zinc-800 rounded-lg p-6;
+    background-color: #18191f;
+  }
+
+  .pending-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6 text-sm;
+  }
+
+  .pending-actions {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 mt-6;
+  }
+
+  .membership-select {
+    @apply w-full border border-zinc-700 rounded px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-indigo-300;
+    background-color: #0d0e12;
+  }
+
+  /* ---------- MODAL ---------- */
+
+  .modal-overlay {
+    display: none;
+    @apply fixed inset-0 z-[100] items-center justify-center px-4 bg-black/70 backdrop-blur-sm;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal-card {
+    @apply w-full max-w-md border border-zinc-700 rounded-xl p-8 text-center shadow-2xl;
+    background-color: #15161b;
+  }
+
+  .modal-icon {
+    @apply w-12 h-12 mx-auto mb-5 rounded-full flex items-center justify-center border border-red-500/30 bg-red-500/10 text-red-300 text-xl font-black;
+  }
+
+  .modal-title {
+    @apply text-2xl font-black uppercase tracking-wide text-white mb-3;
+  }
+
+  .modal-text {
+    @apply text-sm text-zinc-400 leading-6;
+  }
+
+  .modal-text strong {
+    @apply text-zinc-200;
+  }
+
+  .modal-warning {
+    @apply text-xs text-red-300 mt-3;
+  }
+
+  .modal-actions {
+    @apply grid grid-cols-2 gap-3 mt-7;
+  }
+
+  .modal-cancel-button {
+    @apply w-full py-3 border border-zinc-700 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded hover:bg-zinc-800 transition;
+  }
+
+  .modal-confirm-button {
+    @apply w-full py-3 bg-red-500/10 border border-red-500/40 text-red-300 font-bold text-xs uppercase tracking-wider rounded hover:bg-red-500/20 transition;
+  }
+
+  .profile-empty {
+    @apply py-7 text-center text-sm text-zinc-500;
+  }
+
+  .membership-summary-status-pending {
+    @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20;
+  }
+
+  .membership-summary-status-none {
+    @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-zinc-800 text-zinc-400 border border-zinc-700;
+  }
+
+  .profile-edit-actions {
+    @apply grid grid-cols-1 gap-3 mt-4;
+  }
+
+  .btn-deactivate {
+    @apply w-full py-2.5 border border-red-500/30 bg-red-500/5 text-red-300 font-bold text-xs uppercase tracking-wider rounded hover:bg-red-500/10 transition;
+  }
+
+  .profile-modal-card {
+    @apply max-w-xl text-left;
+  }
+
+  .profile-modal-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .profile-modal-actions {
+    @apply grid grid-cols-2 gap-3 mt-7;
+  }
+}

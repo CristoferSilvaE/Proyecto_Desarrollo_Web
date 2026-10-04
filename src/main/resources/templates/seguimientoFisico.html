@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Seguimiento Físico</title>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+  <body class="app-body">
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link-active">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section th:if="${cliente == null}" class="login-gate">
+      <div class="login-gate-card">
+        <div class="login-gate-icon">
+          <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2zm3-10V7a3 3 0 016 0v4H9z" />
+          </svg>
+        </div>
+        <h1 class="login-gate-title">Inicia sesión para continuar</h1>
+        <p class="login-gate-text">Esta sección contiene información personal de tu cuenta PowerFit. Inicia sesión para acceder.</p>
+        <a th:href="@{/login}" class="btn-primary">Iniciar sesión</a>
+      </div>
+    </section>
+
+    <main th:if="${cliente != null}" class="page-container">
+      <div class="tracking-header">
+        <div>
+          <p class="eyebrow">Mi progreso</p>
+          <h1 class="page-title">Seguimiento Físico</h1>
+          <p class="text-zinc-400 text-sm mt-2">Monitorea tu evolución y progreso físico.</p>
+        </div>
+        <button class="btn-primary">Registrar medición</button>
+      </div>
+
+      <section th:if="${ultimoSeguimiento == null}" class="empty-state mb-8">
+        <h2 class="empty-title">Aún no tienes mediciones registradas</h2>
+        <p class="empty-text">Registra tu primera medición para comenzar a visualizar tu progreso.</p>
+      </section>
+
+      <section class="metric-grid">
+        <div class="metric-card">
+          <p class="metric-label">Peso actual</p>
+          <p class="metric-value" th:text="${ultimoSeguimiento != null ? ultimoSeguimiento.peso + ' kg' : '--'}">--</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Altura</p>
+          <p class="metric-value" th:text="${ultimoSeguimiento != null ? ultimoSeguimiento.altura + ' m' : '--'}">--</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">IMC</p>
+          <p class="metric-value" th:text="${imc != null ? #numbers.formatDecimal(imc, 1, 1) : '--'}">--</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Grasa corporal</p>
+          <p class="metric-value" th:text="${ultimoSeguimiento != null and ultimoSeguimiento.porcentajeGrasa != null ? ultimoSeguimiento.porcentajeGrasa + ' %' : '--'}">--</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Masa muscular</p>
+          <p class="metric-value" th:text="${ultimoSeguimiento != null and ultimoSeguimiento.masaMuscular != null ? ultimoSeguimiento.masaMuscular + ' kg' : '--'}">--</p>
+        </div>
+      </section>
+
+      <div class="tracking-grid">
+        <section class="chart-card">
+          <div class="chart-head">
+            <h2 class="chart-title">Tendencia de composición corporal</h2>
+            <span class="chart-note">Datos reales del historial</span>
+          </div>
+          <div class="chart-placeholder"><p class="chart-placeholder-text">La gráfica se mostrará cuando conectemos el historial de mediciones.</p></div>
+        </section>
+
+        <section class="observation-card">
+          <h2 class="observation-title">Última observación</h2>
+          <p class="observation-text" th:text="${ultimoSeguimiento != null and ultimoSeguimiento.observaciones != null ? ultimoSeguimiento.observaciones : 'Sin observaciones registradas.'}">
+            Sin observaciones registradas.
+          </p>
+        </section>
+      </div>
+
+      <section class="history-card">
+        <h2 class="panel-title mb-6">Historial de mediciones</h2>
+
+        <div th:if="${seguimientos == null or #lists.isEmpty(seguimientos)}" class="history-empty">No hay mediciones para mostrar.</div>
+
+        <div th:if="${seguimientos != null and !#lists.isEmpty(seguimientos)}" class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr class="data-table-head">
+                <th class="data-table-head-cell">Fecha</th>
+                <th class="data-table-head-cell">Peso</th>
+                <th class="data-table-head-cell">Altura</th>
+                <th class="data-table-head-cell">% Grasa</th>
+                <th class="data-table-head-cell">Masa muscular</th>
+                <th class="data-table-head-cell">Observaciones</th>
+              </tr>
+            </thead>
+            <tbody class="data-table-body">
+              <tr th:each="registro : ${seguimientos}">
+                <td class="data-table-cell" th:text="${#temporals.format(registro.fechaRegistro, 'dd/MM/yyyy')}">--</td>
+                <td class="data-table-cell" th:text="${registro.peso != null ? registro.peso + ' kg' : '--'}">--</td>
+                <td class="data-table-cell" th:text="${registro.altura != null ? registro.altura + ' m' : '--'}">--</td>
+                <td class="data-table-cell" th:text="${registro.porcentajeGrasa != null ? registro.porcentajeGrasa + '%' : '--'}">--</td>
+                <td class="data-table-cell" th:text="${registro.masaMuscular != null ? registro.masaMuscular + ' kg' : '--'}">--</td>
+                <td class="data-table-cell text-zinc-400" th:text="${registro.observaciones != null ? registro.observaciones : '-'}">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+  </body>
+</html>

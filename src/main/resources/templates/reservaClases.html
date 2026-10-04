@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Reserva de Clases</title>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+
+  <body class="app-body">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link-active">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="page-container">
+      <!-- ENCABEZADO -->
+      <div class="page-header">
+        <h1 class="page-title">Reserva una Clase</h1>
+
+        <p class="page-subtitle">Selecciona tu sesión y asegura tu plaza.</p>
+      </div>
+
+      <!-- FILTROS -->
+      <div class="filter-container">
+        <a th:href="@{/clases}" class="filter-button" th:classappend="${categoriaSeleccionada == null or categoriaSeleccionada.isBlank()} ? ' filter-button-active' : ''">Todas</a>
+
+        <a
+          th:each="categoria : ${categorias}"
+          th:href="@{/clases(categoria=${categoria})}"
+          th:text="${categoria}"
+          class="filter-button"
+          th:classappend="${categoriaSeleccionada != null and #strings.equalsIgnoreCase(categoriaSeleccionada, categoria)} ? ' filter-button-active' : ''">
+          Categoría
+        </a>
+      </div>
+
+      <!-- SIN HORARIOS -->
+      <section th:if="${horarios == null or #lists.isEmpty(horarios)}" class="empty-state">
+        <h2 class="empty-title">No hay clases disponibles</h2>
+
+        <p class="empty-text">No existen horarios activos para esta selección.</p>
+      </section>
+
+      <!-- LISTA DE CLASES -->
+      <div th:if="${horarios != null and !#lists.isEmpty(horarios)}" class="class-grid">
+        <!-- TARJETA -->
+        <article
+          th:each="horario : ${horarios}"
+          th:with="reservadas=${reservasPorHorario[horario.idHorario] != null ? reservasPorHorario[horario.idHorario] : 0},
+                 plazas=${horario.capacidad - reservadas}"
+          class="class-card">
+          <!-- IMAGEN -->
+          <div class="class-image-container">
+            <img
+              th:if="${horario.clase.imagen != null and !horario.clase.imagen.isBlank()}"
+              th:src="@{/imagenes/{imagen}(imagen=${horario.clase.imagen})}"
+              th:alt="${horario.clase.nombre}"
+              class="class-image" />
+
+            <div th:if="${horario.clase.imagen == null or horario.clase.imagen.isBlank()}" class="image-placeholder">Sin imagen</div>
+
+            <span class="class-badge" th:text="${horario.clase.categoria}">Categoría</span>
+          </div>
+
+          <!-- INFORMACIÓN -->
+          <div class="class-content">
+            <div>
+              <h3 class="class-title" th:text="${horario.clase.nombre}">Clase</h3>
+
+              <p class="class-description" th:text="${horario.clase.descripcion != null ? horario.clase.descripcion : 'Clase PowerFit'}">Descripción</p>
+
+              <!-- DATOS -->
+              <div class="class-data">
+                <p>
+                  <span class="data-label">Instructor:</span>
+
+                  <span class="data-value" th:text="${horario.instructor.nombres + ' ' + horario.instructor.apellidos}">Instructor</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Fecha:</span>
+
+                  <span class="data-value" th:text="${#temporals.format(horario.fecha, 'dd/MM/yyyy')}">Fecha</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Horario:</span>
+
+                  <span class="data-value" th:text="${#temporals.format(horario.horaInicio, 'HH:mm') + ' - ' + #temporals.format(horario.horaFin, 'HH:mm')}">Horario</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Sala:</span>
+
+                  <span class="data-value" th:text="${horario.sala != null and !horario.sala.isBlank() ? horario.sala : 'Por asignar'}">Sala</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Plazas disponibles:</span>
+
+                  <span th:text="${plazas}" th:class="${plazas <= 3 ? 'limited-value' : 'available-value'}">0</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- SIN PLAZAS -->
+            <button th:if="${plazas <= 0}" type="button" class="btn-disabled class-action" disabled>Sin plazas disponibles</button>
+
+            <!-- NO LOGUEADO -->
+            <a th:if="${plazas > 0 and cliente == null}" th:href="@{/login}" class="btn-primary class-action">Inicia sesión para reservar</a>
+
+            <!-- LOGUEADO -->
+            <form th:if="${plazas > 0 and cliente != null}" th:action="@{/clases/reservar}" method="post" class="class-action">
+              <input type="hidden" name="idHorario" th:value="${horario.idHorario}" />
+
+              <button type="submit" class="btn-primary">Reservar</button>
+            </form>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+  </body>
+</html>

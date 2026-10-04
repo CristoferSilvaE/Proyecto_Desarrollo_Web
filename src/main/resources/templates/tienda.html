@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PowerFit - Tienda</title>
+
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+
+  <body class="app-body">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link-active">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="page-container">
+      <!-- CABECERA -->
+      <div class="store-header">
+        <h1 class="store-title">Tienda PowerFit</h1>
+
+        <p class="store-subtitle">Tu arsenal completo para el máximo rendimiento deportivo.</p>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <section>
+        <div class="section-heading">
+          <h2 class="section-title">Productos</h2>
+          <div class="section-line"></div>
+        </div>
+
+        <!-- SIN PRODUCTOS -->
+        <div th:if="${productos == null or #lists.isEmpty(productos)}" class="empty-state">
+          <h3 class="empty-title">No hay productos disponibles</h3>
+
+          <p class="empty-text">En este momento no tenemos productos activos en la tienda.</p>
+        </div>
+
+        <!-- PRODUCTOS DESDE MYSQL -->
+        <div th:if="${productos != null and !#lists.isEmpty(productos)}" class="product-grid">
+          <article th:each="producto : ${productos}" class="product-card">
+            <div>
+              <!-- IMAGEN -->
+              <div class="product-image-container">
+                <img th:if="${producto.imagen != null and !producto.imagen.isBlank()}" th:src="@{/imagenes/{imagen}(imagen=${producto.imagen})}" th:alt="${producto.nombre}" class="product-image" />
+
+                <div th:if="${producto.imagen == null or producto.imagen.isBlank()}" class="product-placeholder">Sin imagen</div>
+              </div>
+
+              <!-- CATEGORÍA -->
+              <span class="product-category" th:text="${producto.categoria}">Categoría</span>
+
+              <!-- NOMBRE -->
+              <h3 class="product-title" th:text="${producto.nombre}">Producto</h3>
+
+              <!-- DESCRIPCIÓN -->
+              <p class="product-description" th:text="${producto.descripcion != null ? producto.descripcion : 'Producto PowerFit'}">Descripción</p>
+            </div>
+
+            <!-- PARTE INFERIOR -->
+            <div class="product-footer">
+              <!-- DISPONIBILIDAD -->
+              <div class="stock-row">
+                <span class="stock-label">Disponibilidad</span>
+
+                <span th:if="${producto.stock > 0}" class="stock-available">Disponible</span>
+
+                <span th:if="${producto.stock <= 0}" class="stock-out">Agotado</span>
+              </div>
+
+              <!-- PRECIO + BOTÓN -->
+              <div class="product-bottom">
+                <span class="product-price" th:text="${'S/ ' + #numbers.formatDecimal(producto.precio, 1, 2)}">S/ 0.00</span>
+
+                <!-- DISPONIBLE -->
+                <button th:if="${producto.stock > 0}" type="button" class="product-button">
+                  <svg class="product-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17" />
+                  </svg>
+
+                  Añadir
+                </button>
+
+                <!-- AGOTADO -->
+                <button th:if="${producto.stock <= 0}" type="button" disabled class="product-button-disabled">Agotado</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+  </body>
+</html>

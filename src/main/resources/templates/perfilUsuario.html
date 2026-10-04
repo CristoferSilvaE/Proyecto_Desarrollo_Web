@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PowerFit - Perfil</title>
+
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+
+  <body class="app-body">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link-active">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <!-- CARRITO -->
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <!-- SIN SESIÓN -->
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <!-- CON SESIÓN -->
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =====================================================
+       SIN SESIÓN
+  ====================================================== -->
+
+    <section th:if="${cliente == null}" class="login-gate">
+      <div class="login-gate-card">
+        <div class="login-gate-icon">
+          <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2zm3-10V7a3 3 0 016 0v4H9z" />
+          </svg>
+        </div>
+
+        <h1 class="login-gate-title">Inicia sesión para continuar</h1>
+
+        <p class="login-gate-text">Inicia sesión para consultar y administrar tu perfil PowerFit.</p>
+
+        <a th:href="@{/login}" class="btn-primary">Iniciar sesión</a>
+      </div>
+    </section>
+
+    <!-- =====================================================
+       PERFIL DEL CLIENTE
+  ====================================================== -->
+
+    <main th:if="${cliente != null}" class="profile-container">
+      <!-- CABECERA -->
+      <div class="page-header">
+        <h1 class="text-3xl font-black uppercase tracking-wider text-zinc-100">Perfil de Atleta</h1>
+
+        <p class="page-subtitle">Gestiona tu cuenta, membresía, clases y progreso.</p>
+      </div>
+
+      <!-- MENSAJES -->
+      <div th:if="${mensaje}" class="alert-success" th:text="${mensaje}">Operación realizada correctamente.</div>
+
+      <div th:if="${error}" class="alert-error" th:text="${error}">Ocurrió un error.</div>
+
+      <div class="profile-grid">
+        <!-- =====================================================
+           COLUMNA IZQUIERDA
+      ====================================================== -->
+
+        <div class="profile-left">
+          <!-- DATOS PERSONALES -->
+          <section class="profile-card">
+            <div class="profile-person">
+              <div class="profile-photo">
+                <img th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}" th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}" class="profile-photo-img" alt="Avatar" />
+                <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" class="profile-photo-img" alt="Avatar" />
+              </div>
+
+              <div>
+                <h2 class="profile-name" th:text="${cliente.nombres + ' ' + cliente.apellidos}">Usuario PowerFit</h2>
+
+                <p class="profile-role">Miembro PowerFit</p>
+              </div>
+            </div>
+
+            <div class="profile-data">
+              <div>
+                <span class="profile-data-label">Correo</span>
+
+                <span class="profile-data-value" th:text="${cliente.usuario.correo}">correo@ejemplo.com</span>
+              </div>
+
+              <div>
+                <span class="profile-data-label">Teléfono</span>
+
+                <span class="profile-data-value" th:text="${cliente.telefono != null and !cliente.telefono.isBlank() ? cliente.telefono : 'No registrado'}">No registrado</span>
+              </div>
+
+              <div>
+                <span class="profile-data-label">DNI</span>
+
+                <span class="profile-data-value" th:text="${cliente.dni}">00000000</span>
+              </div>
+
+              <div>
+                <span class="profile-data-label">Fecha de nacimiento</span>
+
+                <span class="profile-data-value" th:text="${cliente.fechaNacimiento != null ? #temporals.format(cliente.fechaNacimiento, 'dd/MM/yyyy') : 'No registrado'}">No registrado</span>
+              </div>
+
+              <div>
+                <span class="profile-data-label">Género</span>
+
+                <span class="profile-data-value" th:text="${cliente.genero != null and !cliente.genero.isBlank() ? cliente.genero : 'No registrado'}">No registrado</span>
+              </div>
+            </div>
+
+            <!-- ACCIONES PERFIL -->
+            <div class="profile-edit-actions">
+              <button type="button" class="btn-outline-block" onclick="abrirModalEditarPerfil()">Editar Perfil</button>
+
+              <button type="button" class="btn-deactivate" onclick="abrirModalDesactivarCuenta()">Desactivar Cuenta</button>
+            </div>
+          </section>
+
+          <!-- =====================================================
+             MEMBRESÍA REAL
+        ====================================================== -->
+
+          <section class="profile-card">
+            <div class="membership-summary-head">
+              <span class="membership-summary-label">Membresía</span>
+
+              <!-- ACTIVA -->
+              <span th:if="${membresiaActiva != null}" class="membership-summary-status">ACTIVA</span>
+
+              <!-- PENDIENTE -->
+              <span th:if="${membresiaActiva == null and membresiaPendiente != null}" class="membership-summary-status-pending">PENDIENTE</span>
+
+              <!-- SIN MEMBRESÍA -->
+              <span th:if="${membresiaActiva == null and membresiaPendiente == null}" class="membership-summary-status-none">SIN MEMBRESÍA</span>
+            </div>
+
+            <!-- MEMBRESÍA ACTIVA -->
+            <div th:if="${membresiaActiva != null}">
+              <p class="membership-summary-plan-label">Plan actual</p>
+
+              <h3 class="membership-summary-plan" th:text="${membresiaActiva.plan.nombre}">Plan</h3>
+
+              <div class="membership-summary-data">
+                <div class="summary-row">
+                  <span class="summary-label">Inicio</span>
+
+                  <span class="summary-value" th:text="${membresiaActiva.fechaInicio != null ? #temporals.format(membresiaActiva.fechaInicio, 'dd/MM/yyyy') : 'Por definir'}">Por definir</span>
+                </div>
+
+                <div class="summary-row">
+                  <span class="summary-label">Vencimiento</span>
+
+                  <span class="summary-value" th:text="${membresiaActiva.fechaFin != null ? #temporals.format(membresiaActiva.fechaFin, 'dd/MM/yyyy') : 'Por definir'}">Por definir</span>
+                </div>
+
+                <div class="summary-row">
+                  <span class="summary-label">Monto</span>
+
+                  <span class="summary-value" th:text="${'S/ ' + #numbers.formatDecimal(membresiaActiva.plan.precio, 1, 2)}">S/ 0.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- MEMBRESÍA PENDIENTE -->
+            <div th:if="${membresiaActiva == null and membresiaPendiente != null}">
+              <p class="membership-summary-plan-label">Plan solicitado</p>
+
+              <h3 class="membership-summary-plan" th:text="${membresiaPendiente.plan.nombre}">Plan</h3>
+
+              <div class="membership-summary-data">
+                <div class="summary-row">
+                  <span class="summary-label">Fecha de solicitud</span>
+
+                  <span class="summary-value" th:text="${#temporals.format(membresiaPendiente.fechaSolicitud, 'dd/MM/yyyy')}">Fecha</span>
+                </div>
+              </div>
+
+              <p class="text-xs text-amber-300 mb-6">Tu solicitud está pendiente de aprobación.</p>
+            </div>
+
+            <!-- SIN MEMBRESÍA -->
+            <div th:if="${membresiaActiva == null and membresiaPendiente == null}">
+              <p class="text-sm text-zinc-500 mb-6">Actualmente no tienes una membresía ni una solicitud pendiente.</p>
+            </div>
+
+            <a th:href="@{/membresia}" class="btn-outline-block">Gestionar Membresía</a>
+          </section>
+
+          <!-- ACCESOS RÁPIDOS -->
+          <div class="profile-shortcuts">
+            <a th:href="@{/seguimiento}" class="profile-shortcut">Seguimiento Físico</a>
+
+            <a th:href="@{/pedidos}" class="profile-shortcut">Mis Pedidos</a>
+          </div>
+        </div>
+
+        <!-- =====================================================
+           COLUMNA DERECHA
+      ====================================================== -->
+
+        <div class="profile-right">
+          <!-- =====================================================
+             PRÓXIMAS CLASES REALES
+        ====================================================== -->
+
+          <section class="profile-card">
+            <div class="panel-head">
+              <h2 class="panel-title">Próximas Clases</h2>
+
+              <a th:href="@{/clases}" class="panel-link">Ver clases</a>
+            </div>
+
+            <!-- SIN RESERVAS -->
+            <div th:if="${proximasReservas == null or #lists.isEmpty(proximasReservas)}" class="profile-empty">
+              <p>No tienes clases reservadas próximamente.</p>
+            </div>
+
+            <!-- CON RESERVAS -->
+            <div th:if="${proximasReservas != null and !#lists.isEmpty(proximasReservas)}" class="upcoming-list">
+              <div th:each="reserva : ${proximasReservas}" class="upcoming-item">
+                <div>
+                  <h4 class="upcoming-title" th:text="${reserva.horario.clase.nombre}">Clase</h4>
+
+                  <p class="upcoming-meta">
+                    <span th:text="${#temporals.format(reserva.horario.fecha, 'dd/MM/yyyy')}">Fecha</span>
+
+                    •
+
+                    <span th:text="${#temporals.format(reserva.horario.horaInicio, 'HH:mm')}">Inicio</span>
+
+                    -
+
+                    <span th:text="${#temporals.format(reserva.horario.horaFin, 'HH:mm')}">Fin</span>
+                  </p>
+                </div>
+
+                <!-- CANCELACIÓN LA CONECTAREMOS DESPUÉS -->
+                <button type="button" class="cancel-class-btn">Cancelar</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- =====================================================
+             HISTORIAL DE PAGOS REAL
+        ====================================================== -->
+
+          <section class="profile-card">
+            <h2 class="panel-title mb-6">Historial de Pagos</h2>
+
+            <!-- SIN PAGOS -->
+            <div th:if="${pagos == null or #lists.isEmpty(pagos)}" class="profile-empty">
+              <p>No hay pagos de membresía registrados.</p>
+            </div>
+
+            <!-- PAGOS -->
+            <div th:if="${pagos != null and !#lists.isEmpty(pagos)}" class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr class="data-table-head">
+                    <th class="data-table-head-cell">Fecha</th>
+
+                    <th class="data-table-head-cell">Descripción</th>
+
+                    <th class="data-table-head-cell">Monto</th>
+
+                    <th class="data-table-head-cell">Estado</th>
+                  </tr>
+                </thead>
+
+                <tbody class="data-table-body">
+                  <tr th:each="pago : ${pagos}">
+                    <td class="data-table-cell" th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy')}">Fecha</td>
+
+                    <td class="data-table-cell" th:text="${'Plan ' + pago.membresia.plan.nombre}">Membresía</td>
+
+                    <td class="data-table-cell" th:text="${'S/ ' + #numbers.formatDecimal(pago.monto, 1, 2)}">S/ 0.00</td>
+
+                    <td class="data-table-cell">
+                      <span th:text="${pago.estado}" th:classappend="${pago.estado == 'PAGADO' ? ' text-emerald-300' : ' text-amber-300'}">Estado</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- =====================================================
+       MODAL EDITAR PERFIL
+  ====================================================== -->
+
+    <div th:if="${cliente != null}" id="modalEditarPerfil" class="modal-overlay">
+      <div class="modal-card profile-modal-card">
+        <h2 class="modal-title">Editar Perfil</h2>
+
+        <p class="modal-text mb-6">Actualiza tus datos personales.</p>
+
+        <form th:action="@{/perfil/actualizar}" method="post" enctype="multipart/form-data">
+          <div class="field-span-2">
+            <label class="field-label">Foto de perfil</label>
+            <input type="file" name="fotoPerfil" accept="image/jpeg,image/png,image/webp" class="field-input" />
+            <p class="text-[10px] text-zinc-500 mt-2">JPG, PNG o WEBP. Máximo 2 MB.</p>
+          </div>
+          <div class="profile-modal-grid">
+            <!-- NOMBRES -->
+            <div>
+              <label class="field-label">Nombres</label>
+
+              <input type="text" name="nombres" th:value="${cliente.nombres}" class="field-input" maxlength="80" required />
+            </div>
+
+            <!-- APELLIDOS -->
+            <div>
+              <label class="field-label">Apellidos</label>
+
+              <input type="text" name="apellidos" th:value="${cliente.apellidos}" class="field-input" maxlength="80" required />
+            </div>
+
+            <!-- TELÉFONO -->
+            <div>
+              <label class="field-label">Teléfono</label>
+
+              <input type="tel" name="telefono" th:value="${cliente.telefono}" class="field-input" maxlength="15" required />
+            </div>
+
+            <!-- FECHA NACIMIENTO -->
+            <div>
+              <label class="field-label">Fecha de nacimiento</label>
+
+              <input type="date" name="fechaNacimiento" th:value="${cliente.fechaNacimiento}" class="field-input" required />
+            </div>
+
+            <!-- GÉNERO -->
+            <div class="field-span-2">
+              <label class="field-label">Género</label>
+
+              <select name="genero" class="field-input" required>
+                <option value="" th:selected="${cliente.genero == null or cliente.genero.isBlank()}" disabled>Seleccionar</option>
+
+                <option value="MASCULINO" th:selected="${cliente.genero == 'MASCULINO'}">Masculino</option>
+
+                <option value="FEMENINO" th:selected="${cliente.genero == 'FEMENINO'}">Femenino</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="profile-modal-actions">
+            <button type="button" class="modal-cancel-button" onclick="cerrarModalEditarPerfil()">Cancelar</button>
+
+            <button type="submit" class="btn-primary-block">Guardar Cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =====================================================
+       MODAL DESACTIVAR CUENTA
+  ====================================================== -->
+
+    <div th:if="${cliente != null}" id="modalDesactivarCuenta" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-icon">!</div>
+
+        <h2 class="modal-title">Desactivar Cuenta</h2>
+
+        <p class="modal-text">Si desactivas tu cuenta ya no podrás volver a iniciar sesión.</p>
+
+        <p class="modal-warning">Solo un administrador podrá volver a activarla.</p>
+
+        <div class="modal-actions">
+          <button type="button" class="modal-cancel-button" onclick="cerrarModalDesactivarCuenta()">Volver</button>
+
+          <form th:action="@{/perfil/desactivar}" method="post">
+            <button type="submit" class="modal-confirm-button">Desactivar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+      function abrirModalEditarPerfil() {
+        document.getElementById("modalEditarPerfil").classList.add("active");
+      }
+
+      function cerrarModalEditarPerfil() {
+        document.getElementById("modalEditarPerfil").classList.remove("active");
+      }
+
+      function abrirModalDesactivarCuenta() {
+        document.getElementById("modalDesactivarCuenta").classList.add("active");
+      }
+
+      function cerrarModalDesactivarCuenta() {
+        document.getElementById("modalDesactivarCuenta").classList.remove("active");
+      }
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          cerrarModalEditarPerfil();
+          cerrarModalDesactivarCuenta();
+        }
+      });
+    </script>
+  </body>
+</html>

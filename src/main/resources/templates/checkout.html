@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Checkout</title>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+  <body class="app-body">
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link-active">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section th:if="${cliente == null}" class="login-gate">
+      <div class="login-gate-card">
+        <div class="login-gate-icon">
+          <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2zm3-10V7a3 3 0 016 0v4H9z" />
+          </svg>
+        </div>
+        <h1 class="login-gate-title">Inicia sesión para continuar</h1>
+        <p class="login-gate-text">Esta sección contiene información personal de tu cuenta PowerFit. Inicia sesión para acceder.</p>
+        <a th:href="@{/login}" class="btn-primary">Iniciar sesión</a>
+      </div>
+    </section>
+
+    <main th:if="${cliente != null}" class="page-container">
+      <div class="checkout-header">
+        <p class="eyebrow">Tienda PowerFit</p>
+        <h1 class="page-title">Checkout</h1>
+        <p class="text-zinc-400 text-sm mt-2">Completa los datos para confirmar tu pedido.</p>
+      </div>
+
+      <div class="checkout-layout">
+        <form class="checkout-form" onsubmit="event.preventDefault()">
+          <section class="section-card">
+            <div class="checkout-step-head">
+              <span class="checkout-step-number">1</span>
+              <h2 class="checkout-step-title">Método de entrega</h2>
+            </div>
+
+            <div class="checkout-option-grid">
+              <label class="checkout-option checkout-option-active">
+                <div class="checkout-option-row">
+                  <input type="radio" name="metodoEntrega" value="RECOJO" checked onchange="actualizarEntrega()" />
+                  <div>
+                    <p class="checkout-option-title">Recojo en sede</p>
+                    <p class="checkout-option-text">Sin costo de entrega</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="checkout-option">
+                <div class="checkout-option-row">
+                  <input type="radio" name="metodoEntrega" value="DELIVERY" onchange="actualizarEntrega()" />
+                  <div>
+                    <p class="checkout-option-title">Delivery</p>
+                    <p class="checkout-option-text">El costo se calculará según la entrega</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div id="datosDelivery" class="form-grid-hidden">
+              <div class="field-span-2">
+                <label class="field-label">Dirección</label>
+                <input type="text" name="direccionEntrega" class="field-input" />
+              </div>
+              <div>
+                <label class="field-label">Distrito</label>
+                <input type="text" name="distrito" class="field-input" />
+              </div>
+              <div>
+                <label class="field-label">Referencia</label>
+                <input type="text" name="referencia" class="field-input" />
+              </div>
+            </div>
+          </section>
+
+          <section class="section-card">
+            <div class="checkout-step-head">
+              <span class="checkout-step-number">2</span>
+              <h2 class="checkout-step-title">Datos de contacto y comprobante</h2>
+            </div>
+
+            <div class="form-grid">
+              <div>
+                <label class="field-label">Nombres</label>
+                <input type="text" th:value="${cliente.nombres}" readonly class="field-input-readonly" />
+              </div>
+              <div>
+                <label class="field-label">Apellidos</label>
+                <input type="text" th:value="${cliente.apellidos}" readonly class="field-input-readonly" />
+              </div>
+              <div>
+                <label class="field-label">DNI</label>
+                <input type="text" th:value="${cliente.dni}" readonly class="field-input-readonly" />
+              </div>
+              <div>
+                <label class="field-label">Correo</label>
+                <input type="email" th:value="${cliente.usuario.correo}" readonly class="field-input-readonly" />
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <p class="field-label mb-3">Comprobante</p>
+              <div class="radio-row">
+                <label class="radio-label">
+                  <input type="radio" name="tipoComprobante" value="BOLETA" checked onchange="actualizarComprobante()" />
+                  Boleta
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="tipoComprobante" value="FACTURA" onchange="actualizarComprobante()" />
+                  Factura
+                </label>
+              </div>
+            </div>
+
+            <div id="datosFactura" class="form-grid-hidden">
+              <div>
+                <label class="field-label">RUC</label>
+                <input type="text" name="ruc" maxlength="11" class="field-input" />
+              </div>
+              <div>
+                <label class="field-label">Razón social</label>
+                <input type="text" name="razonSocial" class="field-input" />
+              </div>
+            </div>
+          </section>
+
+          <section class="section-card">
+            <div class="checkout-step-head">
+              <span class="checkout-step-number">3</span>
+              <h2 class="checkout-step-title">Método de pago</h2>
+            </div>
+
+            <div class="payment-options">
+              <label class="payment-option">
+                <input type="radio" name="metodoPago" value="TARJETA" checked />
+                <span class="font-semibold text-sm">Tarjeta de crédito o débito</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="metodoPago" value="YAPE_PLIN" />
+                <span class="font-semibold text-sm">Yape / Plin</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="metodoPago" value="TRANSFERENCIA" />
+                <span class="font-semibold text-sm">Transferencia bancaria</span>
+              </label>
+            </div>
+
+            <p class="payment-note">PowerFit no almacenará números de tarjeta ni códigos CVV.</p>
+          </section>
+
+          <button type="submit" class="btn-primary-block py-4">Confirmar compra</button>
+        </form>
+
+        <aside class="checkout-summary">
+          <h2 class="checkout-summary-title">Resumen del pedido</h2>
+
+          <div th:if="${itemsCarrito == null or #lists.isEmpty(itemsCarrito)}" class="checkout-empty">No hay productos en el carrito.</div>
+
+          <div th:if="${itemsCarrito != null and !#lists.isEmpty(itemsCarrito)}" class="checkout-items">
+            <div th:each="item : ${itemsCarrito}" class="checkout-item">
+              <div>
+                <p class="checkout-item-name" th:text="${item.producto.nombre}">Producto</p>
+                <p class="checkout-item-meta">
+                  Cantidad:
+                  <span th:text="${item.cantidad}">1</span>
+                </p>
+              </div>
+              <span class="checkout-item-price" th:text="${'S/ ' + #numbers.formatDecimal(item.subtotal, 1, 2)}">S/ 0.00</span>
+            </div>
+          </div>
+
+          <div class="checkout-summary-list">
+            <div class="cart-summary-row">
+              <span>Subtotal</span>
+              <span class="cart-summary-value" th:text="${subtotal != null ? 'S/ ' + #numbers.formatDecimal(subtotal, 1, 2) : 'S/ 0.00'}">S/ 0.00</span>
+            </div>
+            <div class="cart-summary-row">
+              <span>Entrega</span>
+              <span class="cart-summary-value">Según método</span>
+            </div>
+            <div class="cart-total-row">
+              <span class="cart-total-label">Total</span>
+              <span class="cart-total" th:text="${total != null ? 'S/ ' + #numbers.formatDecimal(total, 1, 2) : 'S/ 0.00'}">S/ 0.00</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+
+    <script>
+      function actualizarEntrega() {
+        const metodo = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
+        document.getElementById("datosDelivery").classList.toggle("hidden", metodo !== "DELIVERY");
+      }
+
+      function actualizarComprobante() {
+        const tipo = document.querySelector('input[name="tipoComprobante"]:checked')?.value;
+        document.getElementById("datosFactura").classList.toggle("hidden", tipo !== "FACTURA");
+      }
+    </script>
+  </body>
+</html>

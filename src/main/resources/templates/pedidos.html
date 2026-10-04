@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Mis Pedidos</title>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+  <body class="app-body">
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section th:if="${cliente == null}" class="login-gate">
+      <div class="login-gate-card">
+        <div class="login-gate-icon">
+          <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2zm3-10V7a3 3 0 016 0v4H9z" />
+          </svg>
+        </div>
+        <h1 class="login-gate-title">Inicia sesión para continuar</h1>
+        <p class="login-gate-text">Esta sección contiene información personal de tu cuenta PowerFit. Inicia sesión para acceder.</p>
+        <a th:href="@{/login}" class="btn-primary">Iniciar sesión</a>
+      </div>
+    </section>
+
+    <main th:if="${cliente != null}" class="page-container">
+      <div class="page-head-actions">
+        <div>
+          <p class="eyebrow">Mi cuenta</p>
+          <h1 class="page-title">Mis Pedidos</h1>
+          <p class="text-zinc-400 text-sm mt-2">Consulta el estado y detalle de tus compras.</p>
+        </div>
+
+        <div class="order-filters">
+          <button class="order-filter-active">Todos</button>
+          <button class="order-filter">Pendientes</button>
+          <button class="order-filter">En proceso</button>
+          <button class="order-filter">Entregados</button>
+          <button class="order-filter">Cancelados</button>
+        </div>
+      </div>
+
+      <section th:if="${pedidos == null or #lists.isEmpty(pedidos)}" class="empty-state">
+        <h2 class="empty-title">Aún no tienes pedidos</h2>
+        <p class="empty-text mb-6">Cuando realices una compra aparecerá aquí.</p>
+        <a th:href="@{/tienda}" class="btn-primary">Ir a la tienda</a>
+      </section>
+
+      <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}" class="orders-list">
+        <article th:each="pedido : ${pedidos}" class="order-card">
+          <div class="order-main">
+            <div class="order-grid">
+              <div>
+                <p class="order-label">Pedido</p>
+                <p class="order-id" th:text="${'#PF-' + pedido.idPedido}">#PF-1</p>
+              </div>
+              <div>
+                <p class="order-label">Fecha</p>
+                <p class="order-value" th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy')}">--</p>
+              </div>
+              <div>
+                <p class="order-label">Entrega</p>
+                <p class="order-value" th:text="${pedido.metodoEntrega}">--</p>
+              </div>
+              <div>
+                <p class="order-label">Total</p>
+                <p class="order-total" th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 2)}">S/ 0.00</p>
+              </div>
+            </div>
+
+            <div class="order-statuses">
+              <span class="order-status" th:text="${pedido.estado}">PENDIENTE</span>
+              <span class="payment-status" th:text="${pedido.estadoPago}">PENDIENTE</span>
+            </div>
+          </div>
+
+          <div class="order-actions">
+            <button class="order-action">Ver detalle</button>
+            <button th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}" class="order-action">Editar</button>
+            <button th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}" class="btn-danger">Cancelar pedido</button>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+  </body>
+</html>

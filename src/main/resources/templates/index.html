@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PowerFit - Inicio</title>
+
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+
+  <body class="app-body">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link-active">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" th:style="'background-image: linear-gradient(to bottom, rgba(11,12,16,0.6), rgba(11,12,16,1)), url(' + @{/imagenes/CBum-pgPrincipal1.jpg} + ');'">
+      <div class="hero-content">
+        <h1 class="hero-title">Supera tus Límites</h1>
+
+        <p class="hero-text">Entra en el estado de flujo. Transforma tu potencial en poder medible. Únete a la élite.</p>
+
+        <div class="hero-actions">
+          <a th:href="@{/membresia}" class="hero-primary-button">Gestionar Membresía</a>
+
+          <a th:href="@{/#planes}" class="hero-secondary-button">Ver Planes</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCIPLINAS -->
+    <section class="disciplines-section">
+      <h2 class="disciplines-title">Nuestras Disciplinas</h2>
+
+      <p class="disciplines-subtitle">Domina cada aspecto del acondicionamiento físico.</p>
+
+      <div class="disciplines-grid">
+        <!-- MUSCULACIÓN -->
+        <div class="discipline-card-large">
+          <img th:src="@{/imagenes/disciplina-musculacion.jpg}" class="discipline-image" alt="Musculación" />
+
+          <div class="discipline-overlay-large">
+            <span class="discipline-badge">Hipertrofia</span>
+
+            <div>
+              <h3 class="discipline-title-large">Musculación</h3>
+
+              <p class="discipline-text discipline-text-large">Construye fuerza y masa muscular con equipamiento y programación especializada.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LATERAL -->
+        <div class="discipline-side">
+          <!-- CARDIO -->
+          <div class="discipline-card-small">
+            <img th:src="@{/imagenes/disciplina-cardio.jpg}" class="discipline-image" alt="Cardio" />
+
+            <div class="discipline-overlay-small">
+              <span class="discipline-badge">Resistencia</span>
+
+              <div>
+                <h3 class="discipline-title-small">Cardio</h3>
+
+                <p class="discipline-text">Lleva tus límites cardiovasculares al máximo.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ENTRENAMIENTO PERSONAL -->
+          <div class="discipline-card-small">
+            <img th:src="@{/imagenes/disciplina-entrenamientoPersonal.jpg}" class="discipline-image" alt="Entrenamiento Personal" />
+
+            <div class="discipline-overlay-small">
+              <span class="discipline-badge">1 a 1</span>
+
+              <div>
+                <h3 class="discipline-title-small">Entrenamiento Personal</h3>
+
+                <p class="discipline-text">Guía experta para un progreso medible.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANES -->
+    <section id="planes" class="plans-section">
+      <div class="plans-header">
+        <h2 class="plans-title">Nuestros Planes</h2>
+
+        <p class="plans-subtitle">Selecciona el nivel que coincida con tu intensidad. Progreso medible.</p>
+      </div>
+
+      <!-- SIN PLANES -->
+      <div th:if="${planes == null or #lists.isEmpty(planes)}" class="empty-state">
+        <h3 class="empty-title">No hay planes disponibles</h3>
+
+        <p class="empty-text">Actualmente no existen planes de membresía activos.</p>
+      </div>
+
+      <!-- PLANES DESDE MYSQL -->
+      <div th:if="${planes != null and !#lists.isEmpty(planes)}" class="plans-grid">
+        <article th:each="plan : ${planes}" class="plan-card" th:classappend="${plan.nombre == 'Premium'} ? ' plan-card-premium' : ''">
+          <!-- POPULAR -->
+          <span th:if="${plan.nombre == 'Premium'}" class="plan-popular">Popular</span>
+
+          <div>
+            <!-- CABECERA -->
+            <div class="plan-header">
+              <p class="plan-level" th:text="${plan.nombre == 'Básico' ? 'Entrenamiento Base' : plan.nombre == 'Premium' ? 'Rendimiento Avanzado' : 'Rendimiento Máximo'}">Nivel</p>
+
+              <h3 class="plan-name" th:text="${plan.nombre}">Plan</h3>
+
+              <p class="plan-description" th:text="${plan.descripcion}">Descripción</p>
+            </div>
+
+            <!-- PRECIO -->
+            <div class="plan-price-container">
+              <div class="plan-price-row">
+                <span class="plan-price" th:text="${'S/ ' + #numbers.formatDecimal(plan.precio, 1, 0)}">S/ 0</span>
+
+                <span class="plan-period">/mes</span>
+              </div>
+            </div>
+
+            <div class="plan-divider"></div>
+
+            <!-- BÁSICO -->
+            <ul th:if="${plan.nombre == 'Básico'}" class="plan-benefits">
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon">✓</span>
+                <span>Acceso a la sala de pesas principal</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon">✓</span>
+                <span>Equipamiento de cardio estándar</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon">✓</span>
+                <span>Acceso a vestuarios</span>
+              </li>
+            </ul>
+
+            <!-- PREMIUM -->
+            <ul th:if="${plan.nombre == 'Premium'}" class="plan-benefits">
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon-premium">✓</span>
+                <span>Todo lo incluido en el Plan Básico</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon-premium">✓</span>
+                <span>Clases grupales ilimitadas</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon-premium">✓</span>
+                <span>Acceso a zona de recuperación</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon-premium">✓</span>
+                <span>Prioridad en reserva de clases</span>
+              </li>
+            </ul>
+
+            <!-- ELITE -->
+            <ul th:if="${plan.nombre == 'Elite'}" class="plan-benefits">
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon">✓</span>
+                <span>Todo lo incluido en el Plan Premium</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon">✓</span>
+                <span>Entrenamiento personal 1 a 1</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon">✓</span>
+                <span>Seguimiento de composición física</span>
+              </li>
+
+              <li class="plan-benefit">
+                <span class="plan-benefit-icon">✓</span>
+                <span>Beneficios exclusivos PowerFit</span>
+              </li>
+            </ul>
+
+            <!-- DURACIÓN -->
+            <div class="plan-duration">
+              <span class="plan-duration-label">Duración</span>
+
+              <span class="plan-duration-value" th:text="${plan.duracionDias + ' días'}">30 días</span>
+            </div>
+          </div>
+
+          <!-- BOTÓN -->
+          <a th:href="@{/membresia(plan=${plan.idPlan})}" class="plan-button" th:classappend="${plan.nombre == 'Premium'} ? ' plan-button-premium' : ''">Seleccionar Plan</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+  </body>
+</html>
