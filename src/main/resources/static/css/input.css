@@ -1459,4 +1459,36 @@
   .modal-confirm-button {
     @apply w-full py-3 bg-red-500/10 border border-red-500/40 text-red-300 font-bold text-xs uppercase tracking-wider rounded hover:bg-red-500/20 transition;
   }
+
+  .profile-empty {
+    @apply py-7 text-center text-sm text-zinc-500;
+  }
+
+  .membership-summary-status-pending {
+    @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20;
+  }
+
+  .membership-summary-status-none {
+    @apply px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-zinc-800 text-zinc-400 border border-zinc-700;
+  }
+
+  .profile-edit-actions {
+    @apply grid grid-cols-1 gap-3 mt-4;
+  }
+
+  .btn-deactivate {
+    @apply w-full py-2.5 border border-red-500/30 bg-red-500/5 text-red-300 font-bold text-xs uppercase tracking-wider rounded hover:bg-red-500/10 transition;
+  }
+
+  .profile-modal-card {
+    @apply max-w-xl text-left;
+  }
+
+  .profile-modal-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .profile-modal-actions {
+    @apply grid grid-cols-2 gap-3 mt-7;
+  }
 }

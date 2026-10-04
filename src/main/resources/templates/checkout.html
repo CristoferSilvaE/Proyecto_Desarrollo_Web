@@ -36,7 +36,13 @@
             <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
 
             <a th:href="@{/perfil}" class="avatar-link">
-              <img th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+              <img
+                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                th:alt="${cliente.nombres}"
+                class="avatar-image" />
+
+              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
             </a>
           </div>
         </div>

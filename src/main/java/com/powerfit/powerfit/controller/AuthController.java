@@ -43,6 +43,7 @@ public class AuthController {
       @RequestParam String apellidos,
       @RequestParam String dni,
       @RequestParam String telefono,
+      @RequestParam String genero,
       @RequestParam String correo,
       @RequestParam String password,
       @RequestParam String confirmarPassword,
@@ -54,9 +55,10 @@ public class AuthController {
     apellidos = apellidos.trim();
     dni = dni.trim();
     telefono = telefono.trim();
+    genero = genero.trim().toUpperCase();
     correo = correo.trim().toLowerCase();
 
-    cargarDatosFormulario(model, nombres, apellidos, dni, telefono, correo, fechaNacimiento);
+    cargarDatosFormulario(model, nombres, apellidos, dni, telefono, genero, correo, fechaNacimiento);
 
     if (nombres.isBlank() || apellidos.isBlank()) {
       model.addAttribute("error", "Los nombres y apellidos son obligatorios.");
@@ -80,6 +82,11 @@ public class AuthController {
 
     if (!password.equals(confirmarPassword)) {
       model.addAttribute("error", "Las contraseñas no coinciden.");
+      return "registro";
+    }
+
+    if (!genero.equals("MASCULINO") && !genero.equals("FEMENINO")) {
+      model.addAttribute("error", "Selecciona un género válido.");
       return "registro";
     }
 
@@ -120,6 +127,7 @@ public class AuthController {
     cliente.setApellidos(apellidos);
     cliente.setDni(dni);
     cliente.setTelefono(telefono);
+    cliente.setGenero(genero);
     cliente.setFechaNacimiento(fechaNacimiento);
     cliente.setEstado("ACTIVO");
 
@@ -142,6 +150,7 @@ public class AuthController {
       String apellidos,
       String dni,
       String telefono,
+      String genero,
       String correo,
       LocalDate fechaNacimiento) {
 
@@ -149,6 +158,7 @@ public class AuthController {
     model.addAttribute("apellidos", apellidos);
     model.addAttribute("dni", dni);
     model.addAttribute("telefono", telefono);
+    model.addAttribute("genero", genero);
     model.addAttribute("correo", correo);
     model.addAttribute("fechaNacimiento", fechaNacimiento);
   }

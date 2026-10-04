@@ -37,11 +37,6 @@ public class NavegacionController {
     return "carrito";
   }
 
-  @GetMapping("/perfil")
-  public String perfil() {
-    return "perfilUsuario";
-  }
-
   @GetMapping("/checkout")
   public String checkout() {
     return "checkout";

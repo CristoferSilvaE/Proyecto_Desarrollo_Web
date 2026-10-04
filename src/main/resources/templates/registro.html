@@ -27,33 +27,42 @@
           <div class="register-grid">
             <div>
               <label class="register-label">Nombres *</label>
-              <input name="nombres" type="text" th:value="${nombres}" placeholder="Ej. Carlos" required maxlength="80" class="register-input">
+              <input name="nombres" type="text" th:value="${nombres}" placeholder="Ej. Carlos" required maxlength="80" class="register-input" />
             </div>
             <div>
               <label class="register-label">Apellidos *</label>
-              <input name="apellidos" type="text" th:value="${apellidos}" placeholder="Ej. Mendoza" required maxlength="80" class="register-input">
+              <input name="apellidos" type="text" th:value="${apellidos}" placeholder="Ej. Mendoza" required maxlength="80" class="register-input" />
             </div>
           </div>
 
           <div class="register-grid">
             <div>
               <label class="register-label">DNI / Documento *</label>
-              <input name="dni" type="text" th:value="${dni}" placeholder="8 dígitos" required maxlength="8" pattern="[0-9]{8}" inputmode="numeric" class="register-input">
+              <input name="dni" type="text" th:value="${dni}" placeholder="8 dígitos" required maxlength="8" pattern="[0-9]{8}" inputmode="numeric" class="register-input" />
             </div>
             <div>
               <label class="register-label">Fecha de nacimiento *</label>
-              <input name="fechaNacimiento" type="date" th:value="${fechaNacimiento}" required class="register-input">
+              <input name="fechaNacimiento" type="date" th:value="${fechaNacimiento}" required class="register-input" />
             </div>
           </div>
 
           <div class="register-grid">
             <div>
+              <label class="register-label">Género *</label>
+
+              <select name="genero" required class="register-input">
+                <option value="">Seleccionar</option>
+                <option value="MASCULINO" th:selected="${genero == 'MASCULINO'}">Masculino</option>
+                <option value="FEMENINO" th:selected="${genero == 'FEMENINO'}">Femenino</option>
+              </select>
+            </div>
+            <div>
               <label class="register-label">Teléfono / WhatsApp *</label>
-              <input name="telefono" type="tel" th:value="${telefono}" placeholder="+51 987 654 321" required maxlength="15" class="register-input">
+              <input name="telefono" type="tel" th:value="${telefono}" placeholder="+51 987 654 321" required maxlength="15" class="register-input" />
             </div>
             <div>
               <label class="register-label">Correo electrónico *</label>
-              <input name="correo" type="email" th:value="${correo}" placeholder="atleta@ejemplo.com" required maxlength="120" class="register-input">
+              <input name="correo" type="email" th:value="${correo}" placeholder="atleta@ejemplo.com" required maxlength="120" class="register-input" />
             </div>
           </div>
 
@@ -69,7 +78,7 @@
           </div>
 
           <label class="terms-row">
-            <input type="checkbox" name="aceptaTerminos" value="true" required class="terms-checkbox">
+            <input type="checkbox" name="aceptaTerminos" value="true" required class="terms-checkbox" />
             <span>
               Acepto los
               <a href="#" class="terms-link">Términos y Condiciones</a>
