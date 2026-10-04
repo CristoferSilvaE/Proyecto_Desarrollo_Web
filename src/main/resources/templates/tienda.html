@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -17,14 +17,14 @@
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="font-black text-2xl tracking-wider text-white">POWERFIT</div>
             <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-                <a href="index.html" class="hover:text-white transition">Inicio</a>
-                <a href="index.html#planes" class="hover:text-white transition">Membresía</a>
-                <a href="tienda.html" class="text-white border-b-2 border-indigo-400 pb-1">Tienda</a>
-                <a href="reservaClases.html" class="hover:text-white transition">Clases</a>
-                <a href="perfilUsuario.html" class="hover:text-white transition">Perfil</a>
+                <a th:href="@{/}" class="hover:text-white transition">Inicio</a>
+                <a th:href="@{/#planes}" class="hover:text-white transition">Membresía</a>
+                <a th:href="@{/tienda}" class="text-white border-b-2 border-indigo-400 pb-1">Tienda</a>
+                <a th:href="@{/clases}" class="hover:text-white transition">Clases</a>
+                <a th:href="@{/perfil}" class="hover:text-white transition">Perfil</a>
             </nav>
             <div class="flex items-center gap-4 text-zinc-400">
-                <a href="carrito.html">
+                <a th:href="@{/carrito}">
                     <button class="text-white relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -40,7 +40,7 @@
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg></button>
                 <div class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700">
-                    <img src="imagenes/perfil-baki.jpg" alt="Avatar"
+                    <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar"
                         class="w-full h-full object-cover">
                 </div>
             </div>
@@ -71,7 +71,7 @@
                     class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between">
                     <div>
                         <div class="w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative">
-                            <img src="imagenes/tienda-proteina-goldPro.jpg"
+                            <img th:src="@{/imagenes/tienda-proteina-goldPro.jpg}"
                                 class="w-full h-full object-contain" alt="Proteína Whey Gold Pro">
                         </div>
                         <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">Gold Pro
@@ -96,7 +96,7 @@
                     class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between">
                     <div>
                         <div class="w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative">
-                            <img src="imagenes/tienda-preentreno-nitrox.jpg"
+                            <img th:src="@{/imagenes/tienda-preentreno-nitrox.jpg}"
                                 class="w-full h-full object-contain" alt="Pre-Entreno Nitrox">
                         </div>
                         <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">Phantom
@@ -121,7 +121,7 @@
                     class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between">
                     <div>
                         <div class="w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative">
-                            <img src="imagenes/tienda-vitaminaB.jpg"
+                            <img th:src="@{/imagenes/tienda-vitaminaB.jpg}"
                                 class="w-full h-full object-contain" alt="Complejo de vitamina B">
                         </div>
                         <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">PowerFit
@@ -146,7 +146,7 @@
                     class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between">
                     <div>
                         <div class="w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative">
-                            <img src="imagenes/tienda-creatina.jpg"
+                            <img th:src="@{/imagenes/tienda-creatina.jpg}"
                                 class="w-full h-full object-contain" alt="Creatina Monohidratada Dragon">
                         </div>
                         <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">Apex
@@ -172,7 +172,7 @@
                     class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between">
                     <div>
                         <div class="w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative">
-                            <img src="imagenes/tienda-glutamina.jpg"
+                            <img th:src="@{/imagenes/tienda-glutamina.jpg}"
                                 class="w-full h-full object-contain" alt="Glutamina + BCAA">
                         </div>
                         <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">Kinetic
@@ -197,7 +197,7 @@
                     class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between">
                     <div>
                         <div class="w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative">
-                            <img src="imagenes/tienda-omega3.jpg"
+                            <img th:src="@{/imagenes/tienda-omega3.jpg}"
                                 class="w-full h-full object-contain" alt="Omega 3 Gat Sports">
                         </div>
                         <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">PowerFit
