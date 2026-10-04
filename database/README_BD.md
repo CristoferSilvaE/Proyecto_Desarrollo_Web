@@ -23,9 +23,9 @@ Si existe una base antigua y no hay datos que conservar:
 - `clientes` contiene información personal/demográfica.
 - `seguimiento_fisico` contiene mediciones que cambian en el tiempo.
 
-La estructura lo deja temporalmente como `VARCHAR(20) NULL` para no romper el registro actual. Cuando el campo se conecte al formulario de registro y a `Cliente.java`, puede hacerse obligatorio.
+La estructura define `genero` como `VARCHAR(20) NOT NULL`, ya que el campo está integrado en el formulario de registro, en la entidad `Cliente` y en la edición del perfil.
 
-Valores previstos actualmente:
+Valores permitidos actualmente:
 
 - `MASCULINO`
 - `FEMENINO`

@@ -29,7 +29,7 @@ El proyecto utiliza **Maven Wrapper**, por lo que no es necesario instalar Maven
 Clona el proyecto desde GitHub:
 
 ```bash
-git clone <URL-DEL-REPOSITORIO>
+git clone https://github.com/CristoferSilvaE/Proyecto_Desarrollo_Web.git
 ```
 
 Luego ingresa a la carpeta del proyecto:
@@ -423,20 +423,180 @@ Después de descargar el repositorio:
 
 ---
 
-# 🎓 Información académica
+# 🛠️ Siguiente tarea del equipo
 
-**Proyecto:** PowerFit  
-**Curso:** Marco de Desarrollo Web  
-**Tipo:** Proyecto académico universitario  
-**Arquitectura:** Spring Boot MVC  
-**Base de datos:** MySQL  
+## CRUD de Pedidos
+
+El siguiente módulo a implementar es el **CRUD de Pedidos**, correspondiente al segundo CRUD transaccional requerido para el proyecto.
+
+Actualmente el sistema ya cuenta con el CRUD de membresías.
+
+```text
+CRUD 1 → Membresías ✅
+CRUD 2 → Pedidos ⏳
+```
+
+### 🎯 Objetivo
+
+Conectar el flujo de compra existente con la base de datos utilizando las tablas:
+
+```text
+productos
+pedidos
+detalle_pedido
+clientes
+```
+
+No utilizar información fija en los archivos HTML. Los datos deben obtenerse desde MySQL mediante Spring Data JPA.
 
 ---
 
-## 👥 Equipo de desarrollo
+## 📋 Operaciones requeridas
 
-Proyecto desarrollado de manera colaborativa mediante Git y GitHub.
+### ➕ CREATE
 
+Al confirmar una compra desde el checkout:
+
+1. Obtener el cliente desde la sesión.
+2. Crear un registro en `pedidos`.
+3. Crear los registros correspondientes en `detalle_pedido`.
+4. Guardar el precio del producto al momento de realizar la compra.
+5. Calcular subtotal, costo de envío y total.
+6. Actualizar el stock de los productos.
+7. Vaciar el carrito después de confirmar correctamente el pedido.
+
+---
+
+### 🔎 READ
+
+El cliente debe poder consultar sus pedidos desde:
+
+```text
+/perfil
+        ↓
+Mis Pedidos
+        ↓
+/pedidos
+```
+
+Cada pedido debe mostrar como mínimo:
+
+- Número de pedido.
+- Fecha.
+- Total.
+- Método de entrega.
+- Método de pago.
+- Estado del pedido.
+- Estado del pago.
+
+También debe ser posible consultar los productos pertenecientes al pedido.
+
+---
+
+### ✏️ UPDATE
+
+Mientras un pedido se encuentre en estado:
+
+```text
+PENDIENTE
+```
+
+el cliente podrá modificar únicamente información permitida, por ejemplo:
+
+- Dirección de entrega.
+- Distrito.
+- Referencia.
+
+No se debe permitir modificar pedidos que ya hayan avanzado a estados posteriores.
+
+---
+
+### ❌ DELETE / CANCELAR
+
+Un pedido pendiente podrá ser cancelado por el cliente.
+
+En lugar de eliminar físicamente el registro de la base de datos, se recomienda actualizar:
+
+```text
+estado = CANCELADO
+```
+
+Esto permite conservar el historial de operaciones.
+
+---
+
+## 🗂️ Estructura recomendada
+
+El módulo puede trabajar con los archivos existentes:
+
+```text
+model/
+├── Pedido.java
+├── DetallePedido.java
+└── Producto.java
+
+repository/
+├── PedidoRepository.java
+├── DetallePedidoRepository.java
+└── ProductoRepository.java
+
+controller/
+└── PedidoController.java
+
+templates/
+├── tienda.html
+├── carrito.html
+├── checkout.html
+└── pedidos.html
+```
+
+Si es necesario, pueden agregarse métodos a los repositories existentes.
+
+---
+
+## ⚠️ Consideraciones
+
+- No modificar las credenciales locales de otros integrantes.
+- No subir `application.properties`.
+- No subir `uploads/`.
+- No subir `node_modules/`.
+- Mantener la estructura MVC utilizada actualmente.
+- Utilizar Thymeleaf para mostrar los datos.
+- Utilizar Spring Data JPA para acceder a MySQL.
+- Mantener el diseño visual actual de PowerFit.
+- No reemplazar información dinámica por datos escritos directamente en los HTML.
+- Probar el flujo completo antes de realizar el push.
+
+---
+
+## ✅ Resultado esperado
+
+El flujo final debe funcionar de esta manera:
+
+```text
+Tienda
+  ↓
+Agregar productos
+  ↓
+Carrito
+  ↓
+Checkout
+  ↓
+Crear Pedido
+  ↓
+Guardar Detalle Pedido
+  ↓
+Mis Pedidos
+  ↓
+Consultar / Modificar / Cancelar
+```
+
+Cuando este módulo esté terminado, PowerFit contará con los dos CRUD transaccionales requeridos para el avance:
+
+```text
+✅ CRUD de Membresías
+✅ CRUD de Pedidos
+```
 ---
 
 <p align="center">

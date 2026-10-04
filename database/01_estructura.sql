@@ -41,7 +41,7 @@ CREATE TABLE usuarios (
 -- ============================================================
 -- 3. CLIENTES
 -- Datos personales del cliente.
--- genero se deja NULL temporalmente hasta conectarlo al registro.
+-- genero es obligatorio en el registro del cliente.
 -- Valores previstos: MASCULINO / FEMENINO.
 -- ============================================================
 
@@ -53,7 +53,7 @@ CREATE TABLE clientes (
     dni CHAR(8) NOT NULL UNIQUE,
     telefono VARCHAR(15),
     fecha_nacimiento DATE,
-    genero VARCHAR(20) NULL,
+    genero VARCHAR(20) NOT NULL,
     foto_perfil VARCHAR(255) NULL,
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
 
