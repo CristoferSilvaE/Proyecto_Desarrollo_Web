@@ -1,121 +1,135 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PowerFit - Carrito</title>
-  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
-</head>
-<body class="app-body">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Carrito</title>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+  <body class="app-body">
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
 
-  <header class="navbar">
-    <div class="navbar-container">
-      <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link-active">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
 
-      <nav class="navbar-menu">
-        <a th:href="@{/}" class="nav-link">Inicio</a>
-        <a th:href="@{/membresia}" class="nav-link">Membresía</a>
-        <a th:href="@{/tienda}" class="nav-link-active">Tienda</a>
-        <a th:href="@{/clases}" class="nav-link">Clases</a>
-        <a th:href="@{/perfil}" class="nav-link">Perfil</a>
-      </nav>
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
 
-      <div class="navbar-actions">
-        <a th:href="@{/carrito}" class="cart-link" title="Carrito">
-          <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-          </svg>
-        </a>
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
 
-        <a th:href="@{/perfil}" class="avatar-link">
-          <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image">
-        </a>
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
+    <main class="page-container-sm">
+      <div class="page-header">
+        <h1 class="page-title text-indigo-200">Carrito</h1>
+        <p class="page-subtitle">Revisa tus productos antes de finalizar la compra.</p>
+      </div>
 
-  <main class="page-container-sm">
-    <div class="page-header">
-      <h1 class="page-title text-indigo-200">Carrito</h1>
-      <p class="page-subtitle">Revisa tus productos antes de finalizar la compra.</p>
-    </div>
-
-    <div class="cart-layout">
-      <div class="cart-items">
-        <div class="cart-item">
-          <div class="cart-item-main">
-            <div class="cart-thumb">
-              <img th:src="@{/imagenes/tienda-proteina-goldPro.jpg}" class="cart-thumb-img" alt="Premium Whey Protein 2kg">
-            </div>
-            <div>
-              <h3 class="cart-item-title">Premium Whey Protein 2kg</h3>
-              <p class="cart-item-category">Nutrición Deportiva</p>
-              <div class="quantity-control">
-                <button class="quantity-button">−</button>
-                <span class="quantity-value">1</span>
-                <button class="quantity-button">+</button>
+      <div class="cart-layout">
+        <div class="cart-items">
+          <div class="cart-item">
+            <div class="cart-item-main">
+              <div class="cart-thumb">
+                <img th:src="@{/imagenes/tienda-proteina-goldPro.jpg}" class="cart-thumb-img" alt="Premium Whey Protein 2kg" />
+              </div>
+              <div>
+                <h3 class="cart-item-title">Premium Whey Protein 2kg</h3>
+                <p class="cart-item-category">Nutrición Deportiva</p>
+                <div class="quantity-control">
+                  <button class="quantity-button">−</button>
+                  <span class="quantity-value">1</span>
+                  <button class="quantity-button">+</button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="cart-item-side">
-            <button class="cart-remove">✕</button>
-            <p class="cart-item-price">S/ 169.00</p>
-          </div>
-        </div>
-
-        <div class="cart-item">
-          <div class="cart-item-main">
-            <div class="cart-thumb">
-              <img th:src="@{/imagenes/tienda-preEntreno-nitrox.jpg}" class="cart-thumb-img" alt="Hyperion Pre-Workout 300g">
+            <div class="cart-item-side">
+              <button class="cart-remove">✕</button>
+              <p class="cart-item-price">S/ 169.00</p>
             </div>
-            <div>
-              <h3 class="cart-item-title">Hyperion Pre-Workout 300g</h3>
-              <p class="cart-item-category">Nutrición Deportiva</p>
-              <div class="quantity-control">
-                <button class="quantity-button">−</button>
-                <span class="quantity-value">1</span>
-                <button class="quantity-button">+</button>
+          </div>
+
+          <div class="cart-item">
+            <div class="cart-item-main">
+              <div class="cart-thumb">
+                <img th:src="@{/imagenes/tienda-preEntreno-nitrox.jpg}" class="cart-thumb-img" alt="Hyperion Pre-Workout 300g" />
+              </div>
+              <div>
+                <h3 class="cart-item-title">Hyperion Pre-Workout 300g</h3>
+                <p class="cart-item-category">Nutrición Deportiva</p>
+                <div class="quantity-control">
+                  <button class="quantity-button">−</button>
+                  <span class="quantity-value">1</span>
+                  <button class="quantity-button">+</button>
+                </div>
               </div>
             </div>
+            <div class="cart-item-side">
+              <button class="cart-remove">✕</button>
+              <p class="cart-item-price">S/ 145.00</p>
+            </div>
           </div>
-          <div class="cart-item-side">
-            <button class="cart-remove">✕</button>
-            <p class="cart-item-price">S/ 145.00</p>
-          </div>
+
+          <a th:href="@{/tienda}" class="continue-shopping">← Seguir comprando</a>
         </div>
 
-        <a th:href="@{/tienda}" class="continue-shopping">← Seguir comprando</a>
+        <aside class="cart-summary">
+          <h2 class="cart-summary-title">Resumen</h2>
+
+          <div class="cart-summary-list">
+            <div class="cart-summary-row">
+              <span>Subtotal (2 artículos)</span>
+              <span class="cart-summary-value">S/ 314.00</span>
+            </div>
+            <div class="cart-summary-row">
+              <span>Envío</span>
+              <span class="cart-summary-value">Calculado en el checkout</span>
+            </div>
+            <div class="cart-total-row">
+              <span class="cart-total-label">Total</span>
+              <span class="cart-total">S/ 314.00</span>
+            </div>
+          </div>
+
+          <a th:href="@{/checkout}" class="btn-primary-block mt-7">Finalizar Compra</a>
+        </aside>
       </div>
+    </main>
 
-      <aside class="cart-summary">
-        <h2 class="cart-summary-title">Resumen</h2>
-
-        <div class="cart-summary-list">
-          <div class="cart-summary-row"><span>Subtotal (2 artículos)</span><span class="cart-summary-value">S/ 314.00</span></div>
-          <div class="cart-summary-row"><span>Envío</span><span class="cart-summary-value">Calculado en el checkout</span></div>
-          <div class="cart-total-row"><span class="cart-total-label">Total</span><span class="cart-total">S/ 314.00</span></div>
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
         </div>
-
-        <a th:href="@{/checkout}" class="btn-primary-block mt-7">Finalizar Compra</a>
-      </aside>
-    </div>
-  </main>
-
-
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-logo">POWERFIT</div>
-      <div class="footer-links">
-        <a href="#" class="footer-link">Política de Privacidad</a>
-        <a href="#" class="footer-link">Términos de Servicio</a>
-        <a href="#" class="footer-link">Soporte</a>
-        <a href="#" class="footer-link">Instagram</a>
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
       </div>
-      <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-    </div>
-  </footer>
-
-</body>
+    </footer>
+  </body>
 </html>

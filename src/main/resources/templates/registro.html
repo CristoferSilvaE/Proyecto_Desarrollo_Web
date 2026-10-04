@@ -1,62 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PowerFit - Crear Cuenta</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
-</head>
-<body class="auth-body" th:style="'background-image: linear-gradient(to bottom, rgba(10,10,12,0.88), rgba(10,10,12,0.96)), url(' + @{/imagenes/login1.jpg} + ');'">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Crear Cuenta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+  <body class="auth-body" th:style="'background-image: linear-gradient(to bottom, rgba(10,10,12,0.88), rgba(10,10,12,0.96)), url(' + @{/imagenes/login1.jpg} + ');'">
+    <header class="register-topbar">
+      <a th:href="@{/}" class="register-logo">POWERFIT</a>
+      <a th:href="@{/}" class="register-back">← Volver al inicio</a>
+    </header>
 
-  <header class="register-topbar">
-    <a th:href="@{/}" class="register-logo">POWERFIT</a>
-    <a th:href="@{/}" class="register-back">← Volver al inicio</a>
-  </header>
-
-  <main class="register-main">
-    <section class="register-card">
-      <div class="register-head">
-        <h1 class="register-title">POWERFIT</h1>
-        <p class="register-subtitle">Crear cuenta atleta • Rendimiento máximo</p>
-      </div>
-
-      <form class="register-form" onsubmit="event.preventDefault()">
-        <div class="register-grid">
-          <div><label class="register-label">Nombres *</label><input name="nombres" type="text" placeholder="Ej. Carlos" required maxlength="80" class="register-input"></div>
-          <div><label class="register-label">Apellidos *</label><input name="apellidos" type="text" placeholder="Ej. Mendoza" required maxlength="80" class="register-input"></div>
+    <main class="register-main">
+      <section class="register-card">
+        <div class="register-head">
+          <h1 class="register-title">POWERFIT</h1>
+          <p class="register-subtitle">Crear cuenta atleta • Rendimiento máximo</p>
         </div>
 
-        <div class="register-grid">
-          <div><label class="register-label">DNI / Documento *</label><input name="dni" type="text" placeholder="8 dígitos" required maxlength="8" pattern="[0-9]{8}" inputmode="numeric" class="register-input"></div>
-          <div><label class="register-label">Fecha de nacimiento *</label><input name="fechaNacimiento" type="date" required class="register-input"></div>
+        <form class="register-form" th:action="@{/registro}" method="post">
+          <div th:if="${error}" class="form-error" th:text="${error}">Error</div>
+          <div class="register-grid">
+            <div>
+              <label class="register-label">Nombres *</label>
+              <input name="nombres" type="text" th:value="${nombres}" placeholder="Ej. Carlos" required maxlength="80" class="register-input">
+            </div>
+            <div>
+              <label class="register-label">Apellidos *</label>
+              <input name="apellidos" type="text" th:value="${apellidos}" placeholder="Ej. Mendoza" required maxlength="80" class="register-input">
+            </div>
+          </div>
+
+          <div class="register-grid">
+            <div>
+              <label class="register-label">DNI / Documento *</label>
+              <input name="dni" type="text" th:value="${dni}" placeholder="8 dígitos" required maxlength="8" pattern="[0-9]{8}" inputmode="numeric" class="register-input">
+            </div>
+            <div>
+              <label class="register-label">Fecha de nacimiento *</label>
+              <input name="fechaNacimiento" type="date" th:value="${fechaNacimiento}" required class="register-input">
+            </div>
+          </div>
+
+          <div class="register-grid">
+            <div>
+              <label class="register-label">Teléfono / WhatsApp *</label>
+              <input name="telefono" type="tel" th:value="${telefono}" placeholder="+51 987 654 321" required maxlength="15" class="register-input">
+            </div>
+            <div>
+              <label class="register-label">Correo electrónico *</label>
+              <input name="correo" type="email" th:value="${correo}" placeholder="atleta@ejemplo.com" required maxlength="120" class="register-input">
+            </div>
+          </div>
+
+          <div class="register-grid">
+            <div>
+              <label class="register-label">Contraseña *</label>
+              <input name="password" type="password" placeholder="••••••••" required minlength="8" class="register-input" />
+            </div>
+            <div>
+              <label class="register-label">Confirmar contraseña *</label>
+              <input name="confirmarPassword" type="password" placeholder="••••••••" required minlength="8" class="register-input" />
+            </div>
+          </div>
+
+          <label class="terms-row">
+            <input type="checkbox" name="aceptaTerminos" value="true" required class="terms-checkbox">
+            <span>
+              Acepto los
+              <a href="#" class="terms-link">Términos y Condiciones</a>
+              y la
+              <a href="#" class="terms-link">Política de Privacidad</a>
+              .
+            </span>
+          </label>
+
+          <button type="submit" class="register-submit">Crear cuenta</button>
+        </form>
+
+        <div class="register-footer">
+          ¿Ya tienes una cuenta?
+          <a th:href="@{/login}" class="auth-link underline">Iniciar sesión</a>
         </div>
-
-        <div class="register-grid">
-          <div><label class="register-label">Teléfono / WhatsApp *</label><input name="telefono" type="tel" placeholder="+51 987 654 321" required maxlength="15" class="register-input"></div>
-          <div><label class="register-label">Correo electrónico *</label><input name="correo" type="email" placeholder="atleta@ejemplo.com" required maxlength="120" class="register-input"></div>
-        </div>
-
-        <div class="register-grid">
-          <div><label class="register-label">Contraseña *</label><input name="password" type="password" placeholder="••••••••" required minlength="8" class="register-input"></div>
-          <div><label class="register-label">Confirmar contraseña *</label><input name="confirmarPassword" type="password" placeholder="••••••••" required minlength="8" class="register-input"></div>
-        </div>
-
-        <label class="terms-row">
-          <input type="checkbox" required class="terms-checkbox">
-          <span>Acepto los <a href="#" class="terms-link">Términos y Condiciones</a> y la <a href="#" class="terms-link">Política de Privacidad</a>.</span>
-        </label>
-
-        <button type="submit" class="register-submit">Crear cuenta</button>
-      </form>
-
-      <div class="register-footer">
-        ¿Ya tienes una cuenta?
-        <a th:href="@{/login}" class="auth-link underline">Iniciar sesión</a>
-      </div>
-    </section>
-  </main>
-</body>
+      </section>
+    </main>
+  </body>
 </html>

@@ -22,7 +22,6 @@
         </nav>
 
         <div class="navbar-actions">
-          <!-- CARRITO -->
           <a th:href="@{/carrito}" class="cart-link" title="Carrito">
             <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -33,10 +32,15 @@
             </svg>
           </a>
 
-          <!-- PERFIL -->
-          <a th:href="@{/perfil}" class="avatar-link">
-            <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image" />
-          </a>
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
         </div>
       </div>
     </header>

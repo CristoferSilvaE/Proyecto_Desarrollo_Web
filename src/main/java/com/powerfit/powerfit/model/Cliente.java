@@ -41,6 +41,9 @@ public class Cliente {
   @Column(name = "estado", nullable = false, length = 20)
   private String estado;
 
+  @Column(name = "foto_perfil", length = 255)
+  private String fotoPerfil;
+
   public Long getIdCliente() {
     return idCliente;
   }
@@ -103,5 +106,13 @@ public class Cliente {
 
   public void setEstado(String estado) {
     this.estado = estado;
+  }
+
+  public String getFotoPerfil() {
+    return fotoPerfil;
+  }
+
+  public void setFotoPerfil(String fotoPerfil) {
+    this.fotoPerfil = fotoPerfil;
   }
 }

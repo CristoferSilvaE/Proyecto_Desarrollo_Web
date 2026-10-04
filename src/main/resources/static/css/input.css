@@ -1320,4 +1320,143 @@
   .register-footer {
     @apply text-center mt-7 text-sm text-gray-400;
   }
+
+  .form-error {
+    @apply border border-red-500/30 bg-red-500/10 text-red-300 text-sm rounded px-4 py-3;
+  }
+
+  .nav-login {
+    @apply text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition;
+  }
+
+  .avatar-initial {
+    @apply w-full h-full flex items-center justify-center bg-indigo-200 text-zinc-950 text-xs font-black uppercase;
+  }
+
+  .user-session {
+    @apply flex items-center gap-3;
+  }
+
+  .user-name {
+    @apply text-sm font-semibold text-zinc-200;
+  }
+
+  .user-name:hover {
+    @apply text-white;
+  }
+
+  .nav-login {
+    @apply text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition;
+  }
+
+  .avatar-link {
+    @apply w-9 h-9 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition;
+  }
+
+  .avatar-image {
+    @apply w-full h-full object-cover;
+  }
+
+  .alert-success {
+    @apply mb-6 border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-sm rounded px-4 py-3;
+  }
+
+  .alert-error {
+    @apply mb-6 border border-red-500/30 bg-red-500/10 text-red-300 text-sm rounded px-4 py-3;
+  }
+
+  .membership-empty {
+    @apply border border-zinc-800 rounded-xl p-8 mb-8;
+    background-color: #121318;
+  }
+
+  .membership-empty-title {
+    @apply text-xl font-black uppercase mb-2;
+  }
+
+  .membership-empty-text {
+    @apply text-zinc-500 text-sm;
+  }
+
+  .membership-plans-title {
+    @apply text-2xl font-black uppercase tracking-wide mb-2;
+  }
+
+  .membership-plans-text {
+    @apply text-zinc-500 text-sm mb-8;
+  }
+
+  .membership-plan-actions {
+    @apply mt-7;
+  }
+
+  .pending-badge {
+    @apply px-4 py-1 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-[10px] font-bold tracking-wider;
+  }
+
+  .pending-info {
+    @apply border border-zinc-800 rounded-lg p-6;
+    background-color: #18191f;
+  }
+
+  .pending-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6 text-sm;
+  }
+
+  .pending-actions {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 mt-6;
+  }
+
+  .membership-select {
+    @apply w-full border border-zinc-700 rounded px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-indigo-300;
+    background-color: #0d0e12;
+  }
+
+  /* ---------- MODAL ---------- */
+
+  .modal-overlay {
+    display: none;
+    @apply fixed inset-0 z-[100] items-center justify-center px-4 bg-black/70 backdrop-blur-sm;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal-card {
+    @apply w-full max-w-md border border-zinc-700 rounded-xl p-8 text-center shadow-2xl;
+    background-color: #15161b;
+  }
+
+  .modal-icon {
+    @apply w-12 h-12 mx-auto mb-5 rounded-full flex items-center justify-center border border-red-500/30 bg-red-500/10 text-red-300 text-xl font-black;
+  }
+
+  .modal-title {
+    @apply text-2xl font-black uppercase tracking-wide text-white mb-3;
+  }
+
+  .modal-text {
+    @apply text-sm text-zinc-400 leading-6;
+  }
+
+  .modal-text strong {
+    @apply text-zinc-200;
+  }
+
+  .modal-warning {
+    @apply text-xs text-red-300 mt-3;
+  }
+
+  .modal-actions {
+    @apply grid grid-cols-2 gap-3 mt-7;
+  }
+
+  .modal-cancel-button {
+    @apply w-full py-3 border border-zinc-700 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded hover:bg-zinc-800 transition;
+  }
+
+  .modal-confirm-button {
+    @apply w-full py-3 bg-red-500/10 border border-red-500/40 text-red-300 font-bold text-xs uppercase tracking-wider rounded hover:bg-red-500/20 transition;
+  }
 }

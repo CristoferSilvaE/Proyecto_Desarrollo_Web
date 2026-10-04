@@ -1,7 +1,7 @@
 {
   "name": "proyecto_desarrollo_web",
   "version": "1.0.0",
-  "description": "//dasdasdasdsa",
+  "description": "Sistema web de gestión para gimnasio PowerFit",
   "main": "tailwind.config.js",
   "scripts": {
     "tailwind:watch": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/powerfit.css --watch",

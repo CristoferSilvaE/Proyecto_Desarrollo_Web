@@ -1,99 +1,407 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PowerFit - Mi Membresía</title>
-  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
-</head>
-<body class="app-body">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <header class="navbar">
-    <div class="navbar-container">
-      <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+    <title>PowerFit - Mi Membresía</title>
 
-      <nav class="navbar-menu">
-        <a th:href="@{/}" class="nav-link">Inicio</a>
-        <a th:href="@{/membresia}" class="nav-link-active">Membresía</a>
-        <a th:href="@{/tienda}" class="nav-link">Tienda</a>
-        <a th:href="@{/clases}" class="nav-link">Clases</a>
-        <a th:href="@{/perfil}" class="nav-link">Perfil</a>
-      </nav>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
 
-      <div class="navbar-actions">
-        <a th:href="@{/carrito}" class="cart-link" title="Carrito">
-          <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+  <body class="app-body">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link-active">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
+
+        <div class="navbar-actions">
+          <!-- CARRITO -->
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
+
+          <!-- SIN SESIÓN -->
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <!-- CON SESIÓN -->
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+
+            <a th:href="@{/perfil}" class="avatar-link" title="Mi perfil">
+              <img th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- USUARIO SIN SESIÓN -->
+    <section th:if="${cliente == null}" class="login-gate">
+      <div class="login-gate-card">
+        <div class="login-gate-icon">
+          <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2zm3-10V7a3 3 0 016 0v4H9z" />
           </svg>
-        </a>
-
-        <a th:href="@{/perfil}" class="avatar-link">
-          <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image">
-        </a>
-      </div>
-    </div>
-  </header>
-
-
-  <main class="page-container">
-    <div class="membership-header">
-      <p class="membership-kicker">● Portal de atleta</p>
-      <h1 class="membership-title">Mi Membresía</h1>
-      <p class="membership-subtitle">Gestiona tu plan y consulta su vigencia.</p>
-    </div>
-
-    <section class="membership-shell">
-      <div class="membership-top">
-        <div class="membership-name-row">
-          <h2 class="membership-name">Plan Elite</h2>
-          <span class="status-active">● ACTIVA</span>
         </div>
 
-        <div class="membership-price-box">
-          <p class="membership-price-label">Tarifa mensual</p>
-          <p class="membership-price">S/ 129.00</p>
-        </div>
-      </div>
+        <h1 class="login-gate-title">Inicia sesión para continuar</h1>
 
-      <div class="membership-body">
-        <section class="section-card-soft">
-          <h3 class="membership-section-title">Vigencia del ciclo actual</h3>
-          <div class="membership-period-grid">
-            <div><p class="membership-field-label">Fecha de inicio</p><p class="membership-field-value">05 Oct 2026</p></div>
-            <div><p class="membership-field-label">Fecha de vencimiento</p><p class="membership-field-value">04 Nov 2026</p></div>
-            <div><p class="membership-field-label">Próximo pago</p><p class="membership-field-value-accent">04 Nov 2026 • S/129</p></div>
-          </div>
-        </section>
+        <p class="login-gate-text">Inicia sesión para solicitar, consultar o administrar tu membresía PowerFit.</p>
 
-        <section class="section-card-soft">
-          <h3 class="membership-section-title">Beneficios incluidos</h3>
-          <div class="benefits-grid">
-            <div class="benefit-box"><h4 class="benefit-title">✓ Acceso Total</h4></div>
-            <div class="benefit-box"><h4 class="benefit-title">✓ Clases Grupales</h4></div>
-            <div class="benefit-box"><h4 class="benefit-title">✓ Entrenamiento Personal</h4></div>
-            <div class="benefit-box"><h4 class="benefit-title">✓ Seguimiento Físico</h4></div>
-          </div>
-        </section>
-
-        <a th:href="@{/perfil}" class="btn-outline px-6 py-3">Ver historial de pagos</a>
+        <a th:href="@{/login}" class="btn-primary">Iniciar sesión</a>
       </div>
     </section>
-  </main>
 
+    <!-- USUARIO CON SESIÓN -->
+    <main th:if="${cliente != null}" class="page-container">
+      <!-- CABECERA -->
+      <div class="membership-header">
+        <p class="membership-kicker">● Portal de atleta</p>
 
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-logo">POWERFIT</div>
-      <div class="footer-links">
-        <a href="#" class="footer-link">Política de Privacidad</a>
-        <a href="#" class="footer-link">Términos de Servicio</a>
-        <a href="#" class="footer-link">Soporte</a>
-        <a href="#" class="footer-link">Instagram</a>
+        <h1 class="membership-title">Mi Membresía</h1>
+
+        <p class="membership-subtitle">Gestiona tu plan y consulta el estado de tu membresía.</p>
       </div>
-      <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-    </div>
-  </footer>
 
-</body>
+      <!-- MENSAJE DE ÉXITO -->
+      <div th:if="${mensaje}" class="alert-success" th:text="${mensaje}">Operación realizada correctamente.</div>
+
+      <!-- MENSAJE DE ERROR -->
+      <div th:if="${error}" class="alert-error" th:text="${error}">Ocurrió un error.</div>
+
+      <!-- =====================================================
+         MEMBRESÍA ACTIVA
+    ====================================================== -->
+
+      <section th:if="${membresiaActiva != null}" class="membership-shell">
+        <div class="membership-top">
+          <div class="membership-name-row">
+            <h2 class="membership-name" th:text="${'Plan ' + membresiaActiva.plan.nombre}">Plan</h2>
+
+            <span class="status-active">● ACTIVA</span>
+          </div>
+
+          <div class="membership-price-box">
+            <p class="membership-price-label">Tarifa mensual</p>
+
+            <p class="membership-price" th:text="${'S/ ' + #numbers.formatDecimal(membresiaActiva.plan.precio, 1, 2)}">S/ 0.00</p>
+          </div>
+        </div>
+
+        <div class="membership-body">
+          <!-- VIGENCIA -->
+          <section class="section-card-soft">
+            <h3 class="membership-section-title">Vigencia del ciclo actual</h3>
+
+            <div class="membership-period-grid">
+              <div>
+                <p class="membership-field-label">Fecha de inicio</p>
+
+                <p class="membership-field-value" th:text="${membresiaActiva.fechaInicio != null ? #temporals.format(membresiaActiva.fechaInicio, 'dd/MM/yyyy') : 'Por definir'}">Por definir</p>
+              </div>
+
+              <div>
+                <p class="membership-field-label">Fecha de vencimiento</p>
+
+                <p class="membership-field-value" th:text="${membresiaActiva.fechaFin != null ? #temporals.format(membresiaActiva.fechaFin, 'dd/MM/yyyy') : 'Por definir'}">Por definir</p>
+              </div>
+
+              <div>
+                <p class="membership-field-label">Duración</p>
+
+                <p class="membership-field-value-accent" th:text="${membresiaActiva.plan.duracionDias + ' días'}">30 días</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- BENEFICIOS -->
+          <section class="section-card-soft">
+            <h3 class="membership-section-title">Beneficios incluidos</h3>
+
+            <!-- PLAN BÁSICO -->
+            <div th:if="${membresiaActiva.plan.nombre == 'Básico'}" class="benefits-grid">
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Sala de pesas principal</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Equipamiento de cardio</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Acceso a vestuarios</h4>
+              </div>
+            </div>
+
+            <!-- PLAN PREMIUM -->
+            <div th:if="${membresiaActiva.plan.nombre == 'Premium'}" class="benefits-grid">
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Beneficios del Plan Básico</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Clases grupales ilimitadas</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Zona de recuperación</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Prioridad en reservas</h4>
+              </div>
+            </div>
+
+            <!-- PLAN ELITE -->
+            <div th:if="${membresiaActiva.plan.nombre == 'Elite'}" class="benefits-grid">
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Beneficios del Plan Premium</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Entrenamiento personal 1 a 1</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Seguimiento físico</h4>
+              </div>
+
+              <div class="benefit-box">
+                <h4 class="benefit-title">✓ Beneficios exclusivos PowerFit</h4>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- =====================================================
+         SOLICITUD PENDIENTE
+    ====================================================== -->
+
+      <section th:if="${membresiaActiva == null and membresiaPendiente != null}" class="membership-shell">
+        <div class="membership-top">
+          <div class="membership-name-row">
+            <h2 class="membership-name" th:text="${'Plan ' + membresiaPendiente.plan.nombre}">Plan</h2>
+
+            <span class="pending-badge">● PENDIENTE</span>
+          </div>
+
+          <div class="membership-price-box">
+            <p class="membership-price-label">Tarifa mensual</p>
+
+            <p class="membership-price" th:text="${'S/ ' + #numbers.formatDecimal(membresiaPendiente.plan.precio, 1, 2)}">S/ 0.00</p>
+          </div>
+        </div>
+
+        <div class="membership-body">
+          <!-- DATOS DE SOLICITUD -->
+          <section class="pending-info">
+            <h3 class="membership-section-title">Solicitud de membresía</h3>
+
+            <div class="pending-grid">
+              <div>
+                <p class="membership-field-label">Plan solicitado</p>
+
+                <p class="membership-field-value" th:text="${membresiaPendiente.plan.nombre}">Plan</p>
+              </div>
+
+              <div>
+                <p class="membership-field-label">Fecha de solicitud</p>
+
+                <p class="membership-field-value" th:text="${#temporals.format(membresiaPendiente.fechaSolicitud, 'dd/MM/yyyy HH:mm')}">Fecha</p>
+              </div>
+
+              <div>
+                <p class="membership-field-label">Estado</p>
+
+                <p class="membership-field-value-accent">Pendiente de aprobación</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- FORMULARIO PARA ACTUALIZAR PLAN -->
+          <form id="formActualizarMembresia" th:action="@{/membresia/actualizar}" method="post">
+            <input type="hidden" name="idMembresia" th:value="${membresiaPendiente.idMembresia}" />
+
+            <label class="field-label">Cambiar plan solicitado</label>
+
+            <select name="idPlan" class="membership-select" required>
+              <option
+                th:each="plan : ${planes}"
+                th:value="${plan.idPlan}"
+                th:text="${plan.nombre + ' - S/ ' + #numbers.formatDecimal(plan.precio, 1, 2)}"
+                th:selected="${plan.idPlan == membresiaPendiente.plan.idPlan}">
+                Plan
+              </option>
+            </select>
+          </form>
+
+          <!-- BOTONES -->
+          <div class="pending-actions">
+            <button type="submit" form="formActualizarMembresia" class="btn-primary-block">Actualizar Plan</button>
+
+            <button type="button" class="btn-danger w-full py-3" onclick="abrirModalCancelar()">Cancelar Solicitud</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+         SIN MEMBRESÍA
+    ====================================================== -->
+
+      <section th:if="${membresiaActiva == null and membresiaPendiente == null}">
+        <div class="membership-empty">
+          <h2 class="membership-empty-title">Aún no tienes una membresía</h2>
+
+          <p class="membership-empty-text">Selecciona uno de nuestros planes y envía tu solicitud.</p>
+        </div>
+
+        <h2 class="membership-plans-title">Elige tu plan</h2>
+
+        <p class="membership-plans-text">Puedes elegir el plan que mejor se adapte a tus objetivos.</p>
+
+        <!-- SIN PLANES -->
+        <div th:if="${planes == null or #lists.isEmpty(planes)}" class="empty-state">
+          <h3 class="empty-title">No hay planes disponibles</h3>
+
+          <p class="empty-text">Actualmente no existen planes activos.</p>
+        </div>
+
+        <!-- PLANES DISPONIBLES -->
+        <div th:if="${planes != null and !#lists.isEmpty(planes)}" class="plans-grid">
+          <article th:each="plan : ${planes}" class="plan-card" th:classappend="${plan.nombre == 'Premium'} ? ' plan-card-premium' : ''">
+            <!-- ETIQUETA POPULAR -->
+            <span th:if="${plan.nombre == 'Premium'}" class="plan-popular">Popular</span>
+
+            <div>
+              <!-- CABECERA -->
+              <div class="plan-header">
+                <p class="plan-level" th:text="${plan.nombre == 'Básico' ? 'Entrenamiento Base' : plan.nombre == 'Premium' ? 'Rendimiento Avanzado' : 'Rendimiento Máximo'}">Nivel</p>
+
+                <h3 class="plan-name" th:text="${plan.nombre}">Plan</h3>
+
+                <p class="plan-description" th:text="${plan.descripcion}">Descripción</p>
+              </div>
+
+              <!-- PRECIO -->
+              <div class="plan-price-container">
+                <div class="plan-price-row">
+                  <span class="plan-price" th:text="${'S/ ' + #numbers.formatDecimal(plan.precio, 1, 0)}">S/ 0</span>
+
+                  <span class="plan-period">/mes</span>
+                </div>
+              </div>
+
+              <div class="plan-divider"></div>
+
+              <!-- DURACIÓN -->
+              <p class="text-xs text-zinc-400">
+                Duración:
+
+                <span class="text-zinc-200 font-semibold" th:text="${plan.duracionDias + ' días'}">30 días</span>
+              </p>
+            </div>
+
+            <!-- SOLICITAR -->
+            <form th:action="@{/membresia/solicitar}" method="post" class="membership-plan-actions">
+              <input type="hidden" name="idPlan" th:value="${plan.idPlan}" />
+
+              <button type="submit" class="plan-button" th:classappend="${plan.nombre == 'Premium'} ? ' plan-button-premium' : ''">Solicitar Plan</button>
+            </form>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- =====================================================
+       MODAL CANCELAR SOLICITUD
+  ====================================================== -->
+
+    <div id="modalCancelar" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-icon">!</div>
+
+        <h2 class="modal-title">Cancelar solicitud</h2>
+
+        <p class="modal-text">
+          ¿Estás seguro de que deseas cancelar tu solicitud del
+
+          <strong th:text="${membresiaPendiente != null ? 'Plan ' + membresiaPendiente.plan.nombre : 'plan seleccionado'}">Plan Premium</strong>
+          ?
+        </p>
+
+        <p class="modal-warning">La solicitud pendiente será eliminada.</p>
+
+        <div class="modal-actions">
+          <!-- VOLVER -->
+          <button type="button" class="modal-cancel-button" onclick="cerrarModalCancelar()">Volver</button>
+
+          <!-- CONFIRMAR ELIMINACIÓN -->
+          <form th:if="${membresiaPendiente != null}" th:action="@{/membresia/eliminar}" method="post">
+            <input type="hidden" name="idMembresia" th:value="${membresiaPendiente.idMembresia}" />
+
+            <button type="submit" class="modal-confirm-button">Sí, cancelar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT MODAL -->
+    <script>
+      function abrirModalCancelar() {
+        document.getElementById("modalCancelar").classList.add("active");
+      }
+
+      function cerrarModalCancelar() {
+        document.getElementById("modalCancelar").classList.remove("active");
+      }
+
+      document.getElementById("modalCancelar").addEventListener("click", function (event) {
+        if (event.target === this) {
+          cerrarModalCancelar();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          cerrarModalCancelar();
+        }
+      });
+    </script>
+  </body>
 </html>

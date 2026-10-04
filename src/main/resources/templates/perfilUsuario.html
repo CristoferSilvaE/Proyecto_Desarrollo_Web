@@ -1,157 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PowerFit - Perfil</title>
-  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
-</head>
-<body class="app-body">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Perfil</title>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+  <body class="app-body">
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
 
-  <header class="navbar">
-    <div class="navbar-container">
-      <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link-active">Perfil</a>
+        </nav>
 
-      <nav class="navbar-menu">
-        <a th:href="@{/}" class="nav-link">Inicio</a>
-        <a th:href="@{/membresia}" class="nav-link">Membresía</a>
-        <a th:href="@{/tienda}" class="nav-link">Tienda</a>
-        <a th:href="@{/clases}" class="nav-link">Clases</a>
-        <a th:href="@{/perfil}" class="nav-link-active">Perfil</a>
-      </nav>
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
 
-      <div class="navbar-actions">
-        <a th:href="@{/carrito}" class="cart-link" title="Carrito">
-          <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-          </svg>
-        </a>
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
 
-        <a th:href="@{/perfil}" class="avatar-link">
-          <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image">
-        </a>
-      </div>
-    </div>
-  </header>
+          <div th:if="${cliente != null}" class="user-session">
+            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
 
-
-  <main class="profile-container">
-    <div class="page-header">
-      <h1 class="text-3xl font-black uppercase tracking-wider text-zinc-100">Perfil de Atleta</h1>
-      <p class="page-subtitle">Gestiona tu cuenta, membresía, clases y progreso.</p>
-    </div>
-
-    <div class="profile-grid">
-      <div class="profile-left">
-        <section class="profile-card">
-          <div class="profile-person">
-            <div class="profile-photo">
-              <img th:src="@{/imagenes/perfil-baki.jpg}" class="profile-photo-img" alt="Avatar">
-            </div>
-            <div>
-              <h2 class="profile-name">Baki Hanma</h2>
-              <p class="profile-role">Miembro PowerFit</p>
-            </div>
+            <a th:href="@{/perfil}" class="avatar-link">
+              <img th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+            </a>
           </div>
-
-          <div class="profile-data">
-            <div><span class="profile-data-label">Correo</span><span class="profile-data-value">baki.hanma@gmail.com</span></div>
-            <div><span class="profile-data-label">Teléfono</span><span class="profile-data-value">+51 999 999 999</span></div>
-            <div><span class="profile-data-label">DNI</span><span class="profile-data-value">74859632</span></div>
-            <div><span class="profile-data-label">Fecha de nacimiento</span><span class="profile-data-value">02 de abril de 2000</span></div>
-          </div>
-
-          <button class="btn-outline-block">Editar Perfil</button>
-        </section>
-
-        <section class="profile-card">
-          <div class="membership-summary-head">
-            <span class="membership-summary-label">Membresía</span>
-            <span class="membership-summary-status">ACTIVA</span>
-          </div>
-
-          <p class="membership-summary-plan-label">Plan actual</p>
-          <h3 class="membership-summary-plan">Elite</h3>
-
-          <div class="membership-summary-data">
-            <div class="summary-row"><span class="summary-label">Próximo pago</span><span class="summary-value">04 Nov 2026</span></div>
-            <div class="summary-row"><span class="summary-label">Monto</span><span class="summary-value">S/ 129.00</span></div>
-          </div>
-
-          <a th:href="@{/membresia}" class="btn-outline-block">Gestionar Membresía</a>
-        </section>
-
-        <div class="profile-shortcuts">
-          <a th:href="@{/seguimiento}" class="profile-shortcut">Seguimiento Físico</a>
-          <a th:href="@{/pedidos}" class="profile-shortcut">Mis Pedidos</a>
         </div>
       </div>
+    </header>
 
-      <div class="profile-right">
-        <section class="profile-card">
-          <div class="panel-head">
-            <h2 class="panel-title">Próximas Clases</h2>
-            <a th:href="@{/clases}" class="panel-link">Ver clases</a>
-          </div>
+    <main class="profile-container">
+      <div class="page-header">
+        <h1 class="text-3xl font-black uppercase tracking-wider text-zinc-100">Perfil de Atleta</h1>
+        <p class="page-subtitle">Gestiona tu cuenta, membresía, clases y progreso.</p>
+      </div>
 
-          <div class="upcoming-list">
-            <div class="upcoming-item">
-              <div>
-                <h4 class="upcoming-title">Spinning</h4>
-                <p class="upcoming-meta">05 Oct 2026 • 18:00 - 19:00</p>
+      <div class="profile-grid">
+        <div class="profile-left">
+          <section class="profile-card">
+            <div class="profile-person">
+              <div class="profile-photo">
+                <img th:src="@{/imagenes/perfil-baki.jpg}" class="profile-photo-img" alt="Avatar" />
               </div>
-              <button class="cancel-class-btn">Cancelar</button>
+              <div>
+                <h2 class="profile-name">Baki Hanma</h2>
+                <p class="profile-role">Miembro PowerFit</p>
+              </div>
             </div>
 
-            <div class="upcoming-item">
+            <div class="profile-data">
               <div>
-                <h4 class="upcoming-title">Funcional</h4>
-                <p class="upcoming-meta">06 Oct 2026 • 19:00 - 20:00</p>
+                <span class="profile-data-label">Correo</span>
+                <span class="profile-data-value">baki.hanma@gmail.com</span>
               </div>
-              <button class="cancel-class-btn">Cancelar</button>
+              <div>
+                <span class="profile-data-label">Teléfono</span>
+                <span class="profile-data-value">+51 999 999 999</span>
+              </div>
+              <div>
+                <span class="profile-data-label">DNI</span>
+                <span class="profile-data-value">74859632</span>
+              </div>
+              <div>
+                <span class="profile-data-label">Fecha de nacimiento</span>
+                <span class="profile-data-value">02 de abril de 2000</span>
+              </div>
             </div>
+
+            <button class="btn-outline-block">Editar Perfil</button>
+          </section>
+
+          <section class="profile-card">
+            <div class="membership-summary-head">
+              <span class="membership-summary-label">Membresía</span>
+              <span class="membership-summary-status">ACTIVA</span>
+            </div>
+
+            <p class="membership-summary-plan-label">Plan actual</p>
+            <h3 class="membership-summary-plan">Elite</h3>
+
+            <div class="membership-summary-data">
+              <div class="summary-row">
+                <span class="summary-label">Próximo pago</span>
+                <span class="summary-value">04 Nov 2026</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Monto</span>
+                <span class="summary-value">S/ 129.00</span>
+              </div>
+            </div>
+
+            <a th:href="@{/membresia}" class="btn-outline-block">Gestionar Membresía</a>
+          </section>
+
+          <div class="profile-shortcuts">
+            <a th:href="@{/seguimiento}" class="profile-shortcut">Seguimiento Físico</a>
+            <a th:href="@{/pedidos}" class="profile-shortcut">Mis Pedidos</a>
           </div>
-        </section>
+        </div>
 
-        <section class="profile-card">
-          <h2 class="panel-title mb-6">Historial de Pagos</h2>
+        <div class="profile-right">
+          <section class="profile-card">
+            <div class="panel-head">
+              <h2 class="panel-title">Próximas Clases</h2>
+              <a th:href="@{/clases}" class="panel-link">Ver clases</a>
+            </div>
 
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr class="data-table-head">
-                  <th class="data-table-head-cell">Fecha</th>
-                  <th class="data-table-head-cell">Descripción</th>
-                  <th class="data-table-head-cell">Monto</th>
-                  <th class="data-table-head-cell">Estado</th>
-                </tr>
-              </thead>
-              <tbody class="data-table-body">
-                <tr><td class="data-table-cell">04 Oct 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
-                <tr><td class="data-table-cell">04 Sep 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
-                <tr><td class="data-table-cell">04 Ago 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+            <div class="upcoming-list">
+              <div class="upcoming-item">
+                <div>
+                  <h4 class="upcoming-title">Spinning</h4>
+                  <p class="upcoming-meta">05 Oct 2026 • 18:00 - 19:00</p>
+                </div>
+                <button class="cancel-class-btn">Cancelar</button>
+              </div>
+
+              <div class="upcoming-item">
+                <div>
+                  <h4 class="upcoming-title">Funcional</h4>
+                  <p class="upcoming-meta">06 Oct 2026 • 19:00 - 20:00</p>
+                </div>
+                <button class="cancel-class-btn">Cancelar</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="profile-card">
+            <h2 class="panel-title mb-6">Historial de Pagos</h2>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr class="data-table-head">
+                    <th class="data-table-head-cell">Fecha</th>
+                    <th class="data-table-head-cell">Descripción</th>
+                    <th class="data-table-head-cell">Monto</th>
+                    <th class="data-table-head-cell">Estado</th>
+                  </tr>
+                </thead>
+                <tbody class="data-table-body">
+                  <tr>
+                    <td class="data-table-cell">04 Oct 2026</td>
+                    <td>Plan Elite - Mensual</td>
+                    <td>S/ 129.00</td>
+                    <td><span class="text-emerald-300">PAGADO</span></td>
+                  </tr>
+                  <tr>
+                    <td class="data-table-cell">04 Sep 2026</td>
+                    <td>Plan Elite - Mensual</td>
+                    <td>S/ 129.00</td>
+                    <td><span class="text-emerald-300">PAGADO</span></td>
+                  </tr>
+                  <tr>
+                    <td class="data-table-cell">04 Ago 2026</td>
+                    <td>Plan Elite - Mensual</td>
+                    <td>S/ 129.00</td>
+                    <td><span class="text-emerald-300">PAGADO</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-logo">POWERFIT</div>
-      <div class="footer-links">
-        <a href="#" class="footer-link">Política de Privacidad</a>
-        <a href="#" class="footer-link">Términos de Servicio</a>
-        <a href="#" class="footer-link">Soporte</a>
-        <a href="#" class="footer-link">Instagram</a>
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
       </div>
-      <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-    </div>
-  </footer>
-
-</body>
+    </footer>
+  </body>
 </html>

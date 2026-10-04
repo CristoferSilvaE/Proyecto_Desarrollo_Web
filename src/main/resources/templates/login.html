@@ -1,42 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PowerFit - Login</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
-</head>
-<body class="auth-body login-body" th:style="'background-image: linear-gradient(to bottom, rgba(10,10,12,0.85), rgba(10,10,12,0.95)), url(' + @{/imagenes/login1.jpg} + ');'">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
+  <body class="auth-body login-body" th:style="'background-image: linear-gradient(to bottom, rgba(10,10,12,0.85), rgba(10,10,12,0.95)), url(' + @{/imagenes/login1.jpg} + ');'">
+    <div class="auth-watermark">PowerFit</div>
 
-  <div class="auth-watermark">PowerFit</div>
-
-  <div class="login-card">
-    <div class="auth-brand">
-      <h1 class="auth-brand-title">POWERFIT</h1>
-      <p class="auth-brand-subtitle">Rendimiento Máximo</p>
-    </div>
-
-    <form class="auth-form" onsubmit="event.preventDefault()">
-      <div>
-        <label class="auth-label">Correo Electrónico</label>
-        <input type="email" name="correo" placeholder="atleta@ejemplo.com" class="login-input" required>
+    <div class="login-card">
+      <div class="auth-brand">
+        <h1 class="auth-brand-title">POWERFIT</h1>
+        <p class="auth-brand-subtitle">Rendimiento Máximo</p>
       </div>
 
-      <div>
-        <label class="auth-label">Contraseña</label>
-        <input type="password" name="password" placeholder="••••••••" class="login-input" required>
+      <form class="auth-form" th:action="@{/login}" method="post">
+        <div th:if="${error}" class="form-error" th:text="${error}">Error</div>
+        <div>
+          <label class="auth-label">Correo Electrónico</label>
+          <input type="email" name="correo" placeholder="atleta@ejemplo.com" class="login-input" required />
+        </div>
+
+        <div>
+          <label class="auth-label">Contraseña</label>
+          <input type="password" name="password" placeholder="••••••••" class="login-input" required />
+        </div>
+
+        <button type="submit" class="auth-submit">Ingresar</button>
+      </form>
+
+      <div class="auth-footer">
+        ¿No tienes una cuenta?
+        <a th:href="@{/registro}" class="auth-link ml-1">REGÍSTRATE</a>
       </div>
-
-      <a th:href="@{/}" class="auth-submit">Ingresar</a>
-    </form>
-
-    <div class="auth-footer">
-      ¿No tienes una cuenta?
-      <a th:href="@{/registro}" class="auth-link ml-1">REGÍSTRATE</a>
     </div>
-  </div>
-</body>
+  </body>
 </html>

@@ -32,11 +32,6 @@ public class NavegacionController {
     return "registro";
   }
 
-  @GetMapping("/membresia")
-  public String membresia() {
-    return "membresia";
-  }
-
   @GetMapping("/carrito")
   public String carrito() {
     return "carrito";
