@@ -1,157 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PowerFit - Reserva de Clases</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen justify-between">
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+  </head>
 
-    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a th:href="@{/}" class="font-black text-2xl tracking-wider text-white">POWERFIT</a>
+  <body class="app-body">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
 
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-                <a th:href="@{/}" class="hover:text-white transition">Inicio</a>
-                <a th:href="@{/membresia}" class="hover:text-white transition">Membresía</a>
-                <a th:href="@{/tienda}" class="hover:text-white transition">Tienda</a>
-                <a th:href="@{/clases}" class="text-white border-b-2 border-indigo-400 pb-1">Clases</a>
-                <a th:href="@{/perfil}" class="hover:text-white transition">Perfil</a>
-            </nav>
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link-active">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+        </nav>
 
-            <div class="flex items-center gap-5 text-zinc-400">
-                <a th:href="@{/carrito}" class="hover:text-white transition relative" title="Carrito">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-                    </svg>
-                    <span class="absolute -top-2 -right-2 w-4 h-4 bg-indigo-300 text-zinc-950 font-bold text-[9px] rounded-full flex items-center justify-center">2</span>
-                </a>
+        <div class="navbar-actions">
+          <!-- CARRITO -->
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+          </a>
 
-                <a th:href="@{/perfil}" class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition">
-                    <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="w-full h-full object-cover">
-                </a>
-            </div>
+          <!-- PERFIL -->
+          <a th:href="@{/perfil}" class="avatar-link">
+            <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image" />
+          </a>
         </div>
+      </div>
     </header>
 
+    <!-- CONTENIDO -->
+    <main class="page-container">
+      <!-- ENCABEZADO -->
+      <div class="page-header">
+        <h1 class="page-title">Reserva una Clase</h1>
 
-    <main class="max-w-7xl mx-auto px-6 py-12 w-full">
-        <div class="mb-8">
-            <h1 class="text-4xl font-black uppercase tracking-wider text-zinc-100">RESERVA UNA CLASE</h1>
-            <p class="text-zinc-400 text-xs mt-1">Selecciona tu sesión y asegura tu lugar.</p>
-        </div>
+        <p class="page-subtitle">Selecciona tu sesión y asegura tu plaza.</p>
+      </div>
 
-        <div class="flex flex-wrap gap-3 mb-10">
-            <button class="px-5 py-2 bg-indigo-200 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded-md">Todas</button>
-            <button class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white font-semibold text-xs uppercase tracking-wider rounded-md">Musculación</button>
-            <button class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white font-semibold text-xs uppercase tracking-wider rounded-md">Spinning</button>
-            <button class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white font-semibold text-xs uppercase tracking-wider rounded-md">Funcional</button>
-            <button class="px-5 py-2 bg-[#121318] border border-zinc-800 text-zinc-400 hover:text-white font-semibold text-xs uppercase tracking-wider rounded-md">Zumba</button>
-        </div>
+      <!-- FILTROS -->
+      <div class="filter-container">
+        <a th:href="@{/clases}" class="filter-button" th:classappend="${categoriaSeleccionada == null or categoriaSeleccionada.isBlank()} ? ' filter-button-active' : ''">Todas</a>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            <article class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row">
-                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
-                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600" class="w-full h-full object-cover" alt="Musculación">
-                    <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Fuerza</span>
-                </div>
-                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-3">Musculación</h3>
-                        <div class="space-y-2 text-xs text-zinc-400">
-                            <p><span class="text-zinc-500">Instructor:</span> Carlos Medina</p>
-                            <p><span class="text-zinc-500">Fecha:</span> 05 Oct 2026</p>
-                            <p><span class="text-zinc-500">Horario:</span> 07:00 - 08:00</p>
-                            <p><span class="text-zinc-500">Plazas disponibles:</span> 8</p>
-                        </div>
-                    </div>
-                    <button class="mt-5 w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">
-                        Reservar
-                    </button>
-                </div>
-            </article>
-            
-            <article class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row">
-                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
-                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600" class="w-full h-full object-cover" alt="Spinning">
-                    <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Cardio</span>
-                </div>
-                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-3">Spinning</h3>
-                        <div class="space-y-2 text-xs text-zinc-400">
-                            <p><span class="text-zinc-500">Instructor:</span> Valeria Ramos</p>
-                            <p><span class="text-zinc-500">Fecha:</span> 05 Oct 2026</p>
-                            <p><span class="text-zinc-500">Horario:</span> 18:00 - 19:00</p>
-                            <p><span class="text-zinc-500">Cupos:</span> 5 disponibles</p>
-                        </div>
-                    </div>
-                    <button class="mt-5 w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">
-                        Reservar
-                    </button>
-                </div>
-            </article>
-            
-            <article class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row">
-                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
-                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=600" class="w-full h-full object-cover" alt="Funcional">
-                    <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Funcional</span>
-                </div>
-                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-3">Funcional</h3>
-                        <div class="space-y-2 text-xs text-zinc-400">
-                            <p><span class="text-zinc-500">Instructor:</span> Luis Torres</p>
-                            <p><span class="text-zinc-500">Fecha:</span> 06 Oct 2026</p>
-                            <p><span class="text-zinc-500">Horario:</span> 19:00 - 20:00</p>
-                            <p><span class="text-zinc-500">Cupos:</span> 10 disponibles</p>
-                        </div>
-                    </div>
-                    <button class="mt-5 w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">
-                        Reservar
-                    </button>
-                </div>
-            </article>
-            
-            <article class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden flex flex-col sm:flex-row">
-                <div class="sm:w-5/12 h-48 sm:h-auto relative shrink-0">
-                    <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600" class="w-full h-full object-cover" alt="Zumba">
-                    <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-black/80 border border-zinc-700 rounded text-zinc-300">Cardio</span>
-                </div>
-                <div class="p-6 sm:w-7/12 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xl font-black uppercase tracking-wide text-zinc-100 mb-3">Zumba</h3>
-                        <div class="space-y-2 text-xs text-zinc-400">
-                            <p><span class="text-zinc-500">Instructor:</span> Andrea Flores</p>
-                            <p><span class="text-zinc-500">Fecha:</span> 07 Oct 2026</p>
-                            <p><span class="text-zinc-500">Horario:</span> 20:00 - 21:00</p>
-                            <p><span class="text-zinc-500">Cupos:</span> 12 disponibles</p>
-                        </div>
-                    </div>
-                    <button class="mt-5 w-full py-2.5 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition">
-                        Reservar
-                    </button>
-                </div>
-            </article>
-            
-        </div>
+        <a
+          th:each="categoria : ${categorias}"
+          th:href="@{/clases(categoria=${categoria})}"
+          th:text="${categoria}"
+          class="filter-button"
+          th:classappend="${categoriaSeleccionada != null and #strings.equalsIgnoreCase(categoriaSeleccionada, categoria)} ? ' filter-button-active' : ''">
+          Categoría
+        </a>
+      </div>
+
+      <!-- SIN HORARIOS -->
+      <section th:if="${horarios == null or #lists.isEmpty(horarios)}" class="empty-state">
+        <h2 class="empty-title">No hay clases disponibles</h2>
+
+        <p class="empty-text">No existen horarios activos para esta selección.</p>
+      </section>
+
+      <!-- LISTA DE CLASES -->
+      <div th:if="${horarios != null and !#lists.isEmpty(horarios)}" class="class-grid">
+        <!-- TARJETA -->
+        <article
+          th:each="horario : ${horarios}"
+          th:with="reservadas=${reservasPorHorario[horario.idHorario] != null ? reservasPorHorario[horario.idHorario] : 0},
+                 plazas=${horario.capacidad - reservadas}"
+          class="class-card">
+          <!-- IMAGEN -->
+          <div class="class-image-container">
+            <img
+              th:if="${horario.clase.imagen != null and !horario.clase.imagen.isBlank()}"
+              th:src="@{/imagenes/{imagen}(imagen=${horario.clase.imagen})}"
+              th:alt="${horario.clase.nombre}"
+              class="class-image" />
+
+            <div th:if="${horario.clase.imagen == null or horario.clase.imagen.isBlank()}" class="image-placeholder">Sin imagen</div>
+
+            <span class="class-badge" th:text="${horario.clase.categoria}">Categoría</span>
+          </div>
+
+          <!-- INFORMACIÓN -->
+          <div class="class-content">
+            <div>
+              <h3 class="class-title" th:text="${horario.clase.nombre}">Clase</h3>
+
+              <p class="class-description" th:text="${horario.clase.descripcion != null ? horario.clase.descripcion : 'Clase PowerFit'}">Descripción</p>
+
+              <!-- DATOS -->
+              <div class="class-data">
+                <p>
+                  <span class="data-label">Instructor:</span>
+
+                  <span class="data-value" th:text="${horario.instructor.nombres + ' ' + horario.instructor.apellidos}">Instructor</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Fecha:</span>
+
+                  <span class="data-value" th:text="${#temporals.format(horario.fecha, 'dd/MM/yyyy')}">Fecha</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Horario:</span>
+
+                  <span class="data-value" th:text="${#temporals.format(horario.horaInicio, 'HH:mm') + ' - ' + #temporals.format(horario.horaFin, 'HH:mm')}">Horario</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Sala:</span>
+
+                  <span class="data-value" th:text="${horario.sala != null and !horario.sala.isBlank() ? horario.sala : 'Por asignar'}">Sala</span>
+                </p>
+
+                <p>
+                  <span class="data-label">Plazas disponibles:</span>
+
+                  <span th:text="${plazas}" th:class="${plazas <= 3 ? 'limited-value' : 'available-value'}">0</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- SIN PLAZAS -->
+            <button th:if="${plazas <= 0}" type="button" class="btn-disabled class-action" disabled>Sin plazas disponibles</button>
+
+            <!-- NO LOGUEADO -->
+            <a th:if="${plazas > 0 and cliente == null}" th:href="@{/login}" class="btn-primary class-action">Inicia sesión para reservar</a>
+
+            <!-- LOGUEADO -->
+            <form th:if="${plazas > 0 and cliente != null}" th:action="@{/clases/reservar}" method="post" class="class-action">
+              <input type="hidden" name="idHorario" th:value="${horario.idHorario}" />
+
+              <button type="submit" class="btn-primary">Reservar</button>
+            </form>
+          </div>
+        </article>
+      </div>
     </main>
 
-    <footer class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="font-black text-sm text-white">POWERFIT</div>
-            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
-                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
-                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
-                <a href="#" class="hover:text-zinc-300">Soporte</a>
-                <a href="#" class="hover:text-zinc-300">Instagram</a>
-            </div>
-            <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-        </div>
-    </footer>
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
 
-</body>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
+        </div>
+
+        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+      </div>
+    </footer>
+  </body>
 </html>

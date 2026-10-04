@@ -1,136 +1,121 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerFit - Carrito</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerFit - Carrito</title>
+  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
 </head>
-<body class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen justify-between">
+<body class="app-body">
 
-    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a th:href="@{/}" class="font-black text-2xl tracking-wider text-white">POWERFIT</a>
+  <header class="navbar">
+    <div class="navbar-container">
+      <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
 
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-                <a th:href="@{/}" class="hover:text-white transition">Inicio</a>
-                <a th:href="@{/membresia}" class="hover:text-white transition">Membresía</a>
-                <a th:href="@{/tienda}" class="text-white border-b-2 border-indigo-400 pb-1">Tienda</a>
-                <a th:href="@{/clases}" class="hover:text-white transition">Clases</a>
-                <a th:href="@{/perfil}" class="hover:text-white transition">Perfil</a>
-            </nav>
+      <nav class="navbar-menu">
+        <a th:href="@{/}" class="nav-link">Inicio</a>
+        <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+        <a th:href="@{/tienda}" class="nav-link-active">Tienda</a>
+        <a th:href="@{/clases}" class="nav-link">Clases</a>
+        <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+      </nav>
 
-            <div class="flex items-center gap-5 text-zinc-400">
-                <a th:href="@{/carrito}" class="hover:text-white transition relative" title="Carrito">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-                    </svg>
-                    <span class="absolute -top-2 -right-2 w-4 h-4 bg-indigo-300 text-zinc-950 font-bold text-[9px] rounded-full flex items-center justify-center">2</span>
-                </a>
+      <div class="navbar-actions">
+        <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+          <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+          </svg>
+        </a>
 
-                <a th:href="@{/perfil}" class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition">
-                    <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="w-full h-full object-cover">
-                </a>
+        <a th:href="@{/perfil}" class="avatar-link">
+          <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image">
+        </a>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="page-container-sm">
+    <div class="page-header">
+      <h1 class="page-title text-indigo-200">Carrito</h1>
+      <p class="page-subtitle">Revisa tus productos antes de finalizar la compra.</p>
+    </div>
+
+    <div class="cart-layout">
+      <div class="cart-items">
+        <div class="cart-item">
+          <div class="cart-item-main">
+            <div class="cart-thumb">
+              <img th:src="@{/imagenes/tienda-proteina-goldPro.jpg}" class="cart-thumb-img" alt="Premium Whey Protein 2kg">
             </div>
-        </div>
-    </header>
-
-
-    <main class="max-w-6xl mx-auto px-6 py-12 w-full">
-        <div class="mb-8">
-            <h1 class="text-4xl font-black uppercase tracking-wider text-indigo-200">CARRITO</h1>
-            <p class="text-zinc-400 text-xs mt-1">Revisa tus productos antes de finalizar la compra.</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div class="lg:col-span-2 space-y-4">
-
-                <div class="bg-[#121318] border border-zinc-800/80 rounded-lg p-4 flex gap-4 items-center justify-between">
-                    <div class="flex gap-4 items-center">
-                        <div class="w-20 h-20 bg-white rounded overflow-hidden shrink-0">
-                            <img th:src="@{/imagenes/tienda-proteina-goldPro.jpg}" class="w-full h-full object-contain" alt="Premium Whey Protein 2kg">
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold uppercase tracking-wide text-zinc-100">Premium Whey Protein 2kg</h3>
-                            <p class="text-zinc-500 text-[11px] mb-3">Nutrición Deportiva</p>
-                            <div class="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded px-2 py-1 w-max">
-                                <button class="text-zinc-400 hover:text-white px-1">−</button>
-                                <span class="text-xs font-semibold px-2">1</span>
-                                <button class="text-zinc-400 hover:text-white px-1">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <button class="text-zinc-500 hover:text-red-400 mb-5">✕</button>
-                        <p class="font-bold text-indigo-200">S/ 169.00</p>
-                    </div>
-                </div>
-
-                <div class="bg-[#121318] border border-zinc-800/80 rounded-lg p-4 flex gap-4 items-center justify-between">
-                    <div class="flex gap-4 items-center">
-                        <div class="w-20 h-20 bg-white rounded overflow-hidden shrink-0">
-                            <img th:src="@{/imagenes/tienda-preentreno-nitrox.jpg}" class="w-full h-full object-contain" alt="Hyperion Pre-Workout 300g">
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold uppercase tracking-wide text-zinc-100">Hyperion Pre-Workout 300g</h3>
-                            <p class="text-zinc-500 text-[11px] mb-3">Nutrición Deportiva</p>
-                            <div class="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded px-2 py-1 w-max">
-                                <button class="text-zinc-400 hover:text-white px-1">−</button>
-                                <span class="text-xs font-semibold px-2">1</span>
-                                <button class="text-zinc-400 hover:text-white px-1">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <button class="text-zinc-500 hover:text-red-400 mb-5">✕</button>
-                        <p class="font-bold text-indigo-200">S/ 145.00</p>
-                    </div>
-                </div>
-
-                <a th:href="@{/tienda}" class="inline-block text-xs text-zinc-400 hover:text-white mt-3">← Seguir comprando</a>
+            <div>
+              <h3 class="cart-item-title">Premium Whey Protein 2kg</h3>
+              <p class="cart-item-category">Nutrición Deportiva</p>
+              <div class="quantity-control">
+                <button class="quantity-button">−</button>
+                <span class="quantity-value">1</span>
+                <button class="quantity-button">+</button>
+              </div>
             </div>
-
-            <aside class="bg-[#121318] border border-zinc-800/80 rounded-lg p-6 lg:sticky lg:top-28">
-                <h2 class="text-lg font-black uppercase tracking-wide mb-6">Resumen</h2>
-
-                <div class="space-y-4 text-sm">
-                    <div class="flex justify-between text-zinc-400">
-                        <span>Subtotal (2 artículos)</span>
-                        <span class="text-zinc-200">S/ 314.00</span>
-                    </div>
-
-                    <div class="flex justify-between text-zinc-400">
-                        <span>Envío</span>
-                        <span class="text-zinc-300 text-right">Calculado en el checkout</span>
-                    </div>
-
-                    <div class="border-t border-zinc-800 pt-4 flex justify-between items-end">
-                        <span class="font-bold uppercase">Total</span>
-                        <span class="text-2xl font-black text-indigo-200">S/ 314.00</span>
-                    </div>
-                </div>
-
-                <a th:href="@{/checkout}"
-                    class="block text-center w-full mt-7 py-3 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-black text-xs uppercase tracking-wider rounded transition">
-                    Finalizar Compra
-                </a>
-            </aside>
+          </div>
+          <div class="cart-item-side">
+            <button class="cart-remove">✕</button>
+            <p class="cart-item-price">S/ 169.00</p>
+          </div>
         </div>
-    </main>
 
-    <footer class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="font-black text-sm text-white">POWERFIT</div>
-            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
-                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
-                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
-                <a href="#" class="hover:text-zinc-300">Soporte</a>
-                <a href="#" class="hover:text-zinc-300">Instagram</a>
+        <div class="cart-item">
+          <div class="cart-item-main">
+            <div class="cart-thumb">
+              <img th:src="@{/imagenes/tienda-preEntreno-nitrox.jpg}" class="cart-thumb-img" alt="Hyperion Pre-Workout 300g">
             </div>
-            <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+            <div>
+              <h3 class="cart-item-title">Hyperion Pre-Workout 300g</h3>
+              <p class="cart-item-category">Nutrición Deportiva</p>
+              <div class="quantity-control">
+                <button class="quantity-button">−</button>
+                <span class="quantity-value">1</span>
+                <button class="quantity-button">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-item-side">
+            <button class="cart-remove">✕</button>
+            <p class="cart-item-price">S/ 145.00</p>
+          </div>
         </div>
-    </footer>
+
+        <a th:href="@{/tienda}" class="continue-shopping">← Seguir comprando</a>
+      </div>
+
+      <aside class="cart-summary">
+        <h2 class="cart-summary-title">Resumen</h2>
+
+        <div class="cart-summary-list">
+          <div class="cart-summary-row"><span>Subtotal (2 artículos)</span><span class="cart-summary-value">S/ 314.00</span></div>
+          <div class="cart-summary-row"><span>Envío</span><span class="cart-summary-value">Calculado en el checkout</span></div>
+          <div class="cart-total-row"><span class="cart-total-label">Total</span><span class="cart-total">S/ 314.00</span></div>
+        </div>
+
+        <a th:href="@{/checkout}" class="btn-primary-block mt-7">Finalizar Compra</a>
+      </aside>
+    </div>
+  </main>
+
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo">POWERFIT</div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Política de Privacidad</a>
+        <a href="#" class="footer-link">Términos de Servicio</a>
+        <a href="#" class="footer-link">Soporte</a>
+        <a href="#" class="footer-link">Instagram</a>
+      </div>
+      <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+    </div>
+  </footer>
 
 </body>
 </html>

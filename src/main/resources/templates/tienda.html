@@ -6,254 +6,111 @@
 
     <title>PowerFit - Tienda</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
   </head>
 
-  <body
-    class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen justify-between"
-  >
+  <body class="app-body">
     <!-- NAVBAR -->
-    <header
-      class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50"
-    >
-      <div
-        class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between"
-      >
-        <!-- LOGO -->
-        <a th:href="@{/}" class="font-black text-2xl tracking-wider text-white">
-          POWERFIT
-        </a>
+    <header class="navbar">
+      <div class="navbar-container">
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
 
-        <!-- MENÚ -->
-        <nav
-          class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400"
-        >
-          <a th:href="@{/}" class="hover:text-white transition"> Inicio </a>
-
-          <a th:href="@{/membresia}" class="hover:text-white transition">
-            Membresía
-          </a>
-
-          <a
-            th:href="@{/tienda}"
-            class="text-white border-b-2 border-indigo-400 pb-1"
-          >
-            Tienda
-          </a>
-
-          <a th:href="@{/clases}" class="hover:text-white transition">
-            Clases
-          </a>
-
-          <a th:href="@{/perfil}" class="hover:text-white transition">
-            Perfil
-          </a>
+        <nav class="navbar-menu">
+          <a th:href="@{/}" class="nav-link">Inicio</a>
+          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+          <a th:href="@{/tienda}" class="nav-link-active">Tienda</a>
+          <a th:href="@{/clases}" class="nav-link">Clases</a>
+          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
         </nav>
 
-        <!-- DERECHA -->
-        <div class="flex items-center gap-5 text-zinc-400">
-          <!-- CARRITO -->
-          <a
-            th:href="@{/carrito}"
-            class="hover:text-white transition relative"
-            title="Carrito"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+        <div class="navbar-actions">
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"
-              />
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
           </a>
 
-          <!-- PERFIL -->
-          <a
-            th:href="@{/perfil}"
-            class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition"
-          >
-            <img
-              th:src="@{/imagenes/perfil-baki.jpg}"
-              alt="Avatar"
-              class="w-full h-full object-cover"
-            />
+          <a th:href="@{/perfil}" class="avatar-link">
+            <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image" />
           </a>
         </div>
       </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="max-w-7xl mx-auto px-6 py-12 w-full">
-      <!-- TÍTULO -->
-      <div class="text-center mb-12">
-        <h1
-          class="text-4xl md:text-5xl font-black uppercase tracking-wider text-zinc-100"
-        >
-          TIENDA POWERFIT
-        </h1>
+    <!-- CONTENIDO -->
+    <main class="page-container">
+      <!-- CABECERA -->
+      <div class="store-header">
+        <h1 class="store-title">Tienda PowerFit</h1>
 
-        <p class="text-zinc-400 text-xs md:text-sm mt-2">
-          Tu arsenal completo para el máximo rendimiento deportivo.
-        </p>
+        <p class="store-subtitle">Tu arsenal completo para el máximo rendimiento deportivo.</p>
       </div>
 
       <!-- PRODUCTOS -->
       <section>
-        <div class="flex items-center gap-4 mb-8">
-          <h2
-            class="text-sm font-black uppercase tracking-widest text-zinc-300 shrink-0"
-          >
-            PRODUCTOS
-          </h2>
-
-          <div class="h-[1px] bg-zinc-800/80 w-full"></div>
+        <div class="section-heading">
+          <h2 class="section-title">Productos</h2>
+          <div class="section-line"></div>
         </div>
 
-        <!-- SI NO EXISTEN PRODUCTOS -->
-        <div
-          th:if="${productos == null or #lists.isEmpty(productos)}"
-          class="bg-[#121318] border border-zinc-800 rounded-xl p-12 text-center"
-        >
-          <h3 class="text-xl font-black uppercase text-zinc-200 mb-3">
-            No hay productos disponibles
-          </h3>
+        <!-- SIN PRODUCTOS -->
+        <div th:if="${productos == null or #lists.isEmpty(productos)}" class="empty-state">
+          <h3 class="empty-title">No hay productos disponibles</h3>
 
-          <p class="text-sm text-zinc-500">
-            En este momento no tenemos productos activos en la tienda.
-          </p>
+          <p class="empty-text">En este momento no tenemos productos activos en la tienda.</p>
         </div>
 
-        <!-- GRID DE PRODUCTOS -->
-        <div
-          th:if="${productos != null and !#lists.isEmpty(productos)}"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <!-- TARJETA DINÁMICA -->
-          <article
-            th:each="producto : ${productos}"
-            class="bg-[#121318] border border-zinc-800/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between"
-          >
+        <!-- PRODUCTOS DESDE MYSQL -->
+        <div th:if="${productos != null and !#lists.isEmpty(productos)}" class="product-grid">
+          <article th:each="producto : ${productos}" class="product-card">
             <div>
               <!-- IMAGEN -->
-              <div
-                class="w-full h-52 bg-white rounded-lg overflow-hidden mb-4 relative"
-              >
-                <img
-                  th:if="${producto.imagen != null and !producto.imagen.isBlank()}"
-                  th:src="@{/imagenes/{imagen}(imagen=${producto.imagen})}"
-                  th:alt="${producto.nombre}"
-                  class="w-full h-full object-contain"
-                />
+              <div class="product-image-container">
+                <img th:if="${producto.imagen != null and !producto.imagen.isBlank()}" th:src="@{/imagenes/{imagen}(imagen=${producto.imagen})}" th:alt="${producto.nombre}" class="product-image" />
 
-                <!-- SIN IMAGEN -->
-                <div
-                  th:if="${producto.imagen == null or producto.imagen.isBlank()}"
-                  class="w-full h-full flex items-center justify-center bg-zinc-100 text-zinc-500 text-xs font-semibold uppercase"
-                >
-                  Sin imagen
-                </div>
+                <div th:if="${producto.imagen == null or producto.imagen.isBlank()}" class="product-placeholder">Sin imagen</div>
               </div>
 
               <!-- CATEGORÍA -->
-              <span
-                class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1"
-                th:text="${producto.categoria}"
-              >
-                Categoría
-              </span>
+              <span class="product-category" th:text="${producto.categoria}">Categoría</span>
 
               <!-- NOMBRE -->
-              <h3
-                class="text-base font-bold tracking-wide text-zinc-100 mb-2"
-                th:text="${producto.nombre}"
-              >
-                Nombre del producto
-              </h3>
+              <h3 class="product-title" th:text="${producto.nombre}">Producto</h3>
 
               <!-- DESCRIPCIÓN -->
-              <p
-                class="text-xs text-zinc-500 leading-5 min-h-[40px]"
-                th:text="${producto.descripcion != null ? producto.descripcion : 'Producto PowerFit'}"
-              >
-                Descripción del producto
-              </p>
+              <p class="product-description" th:text="${producto.descripcion != null ? producto.descripcion : 'Producto PowerFit'}">Descripción</p>
             </div>
 
             <!-- PARTE INFERIOR -->
-            <div class="mt-5">
-              <!-- STOCK -->
-              <div class="flex items-center justify-between mb-4">
-                <span
-                  class="text-[10px] uppercase tracking-wider text-zinc-500"
-                >
-                  Disponibilidad
-                </span>
+            <div class="product-footer">
+              <!-- DISPONIBILIDAD -->
+              <div class="stock-row">
+                <span class="stock-label">Disponibilidad</span>
 
-                <!-- CON STOCK -->
-                <span
-                  th:if="${producto.stock > 0}"
-                  class="text-[10px] text-emerald-400 font-semibold"
-                >
-                  Disponible
-                </span>
+                <span th:if="${producto.stock > 0}" class="stock-available">Disponible</span>
 
-                <!-- SIN STOCK -->
-                <span
-                  th:if="${producto.stock <= 0}"
-                  class="text-[10px] text-red-400 font-semibold"
-                >
-                  Agotado
-                </span>
+                <span th:if="${producto.stock <= 0}" class="stock-out">Agotado</span>
               </div>
 
               <!-- PRECIO + BOTÓN -->
-              <div class="flex items-center justify-between gap-4">
-                <!-- PRECIO -->
-                <span
-                  class="text-lg font-extrabold text-indigo-200"
-                  th:text="${'S/ ' + #numbers.formatDecimal(producto.precio, 1, 2)}"
-                >
-                  S/ 0.00
-                </span>
+              <div class="product-bottom">
+                <span class="product-price" th:text="${'S/ ' + #numbers.formatDecimal(producto.precio, 1, 2)}">S/ 0.00</span>
 
-                <!-- AÑADIR -->
-                <button
-                  th:if="${producto.stock > 0}"
-                  type="button"
-                  class="px-4 py-2 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded flex items-center gap-2 transition"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17"
-                    />
+                <!-- DISPONIBLE -->
+                <button th:if="${producto.stock > 0}" type="button" class="product-button">
+                  <svg class="product-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17" />
                   </svg>
 
                   Añadir
                 </button>
 
                 <!-- AGOTADO -->
-                <button
-                  th:if="${producto.stock <= 0}"
-                  type="button"
-                  disabled
-                  class="px-4 py-2 bg-zinc-800 text-zinc-600 font-bold text-xs uppercase tracking-wider rounded cursor-not-allowed"
-                >
-                  Agotado
-                </button>
+                <button th:if="${producto.stock <= 0}" type="button" disabled class="product-button-disabled">Agotado</button>
               </div>
             </div>
           </article>
@@ -262,22 +119,15 @@
     </main>
 
     <!-- FOOTER -->
-    <footer
-      class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12"
-    >
-      <div
-        class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4"
-      >
-        <div class="font-black text-sm text-white">POWERFIT</div>
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">POWERFIT</div>
 
-        <div class="flex flex-wrap gap-6 uppercase tracking-wider">
-          <a href="#" class="hover:text-zinc-300"> Política de Privacidad </a>
-
-          <a href="#" class="hover:text-zinc-300"> Términos de Servicio </a>
-
-          <a href="#" class="hover:text-zinc-300"> Soporte </a>
-
-          <a href="#" class="hover:text-zinc-300"> Instagram </a>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Términos de Servicio</a>
+          <a href="#" class="footer-link">Soporte</a>
+          <a href="#" class="footer-link">Instagram</a>
         </div>
 
         <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>

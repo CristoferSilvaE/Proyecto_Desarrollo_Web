@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
-  boolean existsByCliente_IdClienteAndHorarioClase_IdHorario(Long idCliente, Long idHorario);
+  boolean existsByCliente_IdClienteAndHorario_IdHorario(Long idCliente, Long idHorario);
 
   List<Reserva> findByCliente_IdClienteOrderByFechaReservaDesc(Long idCliente);
 
-  long countByHorarioClase_IdHorarioAndEstado(Long idHorario, String estado);
+  long countByHorario_IdHorarioAndEstado(Long idHorario, String estado);
 }

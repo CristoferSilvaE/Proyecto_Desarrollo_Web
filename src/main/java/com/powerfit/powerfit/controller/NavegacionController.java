@@ -37,11 +37,6 @@ public class NavegacionController {
     return "membresia";
   }
 
-  @GetMapping("/clases")
-  public String clases() {
-    return "reservaClases";
-  }
-
   @GetMapping("/carrito")
   public String carrito() {
     return "carrito";

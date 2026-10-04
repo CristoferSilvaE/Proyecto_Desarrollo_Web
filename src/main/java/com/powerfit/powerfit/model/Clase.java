@@ -28,6 +28,9 @@ public class Clase {
   @Column(name = "estado", nullable = false, length = 20)
   private String estado;
 
+  @Column(name = "imagen", length = 255)
+  private String imagen;
+
   public Long getIdClase() {
     return idClase;
   }
@@ -66,5 +69,13 @@ public class Clase {
 
   public void setEstado(String estado) {
     this.estado = estado;
+  }
+
+  public String getImagen() {
+    return imagen;
+  }
+
+  public void setImagen(String imagen) {
+    this.imagen = imagen;
   }
 }

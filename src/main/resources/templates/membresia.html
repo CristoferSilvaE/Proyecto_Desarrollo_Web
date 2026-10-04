@@ -1,102 +1,99 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerFit - Mi Membresía</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerFit - Mi Membresía</title>
+  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
 </head>
-<body class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen justify-between">
+<body class="app-body">
 
-    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a th:href="@{/}" class="font-black text-2xl tracking-wider text-white">POWERFIT</a>
+  <header class="navbar">
+    <div class="navbar-container">
+      <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
 
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-                <a th:href="@{/}" class="hover:text-white transition">Inicio</a>
-                <a th:href="@{/membresia}" class="text-white border-b-2 border-indigo-400 pb-1">Membresía</a>
-                <a th:href="@{/tienda}" class="hover:text-white transition">Tienda</a>
-                <a th:href="@{/clases}" class="hover:text-white transition">Clases</a>
-                <a th:href="@{/perfil}" class="hover:text-white transition">Perfil</a>
-            </nav>
+      <nav class="navbar-menu">
+        <a th:href="@{/}" class="nav-link">Inicio</a>
+        <a th:href="@{/membresia}" class="nav-link-active">Membresía</a>
+        <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+        <a th:href="@{/clases}" class="nav-link">Clases</a>
+        <a th:href="@{/perfil}" class="nav-link">Perfil</a>
+      </nav>
 
-            <div class="flex items-center gap-5 text-zinc-400">
-                <a th:href="@{/carrito}" class="hover:text-white transition relative" title="Carrito">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-                    </svg>
-                    <span class="absolute -top-2 -right-2 w-4 h-4 bg-indigo-300 text-zinc-950 font-bold text-[9px] rounded-full flex items-center justify-center">2</span>
-                </a>
+      <div class="navbar-actions">
+        <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+          <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+          </svg>
+        </a>
 
-                <a th:href="@{/perfil}" class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition">
-                    <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="w-full h-full object-cover">
-                </a>
-            </div>
+        <a th:href="@{/perfil}" class="avatar-link">
+          <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image">
+        </a>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="page-container">
+    <div class="membership-header">
+      <p class="membership-kicker">● Portal de atleta</p>
+      <h1 class="membership-title">Mi Membresía</h1>
+      <p class="membership-subtitle">Gestiona tu plan y consulta su vigencia.</p>
+    </div>
+
+    <section class="membership-shell">
+      <div class="membership-top">
+        <div class="membership-name-row">
+          <h2 class="membership-name">Plan Elite</h2>
+          <span class="status-active">● ACTIVA</span>
         </div>
-    </header>
 
-
-    <main class="max-w-7xl mx-auto px-6 py-12 w-full">
-        <div class="mb-10">
-            <p class="text-[10px] uppercase tracking-[0.25em] text-indigo-300 mb-3">● Portal de atleta</p>
-            <h1 class="text-4xl font-black uppercase tracking-tight">Mi Membresía</h1>
-            <p class="text-zinc-400 mt-2 max-w-2xl">Gestiona tu plan y consulta su vigencia.</p>
+        <div class="membership-price-box">
+          <p class="membership-price-label">Tarifa mensual</p>
+          <p class="membership-price">S/ 129.00</p>
         </div>
+      </div>
 
-        <section class="bg-[#121318] border border-zinc-800 rounded-xl overflow-hidden">
-            <div class="px-8 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-b border-zinc-800">
-                <div>
-                    <div class="flex items-center gap-4">
-                        <h2 class="text-3xl font-black uppercase">Plan Elite</h2>
-                        <span class="px-4 py-1 rounded-full border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold tracking-wider">● ACTIVA</span>
-                    </div>
-                </div>
-                <div class="md:text-right">
-                    <p class="text-[10px] uppercase tracking-wider text-zinc-400">Tarifa mensual</p>
-                    <p class="text-4xl font-black text-indigo-200 mt-1">S/ 129.00</p>
-                </div>
-            </div>
-
-            <div class="p-8 space-y-6">
-                <section class="bg-[#18191f] border border-zinc-800 rounded-lg p-6">
-                    <h3 class="text-xl font-bold uppercase mb-5">Vigencia del ciclo actual</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-                        <div><p class="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Fecha de inicio</p><p class="font-semibold">05 Oct 2026</p></div>
-                        <div><p class="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Fecha de vencimiento</p><p class="font-semibold">04 Nov 2026</p></div>
-                        <div><p class="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Próximo pago</p><p class="font-semibold text-indigo-200">04 Nov 2026 • S/129</p></div>
-                    </div>
-                </section>
-
-                <section class="bg-[#18191f] border border-zinc-800 rounded-lg p-6">
-                    <h3 class="text-xl font-bold uppercase mb-6">Beneficios incluidos</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-5 bg-[#111216] border border-white/5"><h4 class="font-bold text-sm">✓ Acceso Total</h4></div>
-                        <div class="p-5 bg-[#111216] border border-white/5"><h4 class="font-bold text-sm">✓ Clases Grupales</h4></div>
-                        <div class="p-5 bg-[#111216] border border-white/5"><h4 class="font-bold text-sm">✓ Entrenamiento Personal</h4></div>
-                        <div class="p-5 bg-[#111216] border border-white/5"><h4 class="font-bold text-sm">✓ Seguimiento Físico</h4></div>
-                    </div>
-                </section>
-
-                <a th:href="@{/perfil}" class="inline-block px-6 py-3 border border-zinc-700 text-xs font-bold uppercase tracking-wider text-zinc-300 hover:border-indigo-300 hover:text-indigo-200 transition">
-                    Ver historial de pagos
-                </a>
-            </div>
+      <div class="membership-body">
+        <section class="section-card-soft">
+          <h3 class="membership-section-title">Vigencia del ciclo actual</h3>
+          <div class="membership-period-grid">
+            <div><p class="membership-field-label">Fecha de inicio</p><p class="membership-field-value">05 Oct 2026</p></div>
+            <div><p class="membership-field-label">Fecha de vencimiento</p><p class="membership-field-value">04 Nov 2026</p></div>
+            <div><p class="membership-field-label">Próximo pago</p><p class="membership-field-value-accent">04 Nov 2026 • S/129</p></div>
+          </div>
         </section>
-    </main>
 
-    <footer class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="font-black text-sm text-white">POWERFIT</div>
-            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
-                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
-                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
-                <a href="#" class="hover:text-zinc-300">Soporte</a>
-                <a href="#" class="hover:text-zinc-300">Instagram</a>
-            </div>
-            <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-        </div>
-    </footer>
+        <section class="section-card-soft">
+          <h3 class="membership-section-title">Beneficios incluidos</h3>
+          <div class="benefits-grid">
+            <div class="benefit-box"><h4 class="benefit-title">✓ Acceso Total</h4></div>
+            <div class="benefit-box"><h4 class="benefit-title">✓ Clases Grupales</h4></div>
+            <div class="benefit-box"><h4 class="benefit-title">✓ Entrenamiento Personal</h4></div>
+            <div class="benefit-box"><h4 class="benefit-title">✓ Seguimiento Físico</h4></div>
+          </div>
+        </section>
+
+        <a th:href="@{/perfil}" class="btn-outline px-6 py-3">Ver historial de pagos</a>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo">POWERFIT</div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Política de Privacidad</a>
+        <a href="#" class="footer-link">Términos de Servicio</a>
+        <a href="#" class="footer-link">Soporte</a>
+        <a href="#" class="footer-link">Instagram</a>
+      </div>
+      <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+    </div>
+  </footer>
 
 </body>
 </html>

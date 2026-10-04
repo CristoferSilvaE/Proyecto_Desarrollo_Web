@@ -1,157 +1,157 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerFit - Perfil</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerFit - Perfil</title>
+  <link rel="stylesheet" th:href="@{/css/powerfit.css}">
 </head>
-<body class="bg-[#0b0c10] text-white font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col min-h-screen justify-between">
+<body class="app-body">
 
-    <header class="border-b border-zinc-800/80 bg-[#0b0c10]/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a th:href="@{/}" class="font-black text-2xl tracking-wider text-white">POWERFIT</a>
+  <header class="navbar">
+    <div class="navbar-container">
+      <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
 
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-                <a th:href="@{/}" class="hover:text-white transition">Inicio</a>
-                <a th:href="@{/membresia}" class="hover:text-white transition">Membresía</a>
-                <a th:href="@{/tienda}" class="hover:text-white transition">Tienda</a>
-                <a th:href="@{/clases}" class="hover:text-white transition">Clases</a>
-                <a th:href="@{/perfil}" class="text-white border-b-2 border-indigo-400 pb-1">Perfil</a>
-            </nav>
+      <nav class="navbar-menu">
+        <a th:href="@{/}" class="nav-link">Inicio</a>
+        <a th:href="@{/membresia}" class="nav-link">Membresía</a>
+        <a th:href="@{/tienda}" class="nav-link">Tienda</a>
+        <a th:href="@{/clases}" class="nav-link">Clases</a>
+        <a th:href="@{/perfil}" class="nav-link-active">Perfil</a>
+      </nav>
 
-            <div class="flex items-center gap-5 text-zinc-400">
-                <a th:href="@{/carrito}" class="hover:text-white transition relative" title="Carrito">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-                    </svg>
-                    <span class="absolute -top-2 -right-2 w-4 h-4 bg-indigo-300 text-zinc-950 font-bold text-[9px] rounded-full flex items-center justify-center">2</span>
-                </a>
+      <div class="navbar-actions">
+        <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+          <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+          </svg>
+        </a>
 
-                <a th:href="@{/perfil}" class="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 hover:border-indigo-300 transition">
-                    <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="w-full h-full object-cover">
-                </a>
+        <a th:href="@{/perfil}" class="avatar-link">
+          <img th:src="@{/imagenes/perfil-baki.jpg}" alt="Avatar" class="avatar-image">
+        </a>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="profile-container">
+    <div class="page-header">
+      <h1 class="text-3xl font-black uppercase tracking-wider text-zinc-100">Perfil de Atleta</h1>
+      <p class="page-subtitle">Gestiona tu cuenta, membresía, clases y progreso.</p>
+    </div>
+
+    <div class="profile-grid">
+      <div class="profile-left">
+        <section class="profile-card">
+          <div class="profile-person">
+            <div class="profile-photo">
+              <img th:src="@{/imagenes/perfil-baki.jpg}" class="profile-photo-img" alt="Avatar">
             </div>
+            <div>
+              <h2 class="profile-name">Baki Hanma</h2>
+              <p class="profile-role">Miembro PowerFit</p>
+            </div>
+          </div>
+
+          <div class="profile-data">
+            <div><span class="profile-data-label">Correo</span><span class="profile-data-value">baki.hanma@gmail.com</span></div>
+            <div><span class="profile-data-label">Teléfono</span><span class="profile-data-value">+51 999 999 999</span></div>
+            <div><span class="profile-data-label">DNI</span><span class="profile-data-value">74859632</span></div>
+            <div><span class="profile-data-label">Fecha de nacimiento</span><span class="profile-data-value">02 de abril de 2000</span></div>
+          </div>
+
+          <button class="btn-outline-block">Editar Perfil</button>
+        </section>
+
+        <section class="profile-card">
+          <div class="membership-summary-head">
+            <span class="membership-summary-label">Membresía</span>
+            <span class="membership-summary-status">ACTIVA</span>
+          </div>
+
+          <p class="membership-summary-plan-label">Plan actual</p>
+          <h3 class="membership-summary-plan">Elite</h3>
+
+          <div class="membership-summary-data">
+            <div class="summary-row"><span class="summary-label">Próximo pago</span><span class="summary-value">04 Nov 2026</span></div>
+            <div class="summary-row"><span class="summary-label">Monto</span><span class="summary-value">S/ 129.00</span></div>
+          </div>
+
+          <a th:href="@{/membresia}" class="btn-outline-block">Gestionar Membresía</a>
+        </section>
+
+        <div class="profile-shortcuts">
+          <a th:href="@{/seguimiento}" class="profile-shortcut">Seguimiento Físico</a>
+          <a th:href="@{/pedidos}" class="profile-shortcut">Mis Pedidos</a>
         </div>
-    </header>
+      </div>
 
+      <div class="profile-right">
+        <section class="profile-card">
+          <div class="panel-head">
+            <h2 class="panel-title">Próximas Clases</h2>
+            <a th:href="@{/clases}" class="panel-link">Ver clases</a>
+          </div>
 
-    <main class="max-w-7xl mx-auto px-6 py-10 w-full">
-        <div class="mb-8">
-            <h1 class="text-3xl font-black uppercase tracking-wider text-zinc-100">PERFIL DE ATLETA</h1>
-            <p class="text-zinc-400 text-xs mt-1">Gestiona tu cuenta, membresía, clases y progreso.</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div class="lg:col-span-4 space-y-6">
-                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-zinc-700">
-                            <img th:src="@{/imagenes/perfil-baki.jpg}" class="w-full h-full object-cover" alt="Avatar">
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-black uppercase tracking-wide text-zinc-100">BAKI HANMA</h2>
-                            <p class="text-zinc-500 text-[11px]">Miembro PowerFit</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4 text-xs border-t border-zinc-800/80 pt-4 mb-6">
-                        <div><span class="block text-zinc-500 text-[10px] uppercase">Correo</span><span class="text-zinc-200">baki.hanma@gmail.com</span></div>
-                        <div><span class="block text-zinc-500 text-[10px] uppercase">Teléfono</span><span class="text-zinc-200">+51 999 999 999</span></div>
-                        <div><span class="block text-zinc-500 text-[10px] uppercase">DNI</span><span class="text-zinc-200">74859632</span></div>
-                        <div><span class="block text-zinc-500 text-[10px] uppercase">Fecha de nacimiento</span><span class="text-zinc-200">02 de abril de 2000</span></div>
-                    </div>
-
-                    <button class="w-full py-2.5 border border-zinc-700 hover:border-zinc-500 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded transition">
-                        Editar Perfil
-                    </button>
-                </div>
-
-                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs font-black uppercase tracking-wider text-zinc-400">Membresía</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">ACTIVA</span>
-                    </div>
-                    <p class="text-[10px] uppercase text-zinc-500">Plan actual</p>
-                    <h3 class="text-3xl font-black uppercase tracking-wider text-indigo-200 mb-6">ELITE</h3>
-                    <div class="space-y-2 text-xs border-t border-zinc-800/80 pt-4 mb-6">
-                        <div class="flex justify-between"><span class="text-zinc-500">Próximo pago</span><span class="text-zinc-300">04 Nov 2026</span></div>
-                        <div class="flex justify-between"><span class="text-zinc-500">Monto</span><span class="text-zinc-300">S/ 129.00</span></div>
-                    </div>
-                    <a th:href="@{/membresia}" class="block text-center w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold text-xs uppercase tracking-wider rounded transition">
-                        Gestionar Membresía
-                    </a>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <a th:href="@{/seguimiento}" class="text-center p-4 bg-[#121318] border border-zinc-800 rounded-lg text-xs font-bold uppercase hover:border-indigo-300 transition">Seguimiento Físico</a>
-                    <a th:href="@{/pedidos}" class="text-center p-4 bg-[#121318] border border-zinc-800 rounded-lg text-xs font-bold uppercase hover:border-indigo-300 transition">Mis Pedidos</a>
-                </div>
+          <div class="upcoming-list">
+            <div class="upcoming-item">
+              <div>
+                <h4 class="upcoming-title">Spinning</h4>
+                <p class="upcoming-meta">05 Oct 2026 • 18:00 - 19:00</p>
+              </div>
+              <button class="cancel-class-btn">Cancelar</button>
             </div>
 
-            <div class="lg:col-span-8 space-y-6">
-                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-sm font-black uppercase tracking-wider text-zinc-200">Próximas Clases</h2>
-                        <a th:href="@{/clases}" class="text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition">Ver clases</a>
-                    </div>
-
-                    <div class="space-y-3">
-                        <div class="bg-zinc-900/60 border border-zinc-800/80 rounded-lg p-4 flex items-center justify-between">
-                            <div>
-                                <h4 class="text-sm font-black uppercase tracking-wide text-zinc-100">Spinning</h4>
-                                <p class="text-zinc-400 text-xs mt-1">05 Oct 2026 • 18:00 - 19:00</p>
-                            </div>
-                            <button class="px-4 py-2 bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 border border-zinc-700 text-zinc-300 font-bold text-[10px] uppercase rounded">Cancelar</button>
-                        </div>
-
-                        <div class="bg-zinc-900/60 border border-zinc-800/80 rounded-lg p-4 flex items-center justify-between">
-                            <div>
-                                <h4 class="text-sm font-black uppercase tracking-wide text-zinc-100">Funcional</h4>
-                                <p class="text-zinc-400 text-xs mt-1">06 Oct 2026 • 19:00 - 20:00</p>
-                            </div>
-                            <button class="px-4 py-2 bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 border border-zinc-700 text-zinc-300 font-bold text-[10px] uppercase rounded">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-[#121318] border border-zinc-800/80 rounded-xl p-6">
-                    <h2 class="text-sm font-black uppercase tracking-wider text-zinc-200 mb-6">Historial de Pagos</h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800">
-                                    <th class="pb-3">Fecha</th>
-                                    <th class="pb-3">Descripción</th>
-                                    <th class="pb-3">Monto</th>
-                                    <th class="pb-3">Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-xs divide-y divide-zinc-800/50 text-zinc-300">
-                                <tr><td class="py-3.5">04 Oct 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
-                                <tr><td class="py-3.5">04 Sep 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
-                                <tr><td class="py-3.5">04 Ago 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="upcoming-item">
+              <div>
+                <h4 class="upcoming-title">Funcional</h4>
+                <p class="upcoming-meta">06 Oct 2026 • 19:00 - 20:00</p>
+              </div>
+              <button class="cancel-class-btn">Cancelar</button>
             </div>
-        </div>
-    </main>
+          </div>
+        </section>
 
-    <footer class="border-t border-zinc-800/80 py-8 text-zinc-500 text-[10px] mt-12">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="font-black text-sm text-white">POWERFIT</div>
-            <div class="flex flex-wrap gap-6 uppercase tracking-wider">
-                <a href="#" class="hover:text-zinc-300">Política de Privacidad</a>
-                <a href="#" class="hover:text-zinc-300">Términos de Servicio</a>
-                <a href="#" class="hover:text-zinc-300">Soporte</a>
-                <a href="#" class="hover:text-zinc-300">Instagram</a>
-            </div>
-            <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-        </div>
-    </footer>
+        <section class="profile-card">
+          <h2 class="panel-title mb-6">Historial de Pagos</h2>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr class="data-table-head">
+                  <th class="data-table-head-cell">Fecha</th>
+                  <th class="data-table-head-cell">Descripción</th>
+                  <th class="data-table-head-cell">Monto</th>
+                  <th class="data-table-head-cell">Estado</th>
+                </tr>
+              </thead>
+              <tbody class="data-table-body">
+                <tr><td class="data-table-cell">04 Oct 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
+                <tr><td class="data-table-cell">04 Sep 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
+                <tr><td class="data-table-cell">04 Ago 2026</td><td>Plan Elite - Mensual</td><td>S/ 129.00</td><td><span class="text-emerald-300">PAGADO</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo">POWERFIT</div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Política de Privacidad</a>
+        <a href="#" class="footer-link">Términos de Servicio</a>
+        <a href="#" class="footer-link">Soporte</a>
+        <a href="#" class="footer-link">Instagram</a>
+      </div>
+      <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
+    </div>
+  </footer>
 
 </body>
 </html>

@@ -1,0 +1,25 @@
+{
+  "name": "proyecto_desarrollo_web",
+  "version": "1.0.0",
+  "description": "//dasdasdasdsa",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "tailwind:watch": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/powerfit.css --watch",
+    "tailwind:build": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/powerfit.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CristoferSilvaE/Proyecto_Desarrollo_Web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/CristoferSilvaE/Proyecto_Desarrollo_Web/issues"
+  },
+  "homepage": "https://github.com/CristoferSilvaE/Proyecto_Desarrollo_Web#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
