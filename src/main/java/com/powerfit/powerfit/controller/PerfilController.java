@@ -359,7 +359,7 @@ public class PerfilController {
     return verSeguimiento(session, model);
   }
 
-  @GetMapping("/perfil/seguimiento/eliminar/{id}")
+  @PostMapping("/perfil/seguimiento/eliminar/{id}")
   public String eliminarSeguimiento(@PathVariable("id") Long id, HttpSession session) {
     Long idCliente = (Long) session.getAttribute("idCliente");
     if (idCliente == null) return "redirect:/login";

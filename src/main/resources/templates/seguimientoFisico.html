@@ -221,9 +221,7 @@
                 <td class="data-table-cell">
                   <a th:href="@{/perfil/seguimiento/editar/{id}(id=${registro.idSeguimiento})}" style="color: #60a5fa; margin-right: 10px; text-decoration: none">Editar</a>
                   <form th:action="@{/perfil/seguimiento/eliminar/{id}(id=${registro.idSeguimiento})}" method="post" style="display: inline">
-                    <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');" style="color: #f87171; background: none; border: none; cursor: pointer">
-                      Borrar
-                    </button>
+                    <button type="button" class="tracking-delete" th:onclick="'abrirModalEliminarSeguimiento(' + ${registro.idSeguimiento} + ')'">Borrar</button>
                   </form>
                 </td>
               </tr>
@@ -232,6 +230,30 @@
         </div>
       </section>
     </main>
+
+    <!-- =====================================================
+     MODAL ELIMINAR SEGUIMIENTO
+    ====================================================== -->
+
+    <div id="modalEliminarSeguimiento" class="modal-overlay" th:data-url-base="@{/perfil/seguimiento/eliminar/}">
+      <div class="modal-card">
+        <div class="modal-icon">!</div>
+
+        <h2 class="modal-title">Eliminar medición</h2>
+
+        <p class="modal-text">¿Estás seguro de que deseas eliminar esta medición de tu seguimiento físico?</p>
+
+        <p class="modal-warning">Esta acción eliminará el registro de forma permanente.</p>
+
+        <div class="modal-actions">
+          <button type="button" class="modal-cancel-button" onclick="cerrarModalEliminarSeguimiento()">Volver</button>
+
+          <form id="formEliminarSeguimiento" method="post">
+            <button type="submit" class="modal-confirm-button">Sí, eliminar</button>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="footer-container">
@@ -259,6 +281,33 @@
 
         if (menu) {
           menu.classList.remove("active");
+        }
+      });
+
+      function abrirModalEliminarSeguimiento(idSeguimiento) {
+        const modal = document.getElementById("modalEliminarSeguimiento");
+        const formulario = document.getElementById("formEliminarSeguimiento");
+
+        const urlBase = modal.dataset.urlBase;
+
+        formulario.action = urlBase + idSeguimiento;
+
+        modal.classList.add("active");
+      }
+
+      function cerrarModalEliminarSeguimiento() {
+        document.getElementById("modalEliminarSeguimiento").classList.remove("active");
+      }
+
+      document.getElementById("modalEliminarSeguimiento").addEventListener("click", function (event) {
+        if (event.target === this) {
+          cerrarModalEliminarSeguimiento();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          cerrarModalEliminarSeguimiento();
         }
       });
     </script>
