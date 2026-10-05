@@ -100,6 +100,31 @@
     @apply w-full h-full object-cover;
   }
 
+  .user-menu {
+    @apply relative;
+  }
+
+  .user-menu-button {
+    @apply cursor-pointer bg-transparent p-0;
+  }
+
+  .user-dropdown {
+    @apply hidden absolute right-0 top-12 z-50 w-44 overflow-hidden rounded-lg border border-zinc-700 shadow-xl;
+    background-color: #15161b;
+  }
+
+  .user-dropdown.active {
+    @apply block;
+  }
+
+  .user-dropdown-item {
+    @apply block px-4 py-3 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white transition;
+  }
+
+  .user-dropdown-logout {
+    @apply border-t border-zinc-800 text-red-300 hover:text-red-200 hover:bg-red-500/10;
+  }
+
   /* ===== BOTONES ===== */
   .btn-primary {
     @apply inline-flex items-center justify-center text-center py-3 px-6 bg-indigo-200 hover:bg-indigo-300 text-zinc-950 font-bold text-xs uppercase tracking-wider rounded transition;

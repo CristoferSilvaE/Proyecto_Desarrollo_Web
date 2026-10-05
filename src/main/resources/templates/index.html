@@ -37,17 +37,25 @@
           <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
 
           <div th:if="${cliente != null}" class="user-session">
-            <a th:href="@{/perfil}" class="user-name" th:text="${cliente.nombres}">Usuario</a>
+            <span class="user-name" th:text="${cliente.nombres}">Usuario</span>
 
-            <a th:href="@{/perfil}" class="avatar-link">
-              <img
-                th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
-                th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
-                th:alt="${cliente.nombres}"
-                class="avatar-image" />
+            <div class="user-menu">
+              <button type="button" class="avatar-link user-menu-button" onclick="toggleUserMenu(event)">
+                <img
+                  th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                  th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                  th:alt="${cliente.nombres}"
+                  class="avatar-image" />
 
-              <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
-            </a>
+                <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+              </button>
+
+              <div id="userDropdown" class="user-dropdown">
+                <a th:href="@{/perfil}" class="user-dropdown-item">Perfil</a>
+
+                <a th:href="@{/logout}" class="user-dropdown-item user-dropdown-logout">Cerrar sesión</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -260,5 +268,22 @@
         <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
       </div>
     </footer>
+    <script>
+      function toggleUserMenu(event) {
+        event.stopPropagation();
+
+        const menu = document.getElementById("userDropdown");
+
+        menu.classList.toggle("active");
+      }
+
+      document.addEventListener("click", function () {
+        const menu = document.getElementById("userDropdown");
+
+        if (menu) {
+          menu.classList.remove("active");
+        }
+      });
+    </script>
   </body>
 </html>

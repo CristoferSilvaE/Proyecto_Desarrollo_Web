@@ -47,8 +47,4 @@ public class NavegacionController {
     return "pedidos";
   }
 
-  @GetMapping("/seguimiento")
-  public String seguimiento() {
-    return "seguimientoFisico";
-  }
 }
