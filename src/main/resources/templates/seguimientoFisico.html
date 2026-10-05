@@ -6,6 +6,7 @@
     <title>PowerFit - Seguimiento Físico</title>
     <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
   </head>
+
   <body class="app-body">
     <header class="navbar">
       <div class="navbar-container">
@@ -73,7 +74,8 @@
           <h1 class="page-title">Seguimiento Físico</h1>
           <p class="text-zinc-400 text-sm mt-2">Monitorea tu evolución y progreso físico.</p>
         </div>
-        <button class="btn-primary">Registrar medición</button>
+        <!-- Botón que lleva al formulario -->
+        <a href="#formulario-medicion" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center">Registrar medición</a>
       </div>
 
       <section th:if="${ultimoSeguimiento == null}" class="empty-state mb-8">
@@ -81,6 +83,7 @@
         <p class="empty-text">Registra tu primera medición para comenzar a visualizar tu progreso.</p>
       </section>
 
+      <!-- Tarjetas de métricas -->
       <section class="metric-grid">
         <div class="metric-card">
           <p class="metric-label">Peso actual</p>
@@ -104,18 +107,78 @@
         </div>
       </section>
 
+      <!-- NUEVA SECCIÓN: FORMULARIO (Diseño adaptado a tus clases) -->
+      <section id="formulario-medicion" class="history-card" style="margin-bottom: 2rem">
+        <h2 class="panel-title mb-6" th:text="${nuevoSeguimiento.idSeguimiento != null} ? 'Editar medición' : 'Registrar nueva medición'">Registrar nueva medición</h2>
+
+        <form th:action="@{/perfil/seguimiento/guardar}" th:object="${nuevoSeguimiento}" method="post">
+          <input type="hidden" th:field="*{idSeguimiento}" />
+          <input type="hidden" th:field="*{fechaRegistro}" />
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem">
+            <div>
+              <label class="metric-label" style="display: block; margin-bottom: 0.5rem">Peso (kg)</label>
+              <input
+                type="number"
+                step="0.1"
+                th:field="*{peso}"
+                required
+                style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #3f3f46; background: transparent; color: white" />
+            </div>
+            <div>
+              <label class="metric-label" style="display: block; margin-bottom: 0.5rem">Altura (m)</label>
+              <input
+                type="number"
+                step="0.01"
+                th:field="*{altura}"
+                required
+                placeholder="Ej. 1.75"
+                style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #3f3f46; background: transparent; color: white" />
+            </div>
+            <div>
+              <label class="metric-label" style="display: block; margin-bottom: 0.5rem">% Grasa</label>
+              <input
+                type="number"
+                step="0.1"
+                th:field="*{porcentajeGrasa}"
+                style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #3f3f46; background: transparent; color: white" />
+            </div>
+            <div>
+              <label class="metric-label" style="display: block; margin-bottom: 0.5rem">Masa muscular (kg)</label>
+              <input
+                type="number"
+                step="0.1"
+                th:field="*{masaMuscular}"
+                style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #3f3f46; background: transparent; color: white" />
+            </div>
+          </div>
+          <div style="margin-bottom: 1.5rem">
+            <label class="metric-label" style="display: block; margin-bottom: 0.5rem">Observaciones</label>
+            <textarea th:field="*{observaciones}" rows="2" style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #3f3f46; background: transparent; color: white"></textarea>
+          </div>
+          <div>
+            <button type="submit" class="btn-primary">Guardar Registro</button>
+            <a th:if="${nuevoSeguimiento.idSeguimiento != null}" th:href="@{/seguimiento}" style="margin-left: 1rem; color: #a1a1aa; text-decoration: none">Cancelar edición</a>
+          </div>
+        </form>
+      </section>
+
       <div class="tracking-grid">
         <section class="chart-card">
           <div class="chart-head">
             <h2 class="chart-title">Tendencia de composición corporal</h2>
             <span class="chart-note">Datos reales del historial</span>
           </div>
-          <div class="chart-placeholder"><p class="chart-placeholder-text">La gráfica se mostrará cuando conectemos el historial de mediciones.</p></div>
+          <div class="chart-placeholder">
+            <p class="chart-placeholder-text">La gráfica se mostrará cuando conectemos el historial de mediciones.</p>
+          </div>
         </section>
 
         <section class="observation-card">
           <h2 class="observation-title">Última observación</h2>
-          <p class="observation-text" th:text="${ultimoSeguimiento != null and ultimoSeguimiento.observaciones != null ? ultimoSeguimiento.observaciones : 'Sin observaciones registradas.'}">
+          <p
+            class="observation-text"
+            th:text="${ultimoSeguimiento != null and ultimoSeguimiento.observaciones != null and !ultimoSeguimiento.observaciones.isBlank() ? ultimoSeguimiento.observaciones : 'Sin observaciones registradas.'}">
             Sin observaciones registradas.
           </p>
         </section>
@@ -135,7 +198,8 @@
                 <th class="data-table-head-cell">Altura</th>
                 <th class="data-table-head-cell">% Grasa</th>
                 <th class="data-table-head-cell">Masa muscular</th>
-                <th class="data-table-head-cell">Observaciones</th>
+                <!-- Nueva cabecera -->
+                <th class="data-table-head-cell">Acciones</th>
               </tr>
             </thead>
             <tbody class="data-table-body">
@@ -145,7 +209,15 @@
                 <td class="data-table-cell" th:text="${registro.altura != null ? registro.altura + ' m' : '--'}">--</td>
                 <td class="data-table-cell" th:text="${registro.porcentajeGrasa != null ? registro.porcentajeGrasa + '%' : '--'}">--</td>
                 <td class="data-table-cell" th:text="${registro.masaMuscular != null ? registro.masaMuscular + ' kg' : '--'}">--</td>
-                <td class="data-table-cell text-zinc-400" th:text="${registro.observaciones != null ? registro.observaciones : '-'}">-</td>
+                <!-- Nuevos botones de acción -->
+                <td class="data-table-cell">
+                  <a th:href="@{/perfil/seguimiento/editar/{id}(id=${registro.idSeguimiento})}" style="color: #60a5fa; margin-right: 10px; text-decoration: none">Editar</a>
+                  <form th:action="@{/perfil/seguimiento/eliminar/{id}(id=${registro.idSeguimiento})}" method="post" style="display: inline">
+                    <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');" style="color: #f87171; background: none; border: none; cursor: pointer">
+                      Borrar
+                    </button>
+                  </form>
+                </td>
               </tr>
             </tbody>
           </table>

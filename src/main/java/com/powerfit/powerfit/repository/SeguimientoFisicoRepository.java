@@ -10,4 +10,7 @@ public interface SeguimientoFisicoRepository extends JpaRepository<SeguimientoFi
   List<SeguimientoFisico> findByCliente_IdClienteOrderByFechaRegistroDesc(Long idCliente);
 
   Optional<SeguimientoFisico> findFirstByCliente_IdClienteOrderByFechaRegistroDesc(Long idCliente);
+
+  Optional<SeguimientoFisico> findByIdSeguimientoAndCliente_IdCliente(
+      Long idSeguimiento, Long idCliente);
 }

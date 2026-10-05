@@ -3,11 +3,13 @@ package com.powerfit.powerfit.controller;
 import com.powerfit.powerfit.model.Cliente;
 import com.powerfit.powerfit.model.Membresia;
 import com.powerfit.powerfit.model.Reserva;
+import com.powerfit.powerfit.model.SeguimientoFisico;
 import com.powerfit.powerfit.model.Usuario;
 import com.powerfit.powerfit.repository.ClienteRepository;
 import com.powerfit.powerfit.repository.MembresiaRepository;
 import com.powerfit.powerfit.repository.PagoMembresiaRepository;
 import com.powerfit.powerfit.repository.ReservaRepository;
+import com.powerfit.powerfit.repository.SeguimientoFisicoRepository;
 import com.powerfit.powerfit.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -15,15 +17,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,19 +41,22 @@ public class PerfilController {
   private final MembresiaRepository membresiaRepository;
   private final PagoMembresiaRepository pagoMembresiaRepository;
   private final ReservaRepository reservaRepository;
+  private final SeguimientoFisicoRepository seguimientoFisicoRepository;
 
   public PerfilController(
       ClienteRepository clienteRepository,
       UsuarioRepository usuarioRepository,
       MembresiaRepository membresiaRepository,
       PagoMembresiaRepository pagoMembresiaRepository,
-      ReservaRepository reservaRepository) {
+      ReservaRepository reservaRepository,
+      SeguimientoFisicoRepository seguimientoFisicoRepository) {
 
     this.clienteRepository = clienteRepository;
     this.usuarioRepository = usuarioRepository;
     this.membresiaRepository = membresiaRepository;
     this.pagoMembresiaRepository = pagoMembresiaRepository;
     this.reservaRepository = reservaRepository;
+    this.seguimientoFisicoRepository = seguimientoFisicoRepository;
   }
 
   @GetMapping("/perfil")
@@ -243,5 +250,130 @@ public class PerfilController {
     session.invalidate();
 
     return "redirect:/login?cuenta=desactivada";
+  }
+
+  // --- CRUD DE SEGUIMIENTO FÍSICO ---
+
+  @GetMapping("/seguimiento")
+  public String verSeguimiento(HttpSession session, Model model) {
+    Long idCliente = (Long) session.getAttribute("idCliente");
+    if (idCliente == null) return "redirect:/login";
+
+    Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
+    model.addAttribute("cliente", cliente); // Necesario para tu navbar
+
+    // Obtener historial
+    List<SeguimientoFisico> seguimientos =
+        seguimientoFisicoRepository.findByCliente_IdClienteOrderByFechaRegistroDesc(idCliente);
+    model.addAttribute("seguimientos", seguimientos);
+
+    // Calcular métricas para las tarjetas superiores
+    if (!seguimientos.isEmpty()) {
+      SeguimientoFisico ultimo = seguimientos.get(0);
+      model.addAttribute("ultimoSeguimiento", ultimo);
+
+      // Calcular IMC (Peso / Altura^2). Asume que la altura está en metros (ej. 1.75)
+      // Calcular IMC (Peso / Altura^2). Asume que la altura está en metros (ej. 1.75)
+      if (ultimo.getPeso() != null
+          && ultimo.getAltura() != null
+          && ultimo.getAltura().doubleValue() > 0) {
+        double pesoDouble = ultimo.getPeso().doubleValue();
+        double alturaDouble = ultimo.getAltura().doubleValue();
+
+        double imc = pesoDouble / Math.pow(alturaDouble, 2);
+        model.addAttribute("imc", imc);
+      }
+    }
+    // Preparar el formulario
+    if (!model.containsAttribute("nuevoSeguimiento")) {
+      model.addAttribute("nuevoSeguimiento", new SeguimientoFisico());
+    }
+
+    return "seguimientoFisico";
+  }
+
+  @PostMapping("/perfil/seguimiento/guardar")
+  public String guardarSeguimiento(
+      @ModelAttribute("nuevoSeguimiento") SeguimientoFisico seguimiento, HttpSession session) {
+
+    Long idCliente = (Long) session.getAttribute("idCliente");
+
+    if (idCliente == null) {
+      return "redirect:/login";
+    }
+
+    Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
+
+    if (cliente == null) {
+      return "redirect:/login";
+    }
+
+    // CREATE
+    if (seguimiento.getIdSeguimiento() == null) {
+
+      seguimiento.setCliente(cliente);
+      seguimiento.setFechaRegistro(LocalDate.now());
+
+      seguimientoFisicoRepository.save(seguimiento);
+
+      return "redirect:/seguimiento";
+    }
+
+    // UPDATE: comprobar que el registro pertenece al cliente logueado
+    SeguimientoFisico existente =
+        seguimientoFisicoRepository
+            .findByIdSeguimientoAndCliente_IdCliente(seguimiento.getIdSeguimiento(), idCliente)
+            .orElse(null);
+
+    if (existente == null) {
+      return "redirect:/seguimiento";
+    }
+
+    existente.setPeso(seguimiento.getPeso());
+    existente.setAltura(seguimiento.getAltura());
+    existente.setPorcentajeGrasa(seguimiento.getPorcentajeGrasa());
+    existente.setMasaMuscular(seguimiento.getMasaMuscular());
+    existente.setObservaciones(seguimiento.getObservaciones());
+
+    seguimientoFisicoRepository.save(existente);
+
+    return "redirect:/seguimiento";
+  }
+
+  @GetMapping("/perfil/seguimiento/editar/{id}")
+  public String editarSeguimiento(@PathVariable("id") Long id, HttpSession session, Model model) {
+    Long idCliente = (Long) session.getAttribute("idCliente");
+    if (idCliente == null) return "redirect:/login";
+
+    SeguimientoFisico seguimiento =
+        seguimientoFisicoRepository
+            .findByIdSeguimientoAndCliente_IdCliente(id, idCliente)
+            .orElse(null);
+
+    if (seguimiento == null) {
+      return "redirect:/seguimiento";
+    }
+    model.addAttribute("nuevoSeguimiento", seguimiento);
+
+    // Reutilizamos el método principal para cargar el resto de la página
+    return verSeguimiento(session, model);
+  }
+
+  @GetMapping("/perfil/seguimiento/eliminar/{id}")
+  public String eliminarSeguimiento(@PathVariable("id") Long id, HttpSession session) {
+    Long idCliente = (Long) session.getAttribute("idCliente");
+    if (idCliente == null) return "redirect:/login";
+
+    SeguimientoFisico seguimiento =
+        seguimientoFisicoRepository
+            .findByIdSeguimientoAndCliente_IdCliente(id, idCliente)
+            .orElse(null);
+
+    if (seguimiento == null) {
+      return "redirect:/seguimiento";
+    }
+
+    seguimientoFisicoRepository.delete(seguimiento);
+    return "redirect:/seguimiento";
   }
 }
