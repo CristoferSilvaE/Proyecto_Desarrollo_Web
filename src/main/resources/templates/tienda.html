@@ -7,6 +7,7 @@
     <title>PowerFit - Tienda</title>
 
     <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/carrito-ui.css}" />
   </head>
 
   <body class="app-body">
@@ -32,6 +33,7 @@
                 stroke-width="2"
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
+            <span th:if="${cantidadCarrito > 0}" class="cart-badge" th:text="${cantidadCarrito}">0</span>
           </a>
 
           <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
@@ -63,6 +65,17 @@
 
     <!-- CONTENIDO -->
     <main class="page-container">
+      <!-- MENSAJE DE ÉXITO -->
+      <div th:if="${mensaje}" class="section-card" style="margin-bottom: 20px; border: 1px solid #22c55e">
+        <p style="color: #4ade80" th:text="${mensaje}"></p>
+
+        <a th:href="@{/carrito}" class="continue-shopping">Ver carrito →</a>
+      </div>
+
+      <!-- MENSAJE DE ERROR -->
+      <div th:if="${error}" class="section-card" style="margin-bottom: 20px; border: 1px solid #ef4444">
+        <p style="color: #f87171" th:text="${error}"></p>
+      </div>
       <!-- CABECERA -->
       <div class="store-header">
         <h1 class="store-title">Tienda PowerFit</h1>
@@ -120,14 +133,16 @@
               <div class="product-bottom">
                 <span class="product-price" th:text="${'S/ ' + #numbers.formatDecimal(producto.precio, 1, 2)}">S/ 0.00</span>
 
-                <!-- DISPONIBLE -->
-                <button th:if="${producto.stock > 0}" type="button" class="product-button">
-                  <svg class="product-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17" />
-                  </svg>
+                <!-- AÑADIR AL CARRITO -->
+                <form th:if="${producto.stock > 0}" th:action="@{/carrito/agregar/{id}(id=${producto.idProducto})}" method="post">
+                  <button type="submit" class="product-button">
+                    <svg class="product-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63 1.707.707 1.707H17" />
+                    </svg>
 
-                  Añadir
-                </button>
+                    Añadir
+                  </button>
+                </form>
 
                 <!-- AGOTADO -->
                 <button th:if="${producto.stock <= 0}" type="button" disabled class="product-button-disabled">Agotado</button>

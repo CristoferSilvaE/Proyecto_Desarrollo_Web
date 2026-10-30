@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PowerFit - Checkout</title>
     <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/carrito-ui.css}" />
   </head>
   <body class="app-body">
     <header class="navbar">
@@ -28,6 +29,7 @@
                 stroke-width="2"
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
+            <span th:if="${cantidadCarrito > 0}" class="cart-badge" th:text="${cantidadCarrito}">0</span>
           </a>
 
           <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
@@ -75,6 +77,7 @@
     </section>
 
     <main th:if="${cliente != null}" class="page-container">
+      <div th:if="${error}" class="alert-error" style="margin-bottom: 20px" th:text="${error}"></div>
       <div class="checkout-header">
         <p class="eyebrow">Tienda PowerFit</p>
         <h1 class="page-title">Checkout</h1>
@@ -82,7 +85,7 @@
       </div>
 
       <div class="checkout-layout">
-        <form class="checkout-form" onsubmit="event.preventDefault()">
+        <form id="formCheckout" class="checkout-form" th:action="@{/pedidos/confirmar}" method="post">
           <section class="section-card">
             <div class="checkout-step-head">
               <span class="checkout-step-number">1</span>
@@ -111,18 +114,29 @@
               </label>
             </div>
 
+            <!-- SELECCIÓN DE SEDE -->
+            <div id="datosSede" class="mt-6">
+              <label for="idSede" class="field-label">Selecciona la sede de recojo</label>
+
+              <select id="idSede" name="idSede" class="field-input" required>
+                <option value="">-- Selecciona una sede --</option>
+
+                <option th:each="sede : ${sedes}" th:value="${sede.idSede}" th:text="${sede.nombre + ' - ' + sede.distrito}"></option>
+              </select>
+            </div>
+
             <div id="datosDelivery" class="form-grid-hidden">
               <div class="field-span-2">
                 <label class="field-label">Dirección</label>
-                <input type="text" name="direccionEntrega" class="field-input" />
+                <input id="direccionEntrega" type="text" name="direccionEntrega" class="field-input" maxlength="200" />
               </div>
               <div>
                 <label class="field-label">Distrito</label>
-                <input type="text" name="distrito" class="field-input" />
+                <input id="distritoEntrega" type="text" name="distrito" class="field-input" maxlength="80" />
               </div>
               <div>
                 <label class="field-label">Referencia</label>
-                <input type="text" name="referencia" class="field-input" />
+                <input type="text" name="referencia" class="field-input" maxlength="200" />
               </div>
             </div>
           </section>
@@ -166,14 +180,18 @@
               </div>
             </div>
 
-            <div id="datosFactura" class="form-grid-hidden">
+            <!-- DATOS DE FACTURA -->
+            <div id="datosFactura" class="form-grid hidden mt-6">
               <div>
-                <label class="field-label">RUC</label>
-                <input type="text" name="ruc" maxlength="11" class="field-input" />
+                <label for="rucFactura" class="field-label">RUC</label>
+
+                <input id="rucFactura" type="text" name="ruc" maxlength="11" pattern="[0-9]{11}" placeholder="Ingresa 11 dígitos" class="field-input" />
               </div>
+
               <div>
-                <label class="field-label">Razón social</label>
-                <input type="text" name="razonSocial" class="field-input" />
+                <label for="razonSocialFactura" class="field-label">Razón social</label>
+
+                <input id="razonSocialFactura" type="text" name="razonSocial" maxlength="150" placeholder="Nombre o razón social" class="field-input" />
               </div>
             </div>
           </section>
@@ -202,7 +220,7 @@
             <p class="payment-note">PowerFit no almacenará números de tarjeta ni códigos CVV.</p>
           </section>
 
-          <button type="submit" class="btn-primary-block py-4">Confirmar compra</button>
+          <button type="button" class="btn-primary-block py-4" onclick="abrirModalCompra()">Confirmar compra</button>
         </form>
 
         <aside class="checkout-summary">
@@ -257,13 +275,54 @@
     <script>
       function actualizarEntrega() {
         const metodo = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
-        document.getElementById("datosDelivery").classList.toggle("hidden", metodo !== "DELIVERY");
+
+        const datosDelivery = document.getElementById("datosDelivery");
+        const datosSede = document.getElementById("datosSede");
+
+        const selectSede = document.getElementById("idSede");
+        const direccion = document.getElementById("direccionEntrega");
+        const distrito = document.getElementById("distritoEntrega");
+
+        const esRecojo = metodo === "RECOJO";
+
+        datosSede.classList.toggle("hidden", !esRecojo);
+        datosDelivery.classList.toggle("hidden", esRecojo);
+
+        selectSede.required = esRecojo;
+        direccion.required = !esRecojo;
+        distrito.required = !esRecojo;
+
+        if (!esRecojo) {
+          selectSede.value = "";
+        }
       }
+
+      document.addEventListener("DOMContentLoaded", actualizarEntrega);
 
       function actualizarComprobante() {
         const tipo = document.querySelector('input[name="tipoComprobante"]:checked')?.value;
-        document.getElementById("datosFactura").classList.toggle("hidden", tipo !== "FACTURA");
+
+        const esFactura = tipo === "FACTURA";
+
+        const datosFactura = document.getElementById("datosFactura");
+        const ruc = document.getElementById("rucFactura");
+        const razonSocial = document.getElementById("razonSocialFactura");
+
+        // Mostrar u ocultar los campos
+        datosFactura.classList.toggle("hidden", !esFactura);
+
+        // Campos obligatorios solamente para factura
+        ruc.required = esFactura;
+        razonSocial.required = esFactura;
+
+        // Limpiar datos cuando se seleccione boleta
+        if (!esFactura) {
+          ruc.value = "";
+          razonSocial.value = "";
+        }
       }
+
+      document.addEventListener("DOMContentLoaded", actualizarComprobante);
 
       function toggleUserMenu(event) {
         event.stopPropagation();
@@ -280,6 +339,44 @@
           menu.classList.remove("active");
         }
       });
+    </script>
+    <!-- MODAL CONFIRMAR COMPRA -->
+    <dialog id="modalConfirmarCompra" class="cart-modal">
+      <div class="cart-modal-icon" style="color: #c7d2fe">🛒</div>
+
+      <h2 class="cart-modal-title">¿Confirmar pedido?</h2>
+
+      <p class="cart-modal-text">Revisa que los productos y los datos de entrega sean correctos. Tu pedido quedará pendiente de pago y procesamiento.</p>
+
+      <div class="cart-modal-actions">
+        <button type="button" class="cart-modal-cancel" onclick="cerrarModalCompra()">Volver</button>
+
+        <button id="btnConfirmarPedido" type="button" class="cart-modal-confirm" style="background: #818cf8; color: #111118" onclick="enviarPedido()">Sí, confirmar</button>
+      </div>
+    </dialog>
+
+    <script>
+      function abrirModalCompra() {
+        const formulario = document.getElementById("formCheckout");
+
+        if (!formulario.reportValidity()) {
+          return;
+        }
+
+        document.getElementById("modalConfirmarCompra").showModal();
+      }
+
+      function cerrarModalCompra() {
+        document.getElementById("modalConfirmarCompra").close();
+      }
+
+      function enviarPedido() {
+        const formulario = document.getElementById("formCheckout");
+
+        document.getElementById("btnConfirmarPedido").disabled = true;
+
+        formulario.requestSubmit();
+      }
     </script>
   </body>
 </html>
