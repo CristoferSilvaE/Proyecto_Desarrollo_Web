@@ -9,4 +9,10 @@ public interface ClaseRepository extends JpaRepository<Clase, Long> {
   List<Clase> findByEstadoOrderByNombreAsc(String estado);
 
   List<Clase> findByCategoriaAndEstadoOrderByNombreAsc(String categoria, String estado);
+
+  List<Clase> findAllByOrderByNombreAsc();
+
+  boolean existsByNombreIgnoreCase(String nombre);
+
+  boolean existsByNombreIgnoreCaseAndIdClaseNot(String nombre, Long idClase);
 }
