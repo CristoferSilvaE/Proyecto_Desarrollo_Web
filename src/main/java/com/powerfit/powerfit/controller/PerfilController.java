@@ -65,14 +65,14 @@ public class PerfilController {
     Long idCliente = (Long) session.getAttribute("idCliente");
 
     if (idCliente == null) {
-      return "perfilUsuario";
+      return "perfil/perfilUsuario";
     }
 
     Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
 
     if (cliente == null) {
       session.invalidate();
-      return "perfilUsuario";
+      return "perfil/perfilUsuario";
     }
 
     Membresia membresiaActiva =
@@ -102,7 +102,7 @@ public class PerfilController {
         "pagos",
         pagoMembresiaRepository.findByMembresia_Cliente_IdClienteOrderByFechaPagoDesc(idCliente));
 
-    return "perfilUsuario";
+    return "perfil/perfilUsuario";
   }
 
   @PostMapping("/perfil/actualizar")
@@ -289,7 +289,7 @@ public class PerfilController {
       model.addAttribute("nuevoSeguimiento", new SeguimientoFisico());
     }
 
-    return "seguimientoFisico";
+    return "perfil/seguimientoFisico";
   }
 
   @PostMapping("/perfil/seguimiento/guardar")

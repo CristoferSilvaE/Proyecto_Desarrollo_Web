@@ -4,60 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PowerFit - Mis Pedidos</title>
-    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
-    <link rel="stylesheet" th:href="@{/css/carrito-ui.css}" />
+    <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
   </head>
   <body class="app-body">
-    <header class="navbar">
-      <div class="navbar-container">
-        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
-
-        <nav class="navbar-menu">
-          <a th:href="@{/}" class="nav-link">Inicio</a>
-          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
-          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
-          <a th:href="@{/clases}" class="nav-link">Clases</a>
-          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
-        </nav>
-
-        <div class="navbar-actions">
-          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
-            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-            </svg>
-            <span th:if="${cantidadCarrito > 0}" class="cart-badge" th:text="${cantidadCarrito}">0</span>
-          </a>
-
-          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
-
-          <div th:if="${cliente != null}" class="user-session">
-            <span class="user-name" th:text="${cliente.nombres}">Usuario</span>
-
-            <div class="user-menu">
-              <button type="button" class="avatar-link user-menu-button" onclick="toggleUserMenu(event)">
-                <img
-                  th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
-                  th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
-                  th:alt="${cliente.nombres}"
-                  class="avatar-image" />
-
-                <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
-              </button>
-
-              <div id="userDropdown" class="user-dropdown">
-                <a th:href="@{/perfil}" class="user-dropdown-item">Perfil</a>
-
-                <a th:href="@{/logout}" class="user-dropdown-item user-dropdown-logout">Cerrar sesión</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <div th:replace="~{fragments/header :: header('tienda')}"></div>
 
     <section th:if="${cliente == null}" class="login-gate">
       <div class="login-gate-card">
@@ -147,35 +98,8 @@
       </div>
     </main>
 
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-logo">POWERFIT</div>
-        <div class="footer-links">
-          <a href="#" class="footer-link">Política de Privacidad</a>
-          <a href="#" class="footer-link">Términos de Servicio</a>
-          <a href="#" class="footer-link">Soporte</a>
-          <a href="#" class="footer-link">Instagram</a>
-        </div>
-        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-      </div>
-    </footer>
-    <script>
-      function toggleUserMenu(event) {
-        event.stopPropagation();
-
-        const menu = document.getElementById("userDropdown");
-
-        menu.classList.toggle("active");
-      }
-
-      document.addEventListener("click", function () {
-        const menu = document.getElementById("userDropdown");
-
-        if (menu) {
-          menu.classList.remove("active");
-        }
-      });
-    </script>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    
     <!-- MODAL COMPRA EXITOSA -->
     <dialog id="modalPedidoExitoso" class="cart-modal" th:if="${pedidoExitoso != null}">
       <div class="cart-modal-icon" style="color: #4ade80; background: rgba(34, 197, 94, 0.12)">✓</div>
@@ -283,6 +207,7 @@
         </div>
       </form>
     </dialog>
-    <script th:src="@{/js/pedidos.js}"></script>
-  </body>
+    <script th:src="@{/js/pages/pedidos.js}"></script>
+    <script th:src="@{/js/components/header.js}"></script>
+</body>
 </html>

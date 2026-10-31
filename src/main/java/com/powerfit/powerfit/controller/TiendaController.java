@@ -19,6 +19,6 @@ public class TiendaController {
 
     model.addAttribute("productos", productoRepository.findByEstadoOrderByNombreAsc("ACTIVO"));
 
-    return "tienda";
+    return "tienda/tienda";
   }
 }

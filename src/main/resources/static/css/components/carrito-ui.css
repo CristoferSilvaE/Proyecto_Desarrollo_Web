@@ -372,3 +372,9 @@ dialog.pedido-modal::backdrop {
     width: 100%;
   }
 }
+
+/* Mostrar y ocultar campos del checkout */
+
+.hidden {
+  display: none !important;
+}

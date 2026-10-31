@@ -43,13 +43,13 @@ public class MembresiaController {
     Long idCliente = (Long) session.getAttribute("idCliente");
 
     if (idCliente == null) {
-      return "membresia";
+      return "membresias/membresia";
     }
 
     Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
 
     if (cliente == null) {
-      return "membresia";
+      return "membresias/membresia";
     }
 
     List<Membresia> historial =
@@ -70,7 +70,7 @@ public class MembresiaController {
     model.addAttribute("membresiaActiva", activa);
     model.addAttribute("planSeleccionado", plan);
 
-    return "membresia";
+    return "membresias/membresia";
   }
 
   @PostMapping("/membresia/solicitar")

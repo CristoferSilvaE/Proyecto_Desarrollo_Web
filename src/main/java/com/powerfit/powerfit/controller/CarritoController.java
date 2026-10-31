@@ -32,7 +32,7 @@ public class CarritoController {
 
     model.addAttribute("cantidadTotal", carritoService.obtenerCantidadTotal(session));
 
-    return "carrito";
+    return "tienda/carrito";
   }
 
   // Agregar producto desde la tienda

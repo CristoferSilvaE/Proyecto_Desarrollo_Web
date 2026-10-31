@@ -73,6 +73,6 @@ public class ClaseController {
     model.addAttribute("categorias", categorias);
     model.addAttribute("categoriaSeleccionada", categoria);
 
-    return "reservaClases";
+    return "clases/reservaClases";
   }
 }

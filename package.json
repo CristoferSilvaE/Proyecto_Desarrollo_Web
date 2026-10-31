@@ -4,8 +4,8 @@
   "description": "Sistema web de gestión para gimnasio PowerFit",
   "main": "tailwind.config.js",
   "scripts": {
-    "tailwind:watch": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/powerfit.css --watch",
-    "tailwind:build": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/powerfit.css --minify"
+    "tailwind:watch": "tailwindcss -i ./src/main/resources/static/css/base/input.css -o ./src/main/resources/static/css/base/powerfit.css --watch",
+    "tailwind:build": "tailwindcss -i ./src/main/resources/static/css/base/input.css -o ./src/main/resources/static/css/base/powerfit.css --minify"
   },
   "repository": {
     "type": "git",

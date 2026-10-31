@@ -110,7 +110,7 @@ public class PedidoController {
         "pedidos", pedidoRepository.findByCliente_IdClienteOrderByFechaPedidoDesc(idCliente));
 
     model.addAttribute("sedes", sedeRepository.findByEstadoOrderByNombreAsc("ACTIVO"));
-    return "pedidos";
+    return "pedidos/pedidos";
   }
 
   // 1. VER DETALLE DEL PEDIDO

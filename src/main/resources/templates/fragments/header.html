@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <header th:fragment="header(paginaActiva)" class="navbar">
+      <div class="navbar-container">
+        <!-- LOGO -->
+        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
+
+        <!-- NAVEGACIÓN -->
+        <nav class="navbar-menu">
+          <a th:href="@{/}" th:class="${paginaActiva == 'inicio'} ? 'nav-link-active' : 'nav-link'">Inicio</a>
+
+          <a th:href="@{/membresia}" th:class="${paginaActiva == 'membresia'} ? 'nav-link-active' : 'nav-link'">Membresía</a>
+
+          <a th:href="@{/tienda}" th:class="${paginaActiva == 'tienda'} ? 'nav-link-active' : 'nav-link'">Tienda</a>
+
+          <a th:href="@{/clases}" th:class="${paginaActiva == 'clases'} ? 'nav-link-active' : 'nav-link'">Clases</a>
+
+          <a th:href="@{/perfil}" th:class="${paginaActiva == 'perfil'} ? 'nav-link-active' : 'nav-link'">Perfil</a>
+        </nav>
+
+        <!-- ACCIONES -->
+        <div class="navbar-actions">
+          <!-- CARRITO -->
+          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
+            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+
+            <span th:if="${cantidadCarrito != null and cantidadCarrito > 0}" class="cart-badge" th:text="${cantidadCarrito}">0</span>
+          </a>
+
+          <!-- USUARIO SIN SESIÓN -->
+          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
+
+          <!-- USUARIO CON SESIÓN -->
+          <div th:if="${cliente != null}" class="user-session">
+            <span class="user-name" th:text="${cliente.nombres}">Usuario</span>
+
+            <div class="user-menu">
+              <button type="button" class="avatar-link user-menu-button" onclick="toggleUserMenu(event)">
+                <img
+                  th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
+                  th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
+                  th:alt="${cliente.nombres}"
+                  class="avatar-image" />
+
+                <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
+              </button>
+
+              <div id="userDropdown" class="user-dropdown">
+                <a th:href="@{/perfil}" class="user-dropdown-item">Perfil</a>
+
+                <a th:href="@{/logout}" class="user-dropdown-item user-dropdown-logout">Cerrar sesión</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  </body>
+</html>

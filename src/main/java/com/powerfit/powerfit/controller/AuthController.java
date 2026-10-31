@@ -62,54 +62,54 @@ public class AuthController {
 
     if (nombres.isBlank() || apellidos.isBlank()) {
       model.addAttribute("error", "Los nombres y apellidos son obligatorios.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (!dni.matches("\\d{8}")) {
       model.addAttribute("error", "El DNI debe contener exactamente 8 números.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (fechaNacimiento.isAfter(LocalDate.now())) {
       model.addAttribute("error", "La fecha de nacimiento no puede ser futura.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (password.length() < 8) {
       model.addAttribute("error", "La contraseña debe tener al menos 8 caracteres.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (!password.equals(confirmarPassword)) {
       model.addAttribute("error", "Las contraseñas no coinciden.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (!genero.equals("MASCULINO") && !genero.equals("FEMENINO")) {
       model.addAttribute("error", "Selecciona un género válido.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (!Boolean.TRUE.equals(aceptaTerminos)) {
       model.addAttribute("error", "Debes aceptar los términos y condiciones.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (usuarioRepository.existsByCorreo(correo)) {
       model.addAttribute("error", "Ya existe una cuenta registrada con ese correo.");
-      return "registro";
+      return "auth/registro";
     }
 
     if (clienteRepository.existsByDni(dni)) {
       model.addAttribute("error", "Ya existe un cliente registrado con ese DNI.");
-      return "registro";
+      return "auth/registro";
     }
 
     Rol rolCliente = rolRepository.findByNombre("CLIENTE").orElse(null);
 
     if (rolCliente == null) {
       model.addAttribute("error", "No se encontró el rol CLIENTE en la base de datos.");
-      return "registro";
+      return "auth/registro";
     }
 
     Usuario usuario = new Usuario();
@@ -176,12 +176,12 @@ public class AuthController {
 
     if (usuario == null || !passwordEncoder.matches(password, usuario.getPasswordHash())) {
       model.addAttribute("error", "Correo o contraseña incorrectos.");
-      return "login";
+      return "auth/login";
     }
 
     if (!"ACTIVO".equalsIgnoreCase(usuario.getEstado())) {
       model.addAttribute("error", "Tu cuenta no se encuentra activa.");
-      return "login";
+      return "auth/login";
     }
 
     session.setAttribute("idUsuario", usuario.getIdUsuario());
@@ -194,7 +194,7 @@ public class AuthController {
 
       if (cliente == null) {
         model.addAttribute("error", "No se encontró el perfil del cliente.");
-        return "login";
+        return "auth/login";
       }
 
       session.setAttribute("idCliente", cliente.getIdCliente());

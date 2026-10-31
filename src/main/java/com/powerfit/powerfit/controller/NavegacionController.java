@@ -30,17 +30,17 @@ public class NavegacionController {
 
     model.addAttribute("planes", planMembresiaRepository.findByEstadoOrderByPrecioAsc("ACTIVO"));
 
-    return "index";
+    return "inicio/index";
   }
 
   @GetMapping("/login")
   public String login() {
-    return "login";
+    return "auth/login";
   }
 
   @GetMapping("/registro")
   public String registro() {
-    return "registro";
+    return "auth/registro";
   }
 
   @GetMapping("/checkout")
@@ -65,7 +65,6 @@ public class NavegacionController {
     // Total provisional, sin costo de delivery
     model.addAttribute("total", carritoService.obtenerSubtotal(session));
 
-    return "checkout";
+    return "tienda/checkout";
   }
-
 }
