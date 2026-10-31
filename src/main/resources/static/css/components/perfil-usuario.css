@@ -1,0 +1,208 @@
+/* =========================================
+   DATOS DE ACCESO
+========================================= */
+
+.account-access-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.account-access-title {
+  font-size: 0.875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #e4e4e7;
+}
+
+.account-access-description {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: #71717a;
+}
+
+.account-access-icon {
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(165, 180, 252, 0.25);
+  border-radius: 0.65rem;
+  background: rgba(99, 102, 241, 0.12);
+  color: #a5b4fc;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.account-username-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #27272a;
+  border-radius: 0.5rem;
+  background: #0d0e12;
+}
+
+.account-username-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #71717a;
+}
+
+.account-username-value {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f4f4f5;
+  overflow-wrap: anywhere;
+}
+
+.account-username-status {
+  flex-shrink: 0;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.account-username-status.is-set {
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.25);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.account-username-status.is-empty {
+  color: #fcd34d;
+  border-color: rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.account-access-note {
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  line-height: 1.4rem;
+  color: #71717a;
+}
+
+.account-access-button {
+  margin-top: 1rem;
+}
+
+/* =========================================
+   MODAL NOMBRE DE USUARIO
+========================================= */
+
+.username-modal-card {
+  max-width: 32rem;
+  text-align: left;
+}
+
+.username-modal-icon {
+  display: flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #a5b4fc;
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.username-field-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #d4d4d8;
+}
+
+.username-field {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #3f3f46;
+  border-radius: 0.35rem;
+  outline: none;
+  background: #0d0e12;
+  color: #f4f4f5;
+  font-size: 0.9rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.username-field:focus {
+  border-color: #a5b4fc;
+  box-shadow: 0 0 0 3px rgba(165, 180, 252, 0.1);
+}
+
+.username-field-help {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  line-height: 1.2rem;
+  color: #71717a;
+}
+
+.username-modal-warning {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 0.4rem;
+  background: rgba(245, 158, 11, 0.07);
+  font-size: 0.75rem;
+  line-height: 1.4rem;
+  color: #fcd34d;
+}
+
+.username-modal-info {
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  line-height: 1.4rem;
+  color: #a1a1aa;
+}
+
+.username-modal-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.username-confirm-button {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  border-radius: 0.25rem;
+  background: #a5b4fc;
+  color: #09090b;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+}
+
+.username-confirm-button:hover {
+  background: #818cf8;
+}
+
+@media (max-width: 420px) {
+  .username-modal-actions {
+    grid-template-columns: 1fr;
+  }
+}

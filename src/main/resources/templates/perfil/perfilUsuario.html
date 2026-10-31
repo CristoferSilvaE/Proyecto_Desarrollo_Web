@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
     <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/perfil-usuario.css}" />
   </head>
 
   <body class="app-body">
@@ -114,6 +115,48 @@
 
               <button type="button" class="btn-deactivate" onclick="abrirModalDesactivarCuenta()">Desactivar Cuenta</button>
             </div>
+          </section>
+
+          <!-- DATOS DE ACCESO -->
+          <section class="profile-card">
+            <div class="account-access-head">
+              <div>
+                <h3 class="account-access-title">Datos de acceso</h3>
+                <p class="account-access-description">Administra tu nombre de usuario.</p>
+              </div>
+
+              <div class="account-access-icon">@</div>
+            </div>
+
+            <div class="account-username-box">
+              <div>
+                <span class="account-username-label">Nombre de usuario</span>
+
+                <strong
+                  class="account-username-value"
+                  th:text="${cliente.usuario.usuario != null and !cliente.usuario.usuario.isBlank()
+                    ? '@' + cliente.usuario.usuario
+                    : 'Sin configurar'}">
+                  Sin configurar
+                </strong>
+              </div>
+
+              <span th:if="${cliente.usuario.usuario != null and !cliente.usuario.usuario.isBlank()}" class="account-username-status is-set">Configurado</span>
+
+              <span th:if="${cliente.usuario.usuario == null or cliente.usuario.usuario.isBlank()}" class="account-username-status is-empty">Pendiente</span>
+            </div>
+
+            <p class="account-access-note">Puedes utilizar tu correo electrónico o tu nombre de usuario para iniciar sesión en PowerFit.</p>
+
+            <button
+              type="button"
+              class="btn-outline-block account-access-button"
+              onclick="abrirModalNombreUsuario()"
+              th:text="${cliente.usuario.usuario == null or cliente.usuario.usuario.isBlank()
+                ? 'Crear nombre de usuario'
+                : 'Cambiar nombre de usuario'}">
+              Crear nombre de usuario
+            </button>
           </section>
 
           <!-- =====================================================
@@ -356,6 +399,65 @@
       </div>
     </div>
 
+    <!-- MODAL NOMBRE DE USUARIO -->
+
+    <div th:if="${cliente != null}" id="modalNombreUsuario" class="modal-overlay">
+      <div class="modal-card username-modal-card">
+        <div class="username-modal-icon">@</div>
+
+        <h2 class="modal-title">Nombre de usuario</h2>
+
+        <p th:if="${cliente.usuario.usuario == null or cliente.usuario.usuario.isBlank()}" class="modal-text mb-6">
+          Configura tu nombre de usuario para que también puedas utilizarlo al iniciar sesión.
+        </p>
+
+        <p th:if="${cliente.usuario.usuario != null and !cliente.usuario.usuario.isBlank()}" class="modal-text mb-6">
+          Estás a punto de cambiar tu nombre de usuario actual:
+          <strong th:text="${'@' + cliente.usuario.usuario}">@diego123</strong>
+        </p>
+
+        <form th:action="@{/perfil/usuario/actualizar}" method="post">
+          <label for="nuevoNombreUsuario" class="username-field-label">Nuevo nombre de usuario</label>
+
+          <input
+            id="nuevoNombreUsuario"
+            type="text"
+            name="nombreUsuario"
+            class="username-field"
+            th:value="${cliente.usuario.usuario}"
+            placeholder="Ej. diego123"
+            minlength="4"
+            maxlength="30"
+            pattern="[A-Za-z0-9._-]{4,30}"
+            title="Entre 4 y 30 caracteres. Letras, números, puntos, guiones y guiones bajos."
+            autocomplete="nickname"
+            required />
+
+          <p class="username-field-help">Utiliza entre 4 y 30 caracteres. Se permiten letras, números, puntos, guiones y guiones bajos.</p>
+
+          <div class="username-modal-warning">
+            <strong>Importante:</strong>
+
+            <span th:if="${cliente.usuario.usuario != null and !cliente.usuario.usuario.isBlank()}">
+              Si confirmas el cambio, tu nombre de usuario anterior quedará disponible para que otra persona pueda registrarlo.
+            </span>
+
+            <span th:if="${cliente.usuario.usuario == null or cliente.usuario.usuario.isBlank()}">
+              El nombre que registres quedará asociado a tu cuenta. Si posteriormente lo cambias, el anterior quedará disponible para otros usuarios.
+            </span>
+          </div>
+
+          <p class="username-modal-info">Tu correo electrónico y contraseña no cambiarán. Podrás seguir iniciando sesión con tu correo o con tu nuevo usuario.</p>
+
+          <div class="username-modal-actions">
+            <button type="button" class="modal-cancel-button" onclick="cerrarModalNombreUsuario()">Cancelar</button>
+
+            <button type="submit" class="username-confirm-button">Confirmar cambio</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- =====================================================
        MODAL DESACTIVAR CUENTA
   ====================================================== -->
@@ -393,6 +495,14 @@
         document.getElementById("modalEditarPerfil").classList.remove("active");
       }
 
+      function abrirModalNombreUsuario() {
+        document.getElementById("modalNombreUsuario").classList.add("active");
+      }
+
+      function cerrarModalNombreUsuario() {
+        document.getElementById("modalNombreUsuario").classList.remove("active");
+      }
+
       function abrirModalDesactivarCuenta() {
         document.getElementById("modalDesactivarCuenta").classList.add("active");
       }
@@ -405,6 +515,7 @@
         if (event.key === "Escape") {
           cerrarModalEditarPerfil();
           cerrarModalDesactivarCuenta();
+          cerrarModalNombreUsuario();
         }
       });
     </script>

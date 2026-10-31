@@ -64,6 +64,20 @@
               <label class="register-label">Correo electrónico *</label>
               <input name="correo" type="email" th:value="${correo}" placeholder="atleta@ejemplo.com" required maxlength="120" class="register-input" />
             </div>
+            <div>
+              <label class="register-label">Nombre de usuario *</label>
+              <input
+                name="usuario"
+                type="text"
+                th:value="${nombreUsuario}"
+                placeholder="Ej. diego123"
+                required
+                minlength="4"
+                maxlength="30"
+                pattern="[A-Za-z0-9._-]{4,30}"
+                title="Entre 4 y 30 caracteres. Letras, números, puntos, guiones y guiones bajos."
+                class="register-input" />
+            </div>
           </div>
 
           <div class="register-grid">

@@ -45,6 +45,7 @@ public class AuthController {
       @RequestParam String telefono,
       @RequestParam String genero,
       @RequestParam String correo,
+      @RequestParam("usuario") String nombreUsuario,
       @RequestParam String password,
       @RequestParam String confirmarPassword,
       @RequestParam(required = false) Boolean aceptaTerminos,
@@ -57,9 +58,10 @@ public class AuthController {
     telefono = telefono.trim();
     genero = genero.trim().toUpperCase();
     correo = correo.trim().toLowerCase();
+    nombreUsuario = nombreUsuario.trim().toLowerCase();
 
     cargarDatosFormulario(
-        model, nombres, apellidos, dni, telefono, genero, correo, fechaNacimiento);
+        model, nombres, apellidos, dni, telefono, genero, correo, nombreUsuario, fechaNacimiento);
 
     if (nombres.isBlank() || apellidos.isBlank()) {
       model.addAttribute("error", "Los nombres y apellidos son obligatorios.");
@@ -101,6 +103,19 @@ public class AuthController {
       return "auth/registro";
     }
 
+    if (!nombreUsuario.matches("[a-z0-9._-]{4,30}")) {
+      model.addAttribute(
+          "error",
+          "El usuario debe tener entre 4 y 30 caracteres. Solo se permiten letras, números, puntos,"
+              + " guiones y guiones bajos.");
+      return "auth/registro";
+    }
+
+    if (usuarioRepository.existsByUsuario(nombreUsuario)) {
+      model.addAttribute("error", "Ese nombre de usuario ya está registrado. Elige otro.");
+      return "auth/registro";
+    }
+
     if (clienteRepository.existsByDni(dni)) {
       model.addAttribute("error", "Ya existe un cliente registrado con ese DNI.");
       return "auth/registro";
@@ -116,6 +131,7 @@ public class AuthController {
     Usuario usuario = new Usuario();
     usuario.setRol(rolCliente);
     usuario.setCorreo(correo);
+    usuario.setUsuario(nombreUsuario);
     usuario.setPasswordHash(passwordEncoder.encode(password));
     usuario.setEstado("ACTIVO");
     usuario.setCambioPasswordPendiente(false);
@@ -153,6 +169,7 @@ public class AuthController {
       String telefono,
       String genero,
       String correo,
+      String nombreUsuario,
       LocalDate fechaNacimiento) {
 
     model.addAttribute("nombres", nombres);
@@ -161,33 +178,46 @@ public class AuthController {
     model.addAttribute("telefono", telefono);
     model.addAttribute("genero", genero);
     model.addAttribute("correo", correo);
+    model.addAttribute("nombreUsuario", nombreUsuario);
     model.addAttribute("fechaNacimiento", fechaNacimiento);
   }
 
   @PostMapping("/login")
   public String iniciarSesion(
-      @RequestParam String correo,
+      @RequestParam String identificador,
       @RequestParam String password,
       HttpSession session,
       Model model) {
 
-    correo = correo.trim().toLowerCase();
+    identificador = identificador.trim().toLowerCase();
 
-    Usuario usuario = usuarioRepository.findByCorreo(correo).orElse(null);
+    Usuario usuario;
 
+    // Determinar si ingresó un correo o un nombre de usuario
+    if (identificador.contains("@")) {
+      usuario = usuarioRepository.findByCorreo(identificador).orElse(null);
+    } else {
+      usuario = usuarioRepository.findByUsuario(identificador).orElse(null);
+    }
+
+    // Validar credenciales
     if (usuario == null || !passwordEncoder.matches(password, usuario.getPasswordHash())) {
-      model.addAttribute("error", "Correo o contraseña incorrectos.");
+      model.addAttribute("error", "Usuario, correo o contraseña incorrectos.");
+      model.addAttribute("identificador", identificador);
       return "auth/login";
     }
 
+    // Validar estado de la cuenta
     if (!"ACTIVO".equalsIgnoreCase(usuario.getEstado())) {
       model.addAttribute("error", "Tu cuenta no se encuentra activa.");
+      model.addAttribute("identificador", identificador);
       return "auth/login";
     }
 
     session.setAttribute("idUsuario", usuario.getIdUsuario());
     session.setAttribute("rol", usuario.getRol().getNombre());
 
+    // Acceso del cliente
     if ("CLIENTE".equalsIgnoreCase(usuario.getRol().getNombre())) {
 
       Cliente cliente =
@@ -203,6 +233,7 @@ public class AuthController {
       return "redirect:/";
     }
 
+    // Acceso del administrador
     if ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre())) {
       return "redirect:/admin";
     }
