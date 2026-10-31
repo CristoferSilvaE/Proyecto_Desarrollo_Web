@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PowerFit | GESTIÓN DE PRODUCTOS Y PEDIDOS</title>
+  <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+</head>
+<body class="adm-body">
+<div class="adm-shell">
+  <div th:replace="~{admin/fragments/sidebar :: sidebar('productos')}"></div>
+  <div class="adm-workspace">
+    <div th:replace="~{admin/fragments/topbar :: topbar('INVENTARIO & TIENDA', 'GESTIÓN DE PRODUCTOS Y PEDIDOS', 'Inventario, stock y seguimiento de compras')}"></div>
+    <main class="adm-main">
+      <div class="adm-demo-banner"><strong>Vista preliminar:</strong> datos ilustrativos. Los formularios aún no guardan información en MySQL.</div>
+      <div class="adm-tabs"><a th:href="@{/admin/productos}" class="adm-tab is-active">▤ PRODUCTOS</a><a th:href="@{/admin/pedidos}" class="adm-tab ">▣ PEDIDOS</a></div><div class="adm-stats"><article class="adm-stat "><div class="adm-stat-label">INGRESOS TIENDA</div><strong>—</strong><small>MySQL pendiente</small></article><article class="adm-stat "><div class="adm-stat-label">PEDIDOS TOTALES</div><strong>—</strong><small>MySQL pendiente</small></article><article class="adm-stat adm-stat-warn"><div class="adm-stat-label">STOCK CRÍTICO</div><strong>—</strong><small>MySQL pendiente</small></article><article class="adm-stat "><div class="adm-stat-label">ARTÍCULOS EN CATÁLOGO</div><strong>—</strong><small>MySQL pendiente</small></article></div><div class="adm-toolbar"><label class="adm-search">⌕ <input type="search" placeholder="Buscar producto, SKU o categoría..." data-table-search="productosTabla" /></label><select><option>Todas las categorías</option><option>Nutrición Deportiva</option><option>Equipamiento</option></select><button class="adm-btn adm-btn-primary" data-open-modal="modalNuevoProducto">＋ NUEVO PRODUCTO</button></div><section class="adm-panel"><div class="adm-panel-head"><h2>CATÁLOGO DE PRODUCTOS Y CONTROL DE STOCK</h2></div><div id="productosTabla"><div class="adm-table-scroll"><table class="adm-table"><thead><tr><th scope="col">PRODUCTO</th><th scope="col">CATEGORÍA</th><th scope="col">PRECIO</th><th scope="col">STOCK</th><th scope="col">ESTADO</th><th scope="col">ACCIONES</th></tr></thead><tbody><tr><td><strong>Premium Whey Protein 2kg</strong><small>PF-NUT-001</small></td><td>Nutrición Deportiva</td><td>S/ 169.00</td><td>20 un.</td><td><span class="adm-badge blue">DISPONIBLE</span></td><td><button class="adm-text-btn" data-open-modal="modalNuevoProducto">Editar</button></td></tr><tr><td><strong>Hyperion Pre-Workout 300g</strong><small>PF-NUT-002</small></td><td>Nutrición Deportiva</td><td>S/ 145.00</td><td>15 un.</td><td><span class="adm-badge blue">DISPONIBLE</span></td><td><button class="adm-text-btn" data-open-modal="modalNuevoProducto">Editar</button></td></tr></tbody></table></div></div></section><section class="adm-panel"><div class="adm-panel-head"><h2>PEDIDOS RECIENTES</h2></div><p class="adm-muted">Vista previa de pedidos. Se conectará a MySQL en la siguiente etapa.</p><a class="adm-btn adm-btn-ghost" href="/admin/pedidos" th:href="@{/admin/pedidos}">VER TODOS LOS PEDIDOS →</a></section>
+    </main>
+  </div>
+</div>
+<dialog class="adm-modal adm-modal-wide" id="modalNuevoProducto"><form class="adm-modal-form" data-demo-form><div class="adm-modal-head"><div><span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span><h2>NUEVO PRODUCTO</h2><p>Catálogo, precio y control de stock.</p></div><button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button></div><div class="adm-modal-body"><div class="adm-form-grid"><label>SKU *<input type="text" placeholder="PF-NUT-003" required /></label><label>NOMBRE *<input type="text" placeholder="Nombre del producto" required /></label><label>CATEGORÍA *<select><option>Nutrición Deportiva</option><option>Equipamiento</option><option>Accesorios</option></select></label><label>PRECIO (S/.) *<input type="number" min="0.01" step="0.01" required /></label><label>STOCK *<input type="number" min="0" required /></label><label>STOCK MÍNIMO *<input type="number" min="0" required /></label><label>ESTADO<select><option>ACTIVO</option><option>INACTIVO</option></select></label><label>IMAGEN<input type="text" placeholder="tienda-producto.jpg" /></label><label class="adm-full">DESCRIPCIÓN<textarea rows="3"></textarea></label></div></div><div class="adm-modal-footer"><button type="button" class="adm-btn adm-btn-ghost" data-close-modal>Cancelar</button><button type="submit" class="adm-btn adm-btn-primary">GUARDAR PRODUCTO</button></div></form></dialog>
+<div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+<script th:src="@{/js/admin/admin.js}"></script>
+</body>
+</html>

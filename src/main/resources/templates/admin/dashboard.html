@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PowerFit | PANEL DE ADMINISTRACIÓN</title>
+  <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+</head>
+<body class="adm-body">
+<div class="adm-shell">
+  <div th:replace="~{admin/fragments/sidebar :: sidebar('panel')}"></div>
+  <div class="adm-workspace">
+    <div th:replace="~{admin/fragments/topbar :: topbar('PANEL DE CONTROL', 'PANEL DE ADMINISTRACIÓN', 'Visión general y rendimiento del sistema')}"></div>
+    <main class="adm-main">
+      <div class="adm-demo-banner"><strong>Vista preliminar:</strong> datos ilustrativos. Los formularios aún no guardan información en MySQL.</div>
+      <div class="adm-stats"><article class="adm-stat "><div class="adm-stat-label">CLIENTES ACTIVOS</div><strong>—</strong><small>Se conectará a clientes</small></article><article class="adm-stat "><div class="adm-stat-label">MEMBRESÍAS VENDIDAS</div><strong>—</strong><small>Se conectará a membresías</small></article><article class="adm-stat "><div class="adm-stat-label">INGRESOS MENSUALES</div><strong>—</strong><small>Se conectará a pagos</small></article><article class="adm-stat "><div class="adm-stat-label">CLASES HOY</div><strong>—</strong><small>Se conectará a horarios</small></article></div><div class="adm-two-columns"><section class="adm-panel"><div class="adm-panel-head"><h2>HORARIO DE HOY</h2><a class="adm-link" th:href="@{/admin/clases}">VER TODO →</a></div><div class="adm-table-scroll"><table class="adm-table"><thead><tr><th scope="col">HORA</th><th scope="col">CLASE</th><th scope="col">INSTRUCTOR</th><th scope="col">ESTADO</th></tr></thead><tbody><tr><td>06:00</td><td>Musculación</td><td>Por asignar</td><td><span class="adm-badge blue">Pendiente de datos</span></td></tr><tr><td>08:30</td><td>Spinning</td><td>Por asignar</td><td><span class="adm-badge blue">Pendiente de datos</span></td></tr><tr><td>17:30</td><td>Funcional</td><td>Por asignar</td><td><span class="adm-badge blue">Pendiente de datos</span></td></tr></tbody></table></div></section><div class="adm-stack"><section class="adm-panel"><div class="adm-panel-head"><h2>ALERTAS DEL SISTEMA</h2></div><div class="adm-alert">▴ &nbsp; Productos con stock crítico <span>Próximamente</span></div><div class="adm-alert">◷ &nbsp; Membresías por vencer <span>Próximamente</span></div><div class="adm-alert">▤ &nbsp; Pedidos pendientes <span>Próximamente</span></div></section><section class="adm-panel"><div class="adm-panel-head"><h2>ACCESOS RÁPIDOS</h2></div><div class="adm-quick"><a th:href="@{/admin/clientes}">Clientes →</a><a th:href="@{/admin/clases}">Horarios →</a><a th:href="@{/admin/productos}">Productos →</a></div></section></div></div>
+    </main>
+  </div>
+</div>
+
+<div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+<script th:src="@{/js/admin/admin.js}"></script>
+</body>
+</html>

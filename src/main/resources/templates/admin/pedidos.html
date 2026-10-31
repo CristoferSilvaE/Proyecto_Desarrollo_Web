@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PowerFit | GESTIÓN DE PRODUCTOS Y PEDIDOS</title>
+  <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+</head>
+<body class="adm-body">
+<div class="adm-shell">
+  <div th:replace="~{admin/fragments/sidebar :: sidebar('pedidos')}"></div>
+  <div class="adm-workspace">
+    <div th:replace="~{admin/fragments/topbar :: topbar('INVENTARIO & TIENDA', 'GESTIÓN DE PRODUCTOS Y PEDIDOS', 'Seguimiento y estados de las compras')}"></div>
+    <main class="adm-main">
+      <div class="adm-demo-banner"><strong>Vista preliminar:</strong> datos ilustrativos. Los formularios aún no guardan información en MySQL.</div>
+      <div class="adm-tabs"><a th:href="@{/admin/productos}" class="adm-tab ">▤ PRODUCTOS</a><a th:href="@{/admin/pedidos}" class="adm-tab is-active">▣ PEDIDOS</a></div><div class="adm-stats"><article class="adm-stat "><div class="adm-stat-label">PEDIDOS TOTALES</div><strong>—</strong><small>MySQL pendiente</small></article><article class="adm-stat adm-stat-warn"><div class="adm-stat-label">PEDIDOS PENDIENTES</div><strong>—</strong><small>MySQL pendiente</small></article><article class="adm-stat "><div class="adm-stat-label">PAGOS CONFIRMADOS</div><strong>—</strong><small>MySQL pendiente</small></article><article class="adm-stat "><div class="adm-stat-label">VENTAS DEL MES</div><strong>—</strong><small>MySQL pendiente</small></article></div><div class="adm-toolbar"><label class="adm-search">⌕ <input type="search" placeholder="Buscar pedido o cliente..." data-table-search="pedidosTabla" /></label><select><option>Todos los estados</option><option>PENDIENTE</option><option>ENTREGADO</option><option>CANCELADO</option></select><button class="adm-btn adm-btn-ghost" data-toast="La exportación se implementará después">EXPORTAR REPORTE</button></div><section class="adm-panel"><div class="adm-panel-head"><h2>SEGUIMIENTO DE PEDIDOS</h2></div><div id="pedidosTabla"><div class="adm-table-scroll"><table class="adm-table"><thead><tr><th scope="col">PEDIDO</th><th scope="col">CLIENTE</th><th scope="col">FECHA</th><th scope="col">TOTAL</th><th scope="col">ENTREGA</th><th scope="col">ESTADO</th><th scope="col">ACCIONES</th></tr></thead><tbody><tr><td><strong>#PF-1</strong></td><td>Cliente de ejemplo</td><td>—</td><td>S/ 145.00</td><td>RECOJO</td><td><span class="adm-badge orange">PENDIENTE</span></td><td><button class="adm-text-btn" data-toast="El detalle de pedidos se conectará a MySQL">Ver detalle</button></td></tr><tr><td><strong>#PF-2</strong></td><td>Segundo cliente</td><td>—</td><td>S/ 169.00</td><td>DELIVERY</td><td><span class="adm-badge orange">PENDIENTE</span></td><td><button class="adm-text-btn" data-toast="La gestión de pedidos se implementará después">Ver detalle</button></td></tr></tbody></table></div></div></section>
+    </main>
+  </div>
+</div>
+
+<div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+<script th:src="@{/js/admin/admin.js}"></script>
+</body>
+</html>

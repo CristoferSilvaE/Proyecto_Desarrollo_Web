@@ -7,4 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 
   List<Instructor> findByEstadoOrderByNombresAsc(String estado);
+
+  List<Instructor> findAllByOrderByNombresAscApellidosAsc();
+
+  boolean existsByCorreoIgnoreCase(String correo);
+
+  boolean existsByCorreoIgnoreCaseAndIdInstructorNot(String correo, Long idInstructor);
 }

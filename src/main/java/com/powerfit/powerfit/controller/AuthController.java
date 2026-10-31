@@ -58,7 +58,8 @@ public class AuthController {
     genero = genero.trim().toUpperCase();
     correo = correo.trim().toLowerCase();
 
-    cargarDatosFormulario(model, nombres, apellidos, dni, telefono, genero, correo, fechaNacimiento);
+    cargarDatosFormulario(
+        model, nombres, apellidos, dni, telefono, genero, correo, fechaNacimiento);
 
     if (nombres.isBlank() || apellidos.isBlank()) {
       model.addAttribute("error", "Los nombres y apellidos son obligatorios.");
@@ -200,6 +201,10 @@ public class AuthController {
       session.setAttribute("idCliente", cliente.getIdCliente());
 
       return "redirect:/";
+    }
+
+    if ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre())) {
+      return "redirect:/admin";
     }
 
     return "redirect:/";
