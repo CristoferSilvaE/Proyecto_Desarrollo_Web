@@ -166,7 +166,7 @@ CREATE TABLE instructores (
     id_instructor BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombres VARCHAR(80) NOT NULL,
     apellidos VARCHAR(80) NOT NULL,
-    especialidad VARCHAR(80),
+    id_clase BIGINT NOT NULL,
     telefono VARCHAR(15),
     correo VARCHAR(120) UNIQUE,
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO'
@@ -185,6 +185,13 @@ CREATE TABLE clases (
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
     imagen VARCHAR(255) NULL
 ) ENGINE=InnoDB;
+
+ALTER TABLE instructores
+ADD CONSTRAINT fk_instructor_clase
+FOREIGN KEY (id_clase)
+REFERENCES clases(id_clase)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
 
 
 -- ============================================================

@@ -76,6 +76,13 @@ public class HorarioClaseService {
       throw new IllegalArgumentException("El instructor seleccionado está inactivo.");
     }
 
+    if (instructor.getClase() == null
+        || !clase.getIdClase().equals(instructor.getClase().getIdClase())) {
+
+      throw new IllegalArgumentException(
+          "El instructor no pertenece a la especialidad seleccionada.");
+    }
+
     HorarioClase horario;
 
     if (idHorario == null) {
@@ -153,8 +160,15 @@ public class HorarioClaseService {
 
   // ESTADÍSTICAS
   private List<HorarioClase> horariosFuturos() {
-    return horarioRepository.findByFechaGreaterThanEqualAndEstadoOrderByFechaAscHoraInicioAsc(
-        LocalDate.now(ZONA_LIMA), "ACTIVO");
+
+    LocalDate hoy = LocalDate.now(ZONA_LIMA);
+    LocalTime ahora = LocalTime.now(ZONA_LIMA);
+
+    return horarioRepository
+        .findByFechaGreaterThanEqualAndEstadoOrderByFechaAscHoraInicioAsc(hoy, "ACTIVO")
+        .stream()
+        .filter(h -> h.getFecha().isAfter(hoy) || h.getHoraInicio().isAfter(ahora))
+        .toList();
   }
 
   public long contarClasesProgramadas() {
@@ -215,6 +229,26 @@ public class HorarioClaseService {
     return resultado;
   }
 
+  // ==========================================
+  // DETALLE DE CLIENTES RESERVADOS POR HORARIO
+  // ==========================================
+
+  public Map<Long, List<Reserva>> obtenerDetalleReservasPorHorario(List<HorarioClase> horarios) {
+
+    Map<Long, List<Reserva>> resultado = new HashMap<>();
+
+    for (HorarioClase horario : horarios) {
+
+      List<Reserva> reservas =
+          reservaRepository.findByHorario_IdHorarioAndEstadoOrderByFechaReservaAsc(
+              horario.getIdHorario(), "RESERVADA");
+
+      resultado.put(horario.getIdHorario(), reservas);
+    }
+
+    return resultado;
+  }
+
   // VALIDACIONES
   private void validarDatos(
       LocalDate fecha, LocalTime inicio, LocalTime fin, Integer capacidad, String sala) {
@@ -230,8 +264,8 @@ public class HorarioClaseService {
       throw new IllegalArgumentException("La hora de inicio debe ser anterior a la hora de fin.");
     }
 
-    if (capacidad <= 0) {
-      throw new IllegalArgumentException("La capacidad debe ser mayor que cero.");
+    if (capacidad <= 0 || capacidad > 500) {
+      throw new IllegalArgumentException("La capacidad debe estar entre 1 y 500.");
     }
 
     if (sala != null && sala.trim().length() > 80) {

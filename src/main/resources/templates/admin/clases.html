@@ -17,7 +17,7 @@
           <div th:if="${error}" class="adm-demo-banner" style="border-color: #dc2626; color: #fca5a5" th:text="${error}"></div>
           <div class="adm-demo-banner">
             <strong>Administración conectada:</strong>
-            catálogo de clases e instructores gestionados desde MySQL. La programación de horarios está pendiente.
+            catálogo de clases e instructores gestionados desde MySQL.
           </div>
           <div class="adm-tabs" data-panel-tabs>
             <button class="adm-tab is-active" data-panel-target="tabHorarios">◷ HORARIOS</button>
@@ -105,11 +105,33 @@
                           <small th:text="${horario.sala != null and !horario.sala.isBlank() ? horario.sala : 'Sin sala asignada'}">Sala 1</small>
                         </td>
 
-                        <!-- CAPACIDAD -->
+                        <!-- CAPACIDAD Y RESERVAS -->
                         <td>
                           <strong th:text="${horario.capacidad}">25</strong>
 
                           <small th:text="${reservasPorHorario[horario.idHorario] + ' reservadas'}">0 reservadas</small>
+
+                          <details class="adm-reservas">
+                            <summary class="adm-text-btn">
+                              Ver inscritos (
+                              <span th:text="${reservasDetallePorHorario[horario.idHorario].size()}">0</span>
+                              )
+                            </summary>
+
+                            <div class="adm-reservas-panel">
+                              <p th:if="${#lists.isEmpty(reservasDetallePorHorario[horario.idHorario])}" class="adm-muted">Todavía no hay clientes inscritos.</p>
+
+                              <div th:each="reserva : ${reservasDetallePorHorario[horario.idHorario]}" class="adm-reserva-item">
+                                <strong th:text="|${reserva.cliente.nombres} ${reserva.cliente.apellidos}|">Nombre del cliente</strong>
+
+                                <small th:text="${reserva.cliente.usuario.correo}">correo@ejemplo.com</small>
+
+                                <small th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">Fecha de reserva</small>
+
+                                <span class="adm-badge" th:text="${reserva.asistencia == true ? 'ASISTENCIA REGISTRADA' : 'PENDIENTE'}">PENDIENTE</span>
+                              </div>
+                            </div>
+                          </details>
                         </td>
 
                         <!-- ESTADO -->
@@ -136,11 +158,15 @@
                             Editar
                           </button>
 
-                          <form th:action="@{/admin/horarios/{id}/estado(id=${horario.idHorario})}" method="post" style="display: inline">
-                            <input type="hidden" name="estado" th:value="${horario.estado == 'ACTIVO' ? 'INACTIVO' : 'ACTIVO'}" />
-
-                            <button type="submit" class="adm-text-btn" th:text="${horario.estado == 'ACTIVO' ? 'Cancelar' : 'Activar'}">Cancelar</button>
-                          </form>
+                          <button
+                            type="button"
+                            class="adm-text-btn"
+                            data-open-modal="modalConfirmarEstadoHorario"
+                            th:attr="
+                            data-action=@{/admin/horarios/{id}/estado(id=${horario.idHorario})},
+                            data-estado=${horario.estado == 'ACTIVO' ? 'INACTIVO' : 'ACTIVO'},
+                            data-nombre=|${horario.clase.nombre} - ${#temporals.format(horario.fecha, 'dd/MM/yyyy')}|"
+                            th:text="${horario.estado == 'ACTIVO' ? 'Cancelar' : 'Activar'}"></button>
                         </td>
                       </tr>
 
@@ -246,7 +272,7 @@
                     <thead>
                       <tr>
                         <th>INSTRUCTOR</th>
-                        <th>ESPECIALIDAD</th>
+                        <th>CLASE ASIGNADA</th>
                         <th>TELÉFONO</th>
                         <th>CORREO</th>
                         <th>ESTADO</th>
@@ -404,7 +430,8 @@
                 <option
                   th:each="instructor : ${instructoresActivos}"
                   th:value="${instructor.idInstructor}"
-                  th:text="|${instructor.nombres} ${instructor.apellidos} — ${instructor.especialidad != null ? instructor.especialidad : 'Sin especialidad'}|"></option>
+                  th:attr="data-clase-id=${instructor.clase != null ? instructor.clase.idClase : ''}"
+                  th:text="|${instructor.nombres} ${instructor.apellidos} — ${instructor.clase != null ? instructor.clase.nombre : 'Sin clase'}|"></option>
               </select>
             </label>
 
@@ -474,7 +501,7 @@
 
             <h2 id="tituloModalInstructor">NUEVO INSTRUCTOR</h2>
 
-            <p>Datos del entrenador y especialidad.</p>
+            <p>Datos del entrenador y clase asignada.</p>
           </div>
 
           <button type="button" class="adm-close" data-close-modal>×</button>
@@ -493,9 +520,9 @@
             </label>
 
             <label class="adm-full">
-              ESPECIALIDAD *
+              CLASE QUE IMPARTE *
               <select name="idClase" id="instructorClase" required>
-                <option value="">Selecciona una especialidad</option>
+                <option value="">Selecciona una clase</option>
 
                 <option th:each="clase : ${clases}" th:if="${clase.estado == 'ACTIVO'}" th:value="${clase.idClase}" th:text="|${clase.nombre} - ${clase.categoria}|"></option>
               </select>
@@ -544,6 +571,33 @@
           <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>Cancelar</button>
 
           <button type="submit" class="adm-btn adm-btn-primary" id="btnConfirmarEstadoInstructor">CONFIRMAR</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog class="adm-modal" id="modalConfirmarEstadoHorario">
+      <form id="formEstadoHorario" class="adm-modal-form" method="post">
+        <input type="hidden" name="estado" id="estadoHorarioNuevo" />
+
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+
+            <h2 id="tituloModalEstadoHorario">CONFIRMAR ACCIÓN</h2>
+
+            <p>Verifica la operación antes de continuar.</p>
+          </div>
+
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <p id="textoConfirmacionHorario">¿Deseas continuar con esta operación?</p>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+          <button type="submit" class="adm-btn adm-btn-primary" id="btnConfirmarEstadoHorario">CONFIRMAR</button>
         </div>
       </form>
     </dialog>

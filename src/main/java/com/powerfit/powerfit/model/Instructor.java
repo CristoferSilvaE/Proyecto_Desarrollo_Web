@@ -18,7 +18,7 @@ public class Instructor {
   private String apellidos;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "id_clase")
+  @JoinColumn(name = "id_clase", nullable = false)
   private Clase clase;
 
   @Column(name = "telefono", length = 15)

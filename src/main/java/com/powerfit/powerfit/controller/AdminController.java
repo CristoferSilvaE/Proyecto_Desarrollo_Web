@@ -61,6 +61,9 @@ public class AdminController {
 
     model.addAttribute("reservasPorHorario", horarioService.obtenerReservasPorHorario(horarios));
 
+    model.addAttribute(
+        "reservasDetallePorHorario", horarioService.obtenerDetalleReservasPorHorario(horarios));
+
     model.addAttribute("fechaHoy", LocalDate.now(ZoneId.of("America/Lima")));
 
     model.addAttribute("clasesProgramadas", horarioService.contarClasesProgramadas());

@@ -234,8 +234,9 @@
                   </p>
                 </div>
 
-                <!-- CANCELACIÓN LA CONECTAREMOS DESPUÉS -->
-                <button type="button" class="cancel-class-btn">Cancelar</button>
+                <form th:action="@{/clases/cancelar/{idReserva}(idReserva=${reserva.idReserva})}" method="post" onsubmit="return confirm('¿Estás seguro de cancelar esta reserva?');">
+                  <button type="submit" class="cancel-class-btn">Cancelar</button>
+                </form>
               </div>
             </div>
           </section>
@@ -408,5 +409,5 @@
       });
     </script>
     <script th:src="@{/js/components/header.js}"></script>
-</body>
+  </body>
 </html>

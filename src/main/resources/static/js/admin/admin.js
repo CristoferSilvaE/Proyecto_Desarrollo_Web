@@ -63,6 +63,24 @@
         document.getElementById("btnConfirmarEstadoInstructor").textContent = estado === "INACTIVO" ? "DESACTIVAR" : "ACTIVAR";
       }
 
+      // PREPARAR CONFIRMACIÓN DE ESTADO DEL HORARIO
+      if (modalId === "modalConfirmarEstadoHorario") {
+        const form = document.getElementById("formEstadoHorario");
+
+        const estado = button.dataset.estado;
+        const nombre = button.dataset.nombre;
+
+        form.action = button.dataset.action;
+
+        document.getElementById("estadoHorarioNuevo").value = estado;
+
+        document.getElementById("tituloModalEstadoHorario").textContent = estado === "INACTIVO" ? "CANCELAR HORARIO" : "REACTIVAR HORARIO";
+
+        document.getElementById("textoConfirmacionHorario").textContent = estado === "INACTIVO" ? `¿Estás seguro de cancelar la sesión ${nombre}?` : `¿Deseas volver a activar la sesión ${nombre}?`;
+
+        document.getElementById("btnConfirmarEstadoHorario").textContent = estado === "INACTIVO" ? "CONFIRMAR CANCELACIÓN" : "REACTIVAR HORARIO";
+      }
+
       const dialog = document.getElementById(modalId);
 
       if (dialog && !dialog.open) {
@@ -149,16 +167,58 @@ document.querySelector('[data-open-modal="modalNuevaClase"]:not([data-id])')?.ad
 });
 
 // ==========================================
+// FILTRAR INSTRUCTORES SEGÚN LA CLASE
+// ==========================================
+
+function filtrarInstructoresPorClase(idInstructor = "") {
+  const claseSelect = document.getElementById("horarioClase");
+  const instructorSelect = document.getElementById("horarioInstructor");
+
+  if (!claseSelect || !instructorSelect) return;
+
+  const idClase = claseSelect.value;
+
+  Array.from(instructorSelect.options).forEach((option) => {
+    if (!option.value) {
+      option.hidden = false;
+      option.disabled = false;
+      return;
+    }
+
+    const coincide = option.dataset.claseId === idClase;
+
+    option.hidden = !coincide;
+    option.disabled = !coincide;
+  });
+
+  if (idInstructor) {
+    const opcionValida = Array.from(instructorSelect.options).find((option) => option.value === String(idInstructor) && !option.disabled);
+
+    instructorSelect.value = opcionValida ? String(idInstructor) : "";
+  } else if (instructorSelect.selectedOptions[0]?.disabled) {
+    instructorSelect.value = "";
+  }
+}
+
+// DETECTAR CAMBIO DE CLASE
+document.getElementById("horarioClase")?.addEventListener("change", () => {
+  filtrarInstructoresPorClase();
+});
+// ==========================================
 // GESTIÓN DE HORARIOS
 // ==========================================
 
+// ==========================================
 // EDITAR HORARIO
+// ==========================================
+
 function editarHorario(boton) {
   document.getElementById("horarioId").value = boton.dataset.id;
 
   document.getElementById("horarioClase").value = boton.dataset.clase;
 
-  document.getElementById("horarioInstructor").value = boton.dataset.instructor;
+  // Filtrar y seleccionar el instructor correspondiente
+  filtrarInstructoresPorClase(boton.dataset.instructor);
 
   document.getElementById("horarioFecha").value = boton.dataset.fecha;
 
@@ -175,13 +235,20 @@ function editarHorario(boton) {
   document.getElementById("btnGuardarHorario").textContent = "GUARDAR CAMBIOS";
 }
 
-// PREPARAR MODAL PARA NUEVO HORARIO
+// ==========================================
+// NUEVO HORARIO
+// ==========================================
+
 document.querySelector('[data-open-modal="modalNuevoHorario"]:not([data-id])')?.addEventListener("click", () => {
-  document.getElementById("formHorario").reset();
+  const form = document.getElementById("formHorario");
+
+  form.reset();
 
   document.getElementById("horarioId").value = "";
 
   document.getElementById("tituloModalHorario").textContent = "PROGRAMAR HORARIO";
 
   document.getElementById("btnGuardarHorario").textContent = "PROGRAMAR CLASE";
+
+  filtrarInstructoresPorClase();
 });
