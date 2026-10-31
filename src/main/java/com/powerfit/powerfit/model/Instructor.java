@@ -1,11 +1,6 @@
 package com.powerfit.powerfit.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "instructores")
@@ -22,8 +17,9 @@ public class Instructor {
   @Column(name = "apellidos", nullable = false, length = 80)
   private String apellidos;
 
-  @Column(name = "especialidad", length = 80)
-  private String especialidad;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_clase")
+  private Clase clase;
 
   @Column(name = "telefono", length = 15)
   private String telefono;
@@ -58,12 +54,12 @@ public class Instructor {
     this.apellidos = apellidos;
   }
 
-  public String getEspecialidad() {
-    return especialidad;
+  public Clase getClase() {
+    return clase;
   }
 
-  public void setEspecialidad(String especialidad) {
-    this.especialidad = especialidad;
+  public void setClase(Clase clase) {
+    this.clase = clase;
   }
 
   public String getTelefono() {

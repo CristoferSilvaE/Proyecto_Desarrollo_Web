@@ -11,8 +11,63 @@
 
   document.querySelectorAll("[data-open-modal]").forEach((button) => {
     button.addEventListener("click", () => {
-      const dialog = document.getElementById(button.dataset.openModal);
-      if (dialog && !dialog.open) dialog.showModal();
+      const modalId = button.dataset.openModal;
+
+      // PREPARAR MODAL DE INSTRUCTOR
+      if (modalId === "modalNuevoInstructor") {
+        const form = document.getElementById("formInstructor");
+
+        if (button.dataset.id) {
+          // MODO EDICIÓN
+          form.action = form.dataset.editAction;
+
+          document.getElementById("instructorId").value = button.dataset.id;
+          document.getElementById("instructorNombres").value = button.dataset.nombres;
+          document.getElementById("instructorApellidos").value = button.dataset.apellidos;
+          document.getElementById("instructorClase").value = button.dataset.idClase;
+          document.getElementById("instructorTelefono").value = button.dataset.telefono;
+          document.getElementById("instructorCorreo").value = button.dataset.correo;
+
+          document.getElementById("tituloModalInstructor").textContent = "EDITAR INSTRUCTOR";
+
+          document.getElementById("btnGuardarInstructor").textContent = "GUARDAR CAMBIOS";
+        } else {
+          // MODO REGISTRO
+          form.reset();
+
+          form.action = form.dataset.createAction;
+
+          document.getElementById("instructorId").value = "";
+
+          document.getElementById("tituloModalInstructor").textContent = "NUEVO INSTRUCTOR";
+
+          document.getElementById("btnGuardarInstructor").textContent = "REGISTRAR INSTRUCTOR";
+        }
+      }
+
+      // PREPARAR CONFIRMACIÓN DE ESTADO
+      if (modalId === "modalConfirmarEstadoInstructor") {
+        const form = document.getElementById("formEstadoInstructor");
+
+        const estado = button.dataset.estado;
+        const nombre = button.dataset.nombre;
+
+        form.action = button.dataset.action;
+
+        document.getElementById("estadoInstructorNuevo").value = estado;
+
+        document.getElementById("tituloModalEstadoInstructor").textContent = estado === "INACTIVO" ? "DESACTIVAR INSTRUCTOR" : "ACTIVAR INSTRUCTOR";
+
+        document.getElementById("textoConfirmacionInstructor").textContent = estado === "INACTIVO" ? `¿Estás seguro de desactivar a ${nombre}?` : `¿Deseas volver a activar a ${nombre}?`;
+
+        document.getElementById("btnConfirmarEstadoInstructor").textContent = estado === "INACTIVO" ? "DESACTIVAR" : "ACTIVAR";
+      }
+
+      const dialog = document.getElementById(modalId);
+
+      if (dialog && !dialog.open) {
+        dialog.showModal();
+      }
     });
   });
   document.querySelectorAll("[data-close-modal]").forEach((button) => {
@@ -91,4 +146,42 @@ document.querySelector('[data-open-modal="modalNuevaClase"]:not([data-id])')?.ad
   document.getElementById("tituloModalClase").textContent = "NUEVA CLASE";
 
   document.getElementById("btnGuardarClase").textContent = "CREAR CLASE";
+});
+
+// ==========================================
+// GESTIÓN DE HORARIOS
+// ==========================================
+
+// EDITAR HORARIO
+function editarHorario(boton) {
+  document.getElementById("horarioId").value = boton.dataset.id;
+
+  document.getElementById("horarioClase").value = boton.dataset.clase;
+
+  document.getElementById("horarioInstructor").value = boton.dataset.instructor;
+
+  document.getElementById("horarioFecha").value = boton.dataset.fecha;
+
+  document.getElementById("horarioHoraInicio").value = boton.dataset.inicio;
+
+  document.getElementById("horarioHoraFin").value = boton.dataset.fin;
+
+  document.getElementById("horarioCapacidad").value = boton.dataset.capacidad;
+
+  document.getElementById("horarioSala").value = boton.dataset.sala || "";
+
+  document.getElementById("tituloModalHorario").textContent = "EDITAR HORARIO";
+
+  document.getElementById("btnGuardarHorario").textContent = "GUARDAR CAMBIOS";
+}
+
+// PREPARAR MODAL PARA NUEVO HORARIO
+document.querySelector('[data-open-modal="modalNuevoHorario"]:not([data-id])')?.addEventListener("click", () => {
+  document.getElementById("formHorario").reset();
+
+  document.getElementById("horarioId").value = "";
+
+  document.getElementById("tituloModalHorario").textContent = "PROGRAMAR HORARIO";
+
+  document.getElementById("btnGuardarHorario").textContent = "PROGRAMAR CLASE";
 });

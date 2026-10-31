@@ -1,6 +1,8 @@
 package com.powerfit.powerfit.service;
 
+import com.powerfit.powerfit.model.Clase;
 import com.powerfit.powerfit.model.Instructor;
+import com.powerfit.powerfit.repository.ClaseRepository;
 import com.powerfit.powerfit.repository.InstructorRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -10,9 +12,13 @@ import org.springframework.stereotype.Service;
 public class InstructorService {
 
   private final InstructorRepository instructorRepository;
+  private final ClaseRepository claseRepository;
 
-  public InstructorService(InstructorRepository instructorRepository) {
+  public InstructorService(
+      InstructorRepository instructorRepository, ClaseRepository claseRepository) {
+
     this.instructorRepository = instructorRepository;
+    this.claseRepository = claseRepository;
   }
 
   // LISTAR
@@ -23,9 +29,11 @@ public class InstructorService {
   // REGISTRAR
   @Transactional
   public Instructor registrar(
-      String nombres, String apellidos, String especialidad, String telefono, String correo) {
+      Long idClase, String nombres, String apellidos, String telefono, String correo) {
 
-    validarDatos(nombres, apellidos, especialidad, telefono, correo);
+    validarDatos(nombres, apellidos, telefono, correo);
+
+    Clase clase = obtenerClaseActiva(idClase);
 
     String correoNormalizado = correo.trim().toLowerCase();
 
@@ -37,7 +45,7 @@ public class InstructorService {
 
     instructor.setNombres(nombres.trim());
     instructor.setApellidos(apellidos.trim());
-    instructor.setEspecialidad(especialidad.trim());
+    instructor.setClase(clase);
     instructor.setTelefono(telefono.trim());
     instructor.setCorreo(correoNormalizado);
     instructor.setEstado("ACTIVO");
@@ -49,18 +57,20 @@ public class InstructorService {
   @Transactional
   public Instructor editar(
       Long idInstructor,
+      Long idClase,
       String nombres,
       String apellidos,
-      String especialidad,
       String telefono,
       String correo) {
 
-    validarDatos(nombres, apellidos, especialidad, telefono, correo);
+    validarDatos(nombres, apellidos, telefono, correo);
 
     Instructor instructor =
         instructorRepository
             .findById(idInstructor)
             .orElseThrow(() -> new IllegalArgumentException("No se encontró el instructor."));
+
+    Clase clase = obtenerClaseActiva(idClase);
 
     String correoNormalizado = correo.trim().toLowerCase();
 
@@ -72,7 +82,7 @@ public class InstructorService {
 
     instructor.setNombres(nombres.trim());
     instructor.setApellidos(apellidos.trim());
-    instructor.setEspecialidad(especialidad.trim());
+    instructor.setClase(clase);
     instructor.setTelefono(telefono.trim());
     instructor.setCorreo(correoNormalizado);
 
@@ -84,6 +94,7 @@ public class InstructorService {
   public void cambiarEstado(Long idInstructor, String nuevoEstado) {
 
     if (!"ACTIVO".equals(nuevoEstado) && !"INACTIVO".equals(nuevoEstado)) {
+
       throw new IllegalArgumentException("Estado no válido.");
     }
 
@@ -97,21 +108,38 @@ public class InstructorService {
     instructorRepository.save(instructor);
   }
 
+  // OBTENER CLASE ACTIVA
+  private Clase obtenerClaseActiva(Long idClase) {
+
+    if (idClase == null) {
+      throw new IllegalArgumentException("Debes seleccionar una clase.");
+    }
+
+    Clase clase =
+        claseRepository
+            .findById(idClase)
+            .orElseThrow(
+                () -> new IllegalArgumentException("No se encontró la clase seleccionada."));
+
+    if (!"ACTIVO".equals(clase.getEstado())) {
+      throw new IllegalArgumentException("No puedes asignar instructores a una clase inactiva.");
+    }
+
+    return clase;
+  }
+
   // VALIDACIONES
-  private void validarDatos(
-      String nombres, String apellidos, String especialidad, String telefono, String correo) {
+  private void validarDatos(String nombres, String apellidos, String telefono, String correo) {
 
     if (nombres == null || nombres.isBlank() || apellidos == null || apellidos.isBlank()) {
+
       throw new IllegalArgumentException("Los nombres y apellidos son obligatorios.");
     }
 
     if (nombres.trim().length() > 80 || apellidos.trim().length() > 80) {
+
       throw new IllegalArgumentException(
           "Los nombres y apellidos no pueden superar 80 caracteres.");
-    }
-
-    if (especialidad == null || especialidad.isBlank() || especialidad.trim().length() > 80) {
-      throw new IllegalArgumentException("Ingresa una especialidad válida.");
     }
 
     if (telefono == null || !telefono.trim().matches("\\d{9,15}")) {
@@ -122,6 +150,7 @@ public class InstructorService {
         || correo.isBlank()
         || correo.trim().length() > 120
         || !correo.trim().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+
       throw new IllegalArgumentException("Ingresa un correo electrónico válido.");
     }
   }
