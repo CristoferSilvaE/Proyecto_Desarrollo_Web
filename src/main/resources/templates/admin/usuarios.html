@@ -155,14 +155,13 @@
                         <!-- DESACTIVAR / REACTIVAR -->
                         <button
                           type="button"
-                          class="adm-btn"
-                          th:classappend="${#strings.equalsIgnoreCase(
-                                fila.usuario.estado, 'ACTIVO'
-                            )} ? 'adm-btn-danger' : 'adm-btn-success'"
+                          th:class="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')}
+                            ? 'adm-btn adm-btn-danger'
+                            : 'adm-btn adm-btn-success'"
                           th:if="${fila.usuario.rol != null
-                                and !#strings.equalsIgnoreCase(
-                                    fila.usuario.rol.nombre, 'ADMINISTRADOR'
-                                )}"
+                            and !#strings.equalsIgnoreCase(
+                                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+                            )}"
                           th:attr="data-open-modal=|modalEstadoUsuario-${fila.usuario.idUsuario}|"
                           th:text="${#strings.equalsIgnoreCase(
                                 fila.usuario.estado, 'ACTIVO'

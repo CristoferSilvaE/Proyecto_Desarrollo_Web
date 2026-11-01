@@ -1,112 +1,91 @@
 # 🏋️ PowerFit
 
-> Sistema web para la gestión de un gimnasio desarrollado como proyecto académico del curso **Marco de Desarrollo Web**.
+Sistema web para la gestión de un gimnasio, desarrollado como proyecto académico del curso **Marco de Desarrollo Web**.
 
-PowerFit permite gestionar usuarios, membresías, clases, productos y otras operaciones relacionadas con la administración de un gimnasio.
+PowerFit permite gestionar usuarios, membresías, clases, horarios, reservas y compras de productos mediante una aplicación web desarrollada con Spring Boot, Thymeleaf y MySQL.
 
 ---
 
-## 🚀 Puesta en marcha del proyecto
-
-Esta sección explica cómo ejecutar PowerFit en una computadora nueva.
-
-### 📋 Requisitos previos
+## 📌 1. Requisitos previos
 
 Antes de iniciar, asegúrate de tener instalado:
 
-- ☕ Java JDK 25
-- 🐬 MySQL Server
-- 🟢 Node.js y npm
-- 🧰 Git
-- 💻 Visual Studio Code o IntelliJ IDEA
+- ☕ Java JDK 25.
+- 🐬 MySQL Server y MySQL Workbench.
+- 🟢 Node.js y npm.
+- 🔧 Git.
+- 💻 Visual Studio Code o IntelliJ IDEA.
 
-El proyecto utiliza **Maven Wrapper**, por lo que no es necesario instalar Maven de forma independiente.
+El proyecto incluye Maven Wrapper, por lo que no necesitas instalar Maven por separado.
 
----
-
-## 1️⃣ Clonar el repositorio
-
-Clona el proyecto desde GitHub:
+## 📥 2. Clonar el repositorio
 
 ```bash
 git clone https://github.com/CristoferSilvaE/Proyecto_Desarrollo_Web.git
-```
-
-Luego ingresa a la carpeta del proyecto:
-
-```bash
 cd Proyecto_Desarrollo_Web
 ```
 
-Si trabajas sobre una rama específica:
+Para trabajar con la rama `verastegui`:
 
 ```bash
-git checkout Verastegui
+git switch -c verastegui --track origin/verastegui
 ```
 
----
+Si ya tienes creada la rama local:
 
-## 2️⃣ Crear la base de datos
-
-Los scripts necesarios se encuentran en:
-
-```text
-database/
+```bash
+git switch verastegui
 ```
 
-Para una instalación nueva, ejecutar en MySQL Workbench en el siguiente orden:
+## 🗄️ 3. Configurar la base de datos
 
-```text
-00_crear_bd.sql
-01_estructura.sql
-02_datos_iniciales.sql
-03_datos_demo.sql
-```
+Los scripts SQL están ubicados en la carpeta `database/`.
 
-### 📌 Función de cada archivo
+Para una instalación desde cero, abre MySQL Workbench y ejecuta los siguientes archivos en este orden:
 
-| Archivo | Descripción |
-|---|---|
-| `00_crear_bd.sql` | Crea la base de datos `powerfit` |
-| `01_estructura.sql` | Crea tablas, relaciones, claves primarias y foráneas |
-| `02_datos_iniciales.sql` | Inserta roles, planes, productos, clases e instructores |
-| `03_datos_demo.sql` | Inserta horarios de demostración |
-| `04_consultas_verificacion.sql` | Consultas para comprobar la instalación |
-| `05_agregar_genero_bd_actual.sql` | Migración para bases antiguas |
-| `99_reset_bd.sql` | Elimina completamente la base de datos |
+| Orden | Script | Descripción |
+|---|---|---|
+| 1 | `00_crear_bd.sql` | Crea la base de datos PowerFit. |
+| 2 | `01_estructura.sql` | Crea las tablas, relaciones y restricciones. |
+| 3 | `02_datos_iniciales.sql` | Registra roles, planes, clases, instructores y productos. |
+| 4 | `03_datos_demo.sql` | Registra horarios de demostración. |
+| 5 | `07_actualizar_sedes.sql` | Crea las sedes y relaciona pedidos con ellas. |
+| 6 | `10_agregar_usuario.sql` | Agrega el nombre de usuario y su restricción UNIQUE. |
 
-> ⚠️ `99_reset_bd.sql` elimina toda la información de PowerFit. Utilizarlo únicamente cuando sea necesario reconstruir la base desde cero.
-
-Para comprobar la instalación puede ejecutarse:
+Para verificar la instalación:
 
 ```sql
 USE powerfit;
 SHOW TABLES;
 ```
 
----
+También puedes ejecutar `04_consultas_verificacion.sql` para comprobar las tablas y los datos registrados.
 
-## 3️⃣ Configurar la conexión a MySQL
+### ⚠️ Importante sobre los demás scripts
 
-Dentro de:
+- Los archivos `05`, `06`, `08` y `09` son migraciones de versiones anteriores. No deben ejecutarse en una instalación nueva, porque sus cambios ya están incorporados en `01_estructura.sql`.
+- Los scripts `07` y `10` sí son necesarios para una instalación nueva.
+- `99_reset_bd.sql` elimina toda la base de datos y su información. Utilízalo únicamente cuando quieras empezar desde cero.
 
-```text
-src/main/resources/
+No ejecutes dos veces los scripts de creación o migración.
+
+## 🔌 4. Configurar la conexión a MySQL
+
+Copia el archivo de ejemplo:
+
+**Windows PowerShell:**
+
+```powershell
+Copy-Item src/main/resources/application-example.properties src/main/resources/application.properties
 ```
 
-crear el archivo:
+**Linux, macOS o Git Bash:**
 
-```text
-application.properties
+```bash
+cp src/main/resources/application-example.properties src/main/resources/application.properties
 ```
 
-Puedes tomar como referencia:
-
-```text
-application-example.properties
-```
-
-Configuración básica:
+Edita `src/main/resources/application.properties`:
 
 ```properties
 spring.application.name=powerfit
@@ -121,485 +100,202 @@ spring.jpa.show-sql=true
 
 spring.thymeleaf.cache=false
 
-spring.servlet.multipart.max-file-size=2MB
-spring.servlet.multipart.max-request-size=3MB
+spring.servlet.multipart.enabled=true
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=11MB
 ```
 
-> 🔐 `application.properties` está ignorado por Git para evitar publicar las credenciales locales de MySQL.
+Reemplaza `TU_CONTRASENA` por la contraseña local de MySQL.
 
----
+> 🔐 El archivo `application.properties` está excluido de Git para evitar publicar las credenciales personales de cada integrante.
 
-## 4️⃣ Instalar Tailwind CSS
+## 👤 5. Cuenta inicial de administrador
 
-PowerFit utiliza Tailwind CSS compilado mediante npm.
+El proyecto cuenta con un inicializador automático ubicado en:
 
-Instala las dependencias:
+`src/main/java/com/powerfit/powerfit/config/AdminInitializer.java`
+
+Este componente comprueba si existe la cuenta administrativa y, si no existe, la crea automáticamente al iniciar Spring Boot.
+
+La configuración se encuentra en:
+
+`src/main/resources/admin.properties`
+
+**Credenciales de acceso:**
+
+| Campo | Credencial |
+|---|---|
+| 📧 Correo | `admin@powerfit.local` |
+| 🔑 Contraseña | `admin123` |
+| 🛡️ Perfil | ADMINISTRADOR |
+
+Para que se cree correctamente:
+
+1. Ejecutar los scripts SQL indicados anteriormente.
+2. Verificar que exista el rol `ADMINISTRADOR`.
+3. Mantener `powerfit.admin.enabled=true` en `admin.properties`.
+4. Iniciar la aplicación.
+
+La contraseña se almacena mediante BCrypt. Si el administrador ya existe, el inicializador no crea otra cuenta ni modifica su contraseña.
+
+> ⚠️ Estas credenciales son exclusivamente para demostración y desarrollo académico.
+
+## 🎨 6. Instalar y compilar Tailwind CSS
+
+Desde la carpeta raíz del proyecto ejecuta:
 
 ```bash
 npm install
+npm run tailwind:build
 ```
 
-Para trabajar durante el desarrollo:
+Para recompilar automáticamente los estilos durante el desarrollo:
 
 ```bash
 npm run tailwind:watch
 ```
 
-Este comando observa los cambios realizados en los archivos HTML y CSS y actualiza automáticamente:
+El archivo CSS compilado se encuentra en:
 
-```text
-src/main/resources/static/css/powerfit.css
-```
+`src/main/resources/static/css/base/powerfit.css`
 
-Para generar manualmente la versión compilada:
+## 🚀 7. Ejecutar Spring Boot
 
-```bash
-npm run tailwind:build
-```
-
----
-
-## 5️⃣ Ejecutar Spring Boot
-
-### 🪟 Windows PowerShell
+**Windows PowerShell:**
 
 ```powershell
-.\mvnw spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
-También puede ejecutarse directamente desde Visual Studio Code o IntelliJ utilizando:
+**Linux, macOS o Git Bash:**
 
-```text
-PowerfitApplication.java
+```bash
+./mvnw spring-boot:run
 ```
 
-Si la aplicación inicia correctamente, aparecerá un mensaje similar a:
+También puedes iniciar la aplicación desde el IDE ejecutando:
 
-```text
-Started PowerfitApplication
-```
+`PowerfitApplication.java`
 
----
-
-## 6️⃣ Abrir PowerFit
-
-Con Spring Boot ejecutándose, ingresar desde el navegador a:
+Cuando la aplicación inicie correctamente, ingresa desde el navegador:
 
 ```text
 http://localhost:8080
 ```
 
-La aplicación ya debería conectarse automáticamente a la base de datos `powerfit`.
+## 🧩 8. Funcionalidades implementadas
 
----
-
-# 🧩 Tecnologías utilizadas
-
-| Tecnología | Uso |
-|---|---|
-| ☕ Java 25 | Lenguaje principal |
-| 🍃 Spring Boot 4.1.1 | Backend |
-| 🌐 Spring Web MVC | Controladores y navegación |
-| 🗃️ Spring Data JPA | Persistencia |
-| 🐬 MySQL | Base de datos |
-| 🧾 Thymeleaf | Renderizado de vistas |
-| 🎨 Tailwind CSS | Diseño de interfaz |
-| 🟢 Node.js / npm | Compilación de Tailwind |
-| 📦 Maven | Gestión de dependencias |
-| 🔐 BCrypt | Protección de contraseñas |
-
----
-
-# 🏗️ Arquitectura del proyecto
-
-El proyecto utiliza una arquitectura basada en MVC.
-
-```text
-src/main/java/com/powerfit/powerfit/
-│
-├── config/
-│   └── Configuración de la aplicación
-│
-├── controller/
-│   └── Controladores Spring MVC
-│
-├── model/
-│   └── Entidades JPA
-│
-├── repository/
-│   └── Acceso a la base de datos
-│
-└── PowerfitApplication.java
-```
-
-Las vistas se encuentran en:
-
-```text
-src/main/resources/templates/
-```
-
-Los recursos estáticos:
-
-```text
-src/main/resources/static/
-├── css/
-└── imagenes/
-```
-
----
-
-# 🗄️ Modelo de base de datos
-
-Actualmente PowerFit cuenta con las siguientes tablas principales:
-
-```text
-roles
-usuarios
-clientes
-seguimiento_fisico
-planes_membresia
-membresias
-pagos_membresia
-instructores
-clases
-horarios_clase
-reservas
-productos
-pedidos
-detalle_pedido
-```
-
-Las relaciones son gestionadas mediante claves foráneas y entidades JPA.
-
----
-
-# 🔐 Usuarios y autenticación
-
-PowerFit utiliza un único sistema de autenticación.
-
-Los roles considerados actualmente son:
-
-```text
-CLIENTE
-ADMINISTRADOR
-```
-
-Cuando una persona se registra desde la aplicación recibe automáticamente el rol:
-
-```text
-CLIENTE
-```
-
-Las contraseñas no se almacenan directamente en la base de datos. Se protegen utilizando **BCrypt**.
-
-La sesión del usuario se mantiene mediante:
-
-```text
-HttpSession
-```
-
----
-
-# 👤 Perfil del cliente
-
-El cliente puede actualmente:
-
-- Consultar sus datos personales.
-- Editar nombres y apellidos.
-- Editar teléfono.
-- Editar fecha de nacimiento.
-- Editar género.
-- Cambiar su fotografía de perfil.
-- Consultar su membresía.
-- Consultar próximas clases.
-- Consultar historial de pagos.
-- Desactivar su cuenta.
-
-Las fotografías subidas por los usuarios se almacenan localmente en:
-
-```text
-uploads/perfiles/
-```
-
-La carpeta:
-
-```text
-uploads/
-```
-
-no se almacena en GitHub.
-
----
-
-# 💳 Membresías
-
-Los planes actuales son:
-
-| Plan | Precio |
-|---|---:|
-| Básico | S/ 59.00 |
-| Premium | S/ 89.00 |
-| Elite | S/ 129.00 |
-
-El módulo de membresías permite actualmente realizar las operaciones:
-
-```text
-CREATE  → Solicitar una membresía
-READ    → Consultar la solicitud
-UPDATE  → Cambiar el plan solicitado
-DELETE  → Cancelar una solicitud pendiente
-```
-
-Una solicitud nueva se registra con estado:
-
-```text
-PENDIENTE
-```
-
-Posteriormente podrá ser aprobada o rechazada desde el módulo administrativo.
-
----
-
-# 📂 Archivos que no se suben a GitHub
-
-Por seguridad y para evitar archivos innecesarios, `.gitignore` excluye:
-
-```text
-application.properties
-node_modules/
-uploads/
-.vscode/
-target/
-```
-
----
-
-# 🔄 Flujo rápido para otro desarrollador
-
-Después de descargar el repositorio:
-
-```text
-1. Crear la base de datos con los scripts de /database
-             ↓
-2. Crear application.properties
-             ↓
-3. Ejecutar npm install
-             ↓
-4. Ejecutar npm run tailwind:build
-             ↓
-5. Ejecutar .\mvnw spring-boot:run
-             ↓
-6. Abrir localhost:8080
-```
-
----
-
-# 📌 Estado del proyecto
-
-### ✅ Implementado
+### 🔐 Autenticación y usuarios
 
 - Registro de clientes.
-- Inicio y cierre de sesión.
-- Contraseñas con BCrypt.
-- Sesiones de usuario.
-- Perfil dinámico.
-- Edición de perfil.
-- Fotografía de perfil.
+- Inicio de sesión mediante correo o nombre de usuario.
+- Validación de DNI, correo y usuario duplicados.
+- Contraseñas protegidas mediante BCrypt.
+- Control de acceso por roles.
+- Gestión administrativa de usuarios.
+- Edición, baja lógica y reactivación de cuentas.
+- Restablecimiento de contraseñas y cambio obligatorio de contraseña temporal.
+
+### 👥 Clientes y perfil
+
+- Consulta y edición de datos personales.
+- Actualización de fotografía de perfil.
+- Consulta de información relacionada con membresías y clases.
 - Desactivación de cuenta.
-- Planes dinámicos.
-- CRUD de membresías.
-- Tienda conectada a MySQL.
-- Clases y horarios dinámicos.
-- Tailwind CSS organizado.
-- Base de datos estructurada mediante scripts.
 
-### 🚧 En desarrollo
+### 💳 Membresías
 
-- Carrito de compras funcional.
-- CRUD de pedidos.
-- Reservas de clases.
-- Seguimiento físico.
-- Panel administrativo.
+- Visualización de planes desde MySQL.
+- Solicitud de membresías.
+- Consulta del historial.
+- Edición y cancelación de solicitudes pendientes.
+- Gestión administrativa de solicitudes.
+- Aprobación, registro de pago y activación.
+- Rechazo de solicitudes conservando el historial.
 
----
+### 🏋️ Clases, instructores y horarios
 
-# 🛠️ Siguiente tarea del equipo
+- Consulta de clases y horarios disponibles.
+- Gestión administrativa de clases e instructores.
+- Creación y modificación de horarios.
+- Activación y desactivación de horarios.
+- Reserva y cancelación de clases.
 
-## CRUD de Pedidos
+### 🛒 Tienda y pedidos
 
-El siguiente módulo a implementar es el **CRUD de Pedidos**, correspondiente al segundo CRUD transaccional requerido para el proyecto.
+- Catálogo de productos conectado a MySQL.
+- Carrito de compras.
+- Checkout con recojo en sede o delivery.
+- Registro de pedidos y detalles.
+- Actualización de stock al confirmar la compra.
+- Consulta del historial de pedidos.
+- Edición y cancelación de pedidos pendientes.
 
-Actualmente el sistema ya cuenta con el CRUD de membresías.
+## 🛠️ 9. Tecnologías utilizadas
 
-```text
-CRUD 1 → Membresías ✅
-CRUD 2 → Pedidos ⏳
-```
+| Tecnología | Aplicación |
+|---|---|
+| ☕ Java 25 | Lenguaje principal |
+| 🌱 Spring Boot 4.1.1 | Backend |
+| 🌐 Spring Web MVC | Controladores |
+| 🗃️ Spring Data JPA | Persistencia |
+| 🐬 MySQL | Base de datos |
+| 📄 Thymeleaf | Vistas |
+| 🔒 BCrypt | Seguridad de contraseñas |
+| 🎨 Tailwind CSS 3 | Diseño |
+| 🟢 Node.js / npm | Compilación de estilos |
+| 📦 Maven Wrapper | Construcción del proyecto |
 
-### 🎯 Objetivo
-
-Conectar el flujo de compra existente con la base de datos utilizando las tablas:
-
-```text
-productos
-pedidos
-detalle_pedido
-clientes
-```
-
-No utilizar información fija en los archivos HTML. Los datos deben obtenerse desde MySQL mediante Spring Data JPA.
-
----
-
-## 📋 Operaciones requeridas
-
-### ➕ CREATE
-
-Al confirmar una compra desde el checkout:
-
-1. Obtener el cliente desde la sesión.
-2. Crear un registro en `pedidos`.
-3. Crear los registros correspondientes en `detalle_pedido`.
-4. Guardar el precio del producto al momento de realizar la compra.
-5. Calcular subtotal, costo de envío y total.
-6. Actualizar el stock de los productos.
-7. Vaciar el carrito después de confirmar correctamente el pedido.
-
----
-
-### 🔎 READ
-
-El cliente debe poder consultar sus pedidos desde:
+## 🏗️ 10. Estructura del proyecto
 
 ```text
-/perfil
-        ↓
-Mis Pedidos
-        ↓
-/pedidos
+Proyecto_Desarrollo_Web/
+├── database/                 # Scripts SQL
+├── src/
+│   ├── main/
+│   │   ├── java/com/powerfit/powerfit/
+│   │   │   ├── config/
+│   │   │   ├── controller/
+│   │   │   ├── dto/
+│   │   │   ├── model/
+│   │   │   ├── repository/
+│   │   │   └── service/
+│   │   └── resources/
+│   │       ├── static/
+│   │       ├── templates/
+│   │       ├── admin.properties
+│   │       └── application-example.properties
+│   └── test/
+├── uploads/
+├── package.json
+├── pom.xml
+└── README.md
 ```
 
-Cada pedido debe mostrar como mínimo:
+## ⚙️ 11. Consideraciones para levantar el programa
 
-- Número de pedido.
-- Fecha.
-- Total.
-- Método de entrega.
-- Método de pago.
-- Estado del pedido.
-- Estado del pago.
+Antes de ejecutar PowerFit, verifica lo siguiente:
 
-También debe ser posible consultar los productos pertenecientes al pedido.
+- MySQL Server debe estar iniciado.
+- La base de datos `powerfit` debe estar creada y contener los scripts correspondientes.
+- Las credenciales de conexión deben coincidir con las de tu instalación de MySQL.
+- Node.js y npm deben estar instalados para compilar los estilos.
+- La cuenta administrativa se genera automáticamente durante el inicio de la aplicación, si todavía no existe.
+- La carpeta `uploads/` almacena localmente las imágenes cargadas por los usuarios.
 
----
+### 📋 Orden rápido de ejecución
 
-### ✏️ UPDATE
+1. Clonar el repositorio.
+2. Ejecutar los scripts SQL.
+3. Configurar `application.properties`.
+4. Ejecutar `npm install`.
+5. Ejecutar `npm run tailwind:build`.
+6. Iniciar Spring Boot.
+7. Abrir `http://localhost:8080`.
 
-Mientras un pedido se encuentre en estado:
-
-```text
-PENDIENTE
-```
-
-el cliente podrá modificar únicamente información permitida, por ejemplo:
-
-- Dirección de entrega.
-- Distrito.
-- Referencia.
-
-No se debe permitir modificar pedidos que ya hayan avanzado a estados posteriores.
-
----
-
-### ❌ DELETE / CANCELAR
-
-Un pedido pendiente podrá ser cancelado por el cliente.
-
-En lugar de eliminar físicamente el registro de la base de datos, se recomienda actualizar:
-
-```text
-estado = CANCELADO
-```
-
-Esto permite conservar el historial de operaciones.
-
----
-
-## 🗂️ Estructura recomendada
-
-El módulo puede trabajar con los archivos existentes:
-
-```text
-model/
-├── Pedido.java
-├── DetallePedido.java
-└── Producto.java
-
-repository/
-├── PedidoRepository.java
-├── DetallePedidoRepository.java
-└── ProductoRepository.java
-
-controller/
-└── PedidoController.java
-
-templates/
-├── tienda.html
-├── carrito.html
-├── checkout.html
-└── pedidos.html
-```
-
-Si es necesario, pueden agregarse métodos a los repositories existentes.
-
----
-
-## ⚠️ Consideraciones
-
-- No modificar las credenciales locales de otros integrantes.
-- No subir `application.properties`.
-- No subir `uploads/`.
-- No subir `node_modules/`.
-- Mantener la estructura MVC utilizada actualmente.
-- Utilizar Thymeleaf para mostrar los datos.
-- Utilizar Spring Data JPA para acceder a MySQL.
-- Mantener el diseño visual actual de PowerFit.
-- No reemplazar información dinámica por datos escritos directamente en los HTML.
-- Probar el flujo completo antes de realizar el push.
-
----
-
-## ✅ Resultado esperado
-
-El flujo final debe funcionar de esta manera:
-
-```text
-Tienda
-  ↓
-Agregar productos
-  ↓
-Carrito
-  ↓
-Checkout
-  ↓
-Crear Pedido
-  ↓
-Guardar Detalle Pedido
-  ↓
-Mis Pedidos
-  ↓
-Consultar / Modificar / Cancelar
-```
-
-Cuando este módulo esté terminado, PowerFit contará con los dos CRUD transaccionales requeridos para el avance:
-
-```text
-✅ CRUD de Membresías
-✅ CRUD de Pedidos
-```
 ---
 
 <p align="center">
-  <strong>POWERFIT</strong><br>
+  <strong>🏋️ POWERFIT</strong><br>
   Sistema Web de Gestión para Gimnasios
 </p>
