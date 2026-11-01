@@ -1,12 +1,33 @@
-<!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org"><body>
-<aside class="adm-sidebar" th:fragment="sidebar(active)">
-  <a class="adm-brand" th:href="@{/admin}"><span class="adm-brand-mark">✦</span><span><strong>POWERFIT</strong><small>PORTAL DE GESTIÓN</small></span></a>
-  <nav class="adm-side-nav" aria-label="Administración">
-    <a th:href="@{/admin}" th:classappend="${active == 'panel'} ? ' is-active' : ''"><span class="adm-nav-icon">▦</span> Panel</a>
-    <a th:href="@{/admin/clientes}" th:classappend="${active == 'clientes' or active == 'membresias'} ? ' is-active' : ''"><span class="adm-nav-icon">♧</span> Clientes y Membresías</a>
-    <a th:href="@{/admin/clases}" th:classappend="${active == 'clases'} ? ' is-active' : ''"><span class="adm-nav-icon">▣</span> Clases y Horarios</a>
-    <a th:href="@{/admin/productos}" th:classappend="${active == 'productos' or active == 'pedidos'} ? ' is-active' : ''"><span class="adm-nav-icon">▤</span> Productos y Pedidos</a>
-  </nav>
-  <div class="adm-side-bottom"><a th:href="@{/logout}">↪ &nbsp; Cerrar sesión</a></div>
-</aside>
-</body></html>
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <aside class="adm-sidebar" th:fragment="sidebar(active)">
+      <a class="adm-brand" th:href="@{/admin}">
+        <span class="adm-brand-mark">✦</span>
+        <span>
+          <strong>POWERFIT</strong>
+          <small>PORTAL DE GESTIÓN</small>
+        </span>
+      </a>
+      <nav class="adm-side-nav" aria-label="Administración">
+        <a th:href="@{/admin}" th:classappend="${active == 'panel'} ? ' is-active' : ''">
+          <span class="adm-nav-icon">▦</span>
+          Panel
+        </a>
+        <a th:href="@{/admin/clientes}" th:classappend="${active == 'clientes' or active == 'membresias'} ? ' is-active' : ''">
+          <span class="adm-nav-icon">♧</span>
+          Clientes y Membresías
+        </a>
+        <a th:href="@{/admin/clases}" th:classappend="${active == 'clases'} ? ' is-active' : ''">
+          <span class="adm-nav-icon">▣</span>
+          Clases y Horarios
+        </a>
+        <a th:href="@{/admin/productos}" th:classappend="${active == 'productos' or active == 'pedidos'} ? ' is-active' : ''">
+          <span class="adm-nav-icon">▤</span>
+          Productos y Pedidos
+        </a>
+      </nav>
+      <div class="adm-side-bottom"><a th:href="@{/logout}">↪ &nbsp; Cerrar sesión</a></div>
+    </aside>
+  </body>
+</html>

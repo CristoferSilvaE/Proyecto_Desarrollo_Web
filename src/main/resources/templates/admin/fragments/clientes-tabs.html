@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <nav class="adm-tabs" th:fragment="tabs(active)" aria-label="Gestión de clientes">
+      <a th:href="@{/admin/clientes}" class="adm-tab" th:classappend="${active == 'clientes'} ? ' is-active' : ''">♙ CLIENTES</a>
+
+      <a th:href="@{/admin/usuarios}" class="adm-tab" th:classappend="${active == 'usuarios'} ? ' is-active' : ''">♧ USUARIOS</a>
+
+      <a th:href="@{/admin/membresias}" class="adm-tab" th:classappend="${active == 'membresias'} ? ' is-active' : ''">▣ MEMBRESÍAS</a>
+    </nav>
+  </body>
+</html>
