@@ -884,3 +884,50 @@ html {
 .adm-table {
   min-width: 1000px;
 }
+
+/* RESTABLECIMIENTO DE CONTRASEÑA */
+
+.adm-btn-warning {
+  background: #392b18;
+  color: #ffc16e;
+  border: 1px solid #794c24;
+}
+
+.adm-btn-warning:hover {
+  background: #52391d;
+  color: #ffffff;
+  border-color: #b77a36;
+}
+
+.adm-temp-password {
+  margin: 15px 0;
+  padding: 20px;
+  border: 1px solid #794c24;
+  border-left: 3px solid #ffc16e;
+  border-radius: 5px;
+  background: #252018;
+  color: #e8e0d3;
+}
+
+.adm-temp-password h3 {
+  margin: 8px 0;
+  color: #ffc16e;
+  font-weight: 800;
+}
+
+.adm-temp-password p {
+  margin-top: 8px;
+  color: #b8b4ac;
+  font-size: 12px;
+}
+
+.adm-temp-password-value {
+  margin-top: 14px;
+  padding: 14px;
+  background: #141416;
+  border: 1px solid #794c24;
+  font-size: 19px;
+  letter-spacing: 2px;
+  color: #ffc16e;
+  user-select: all;
+}

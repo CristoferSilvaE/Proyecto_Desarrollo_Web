@@ -36,6 +36,26 @@
             <strong th:text="${error}"></strong>
           </div>
 
+          <!-- CREDENCIAL TEMPORAL GENERADA -->
+          <div class="adm-temp-password" th:if="${passwordTemporal}">
+            <div>
+              <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
+
+              <h3>CONTRASEÑA TEMPORAL GENERADA</h3>
+
+              <p>
+                Cuenta:
+                <strong th:text="${usuarioRestablecido}"></strong>
+              </p>
+            </div>
+
+            <div class="adm-temp-password-value">
+              <code th:text="${passwordTemporal}"></code>
+            </div>
+
+            <p>Entrega esta contraseña al usuario por un canal seguro. Solo se mostrará en esta pantalla después del restablecimiento.</p>
+          </div>
+
           <!-- ESTADÍSTICAS -->
           <section class="adm-stats">
             <article class="adm-stat">
@@ -159,15 +179,27 @@
                           th:classappend="${#strings.equalsIgnoreCase(
                                 fila.usuario.estado, 'ACTIVO'
                             )} ? 'adm-btn-danger' : 'adm-btn-success'"
-                                        th:if="${fila.usuario.rol != null
+                          th:if="${fila.usuario.rol != null
                                 and !#strings.equalsIgnoreCase(
                                     fila.usuario.rol.nombre, 'ADMINISTRADOR'
                                 )}"
-                                        th:attr="data-open-modal=|modalEstadoUsuario-${fila.usuario.idUsuario}|"
-                                        th:text="${#strings.equalsIgnoreCase(
+                          th:attr="data-open-modal=|modalEstadoUsuario-${fila.usuario.idUsuario}|"
+                          th:text="${#strings.equalsIgnoreCase(
                                 fila.usuario.estado, 'ACTIVO'
                             )} ? 'DESACTIVAR' : 'REACTIVAR'">
                           DESACTIVAR
+                        </button>
+
+                        <!-- RESTABLECER CONTRASEÑA -->
+                        <button
+                          type="button"
+                          class="adm-btn adm-btn-warning"
+                          th:if="${fila.usuario.rol != null
+                            and !#strings.equalsIgnoreCase(
+                                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+                            )}"
+                          th:attr="data-open-modal=|modalRestablecerPassword-${fila.usuario.idUsuario}|">
+                          RESTABLECER CLAVE
                         </button>
 
                         <!-- ADMINISTRADOR PROTEGIDO -->
@@ -333,6 +365,45 @@
                     )} ? 'CONFIRMAR DESACTIVACIÓN' : 'CONFIRMAR REACTIVACIÓN'">
                     CONFIRMAR
                   </button>
+                </div>
+              </form>
+            </dialog>
+          </div>
+
+          <!-- MODALES DE RESTABLECIMIENTO DE CONTRASEÑA -->
+
+          <div
+            th:each="fila : ${usuarios}"
+            th:if="${fila.usuario.rol != null
+        and !#strings.equalsIgnoreCase(
+            fila.usuario.rol.nombre, 'ADMINISTRADOR'
+        )}">
+            <dialog class="adm-modal" th:id="|modalRestablecerPassword-${fila.usuario.idUsuario}|">
+              <form method="post" th:action="@{/admin/usuarios/{id}/restablecer-password(id=${fila.usuario.idUsuario})}">
+                <div class="adm-modal-head">
+                  <div>
+                    <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
+                    <h2>RESTABLECER CONTRASEÑA</h2>
+                    <p>Generación de credenciales temporales.</p>
+                  </div>
+
+                  <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+                </div>
+
+                <div class="adm-modal-body">
+                  <p>
+                    ¿Estás seguro de restablecer la contraseña de
+                    <strong th:text="${fila.nombreCompleto}">Nombre del usuario</strong>
+                    ?
+                  </p>
+
+                  <p class="adm-note">Se generará una contraseña temporal. El usuario deberá cambiarla obligatoriamente antes de acceder al sistema.</p>
+                </div>
+
+                <div class="adm-modal-footer">
+                  <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                  <button type="submit" class="adm-btn adm-btn-warning">CONFIRMAR RESTABLECIMIENTO</button>
                 </div>
               </form>
             </dialog>
