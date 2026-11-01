@@ -6,6 +6,7 @@ import com.powerfit.powerfit.model.Usuario;
 import com.powerfit.powerfit.repository.ClienteRepository;
 import com.powerfit.powerfit.repository.RolRepository;
 import com.powerfit.powerfit.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AuthController {
@@ -186,14 +188,14 @@ public class AuthController {
   public String iniciarSesion(
       @RequestParam String identificador,
       @RequestParam String password,
-      HttpSession session,
+      HttpServletRequest request,
       Model model) {
 
     identificador = identificador.trim().toLowerCase();
 
     Usuario usuario;
 
-    // Determinar si ingresó un correo o un nombre de usuario
+    // Buscar por correo o nickname
     if (identificador.contains("@")) {
       usuario = usuarioRepository.findByCorreo(identificador).orElse(null);
     } else {
@@ -202,17 +204,63 @@ public class AuthController {
 
     // Validar credenciales
     if (usuario == null || !passwordEncoder.matches(password, usuario.getPasswordHash())) {
+
       model.addAttribute("error", "Usuario, correo o contraseña incorrectos.");
       model.addAttribute("identificador", identificador);
       return "auth/login";
     }
 
-    // Validar estado de la cuenta
+    // Validar estado
     if (!"ACTIVO".equalsIgnoreCase(usuario.getEstado())) {
       model.addAttribute("error", "Tu cuenta no se encuentra activa.");
       model.addAttribute("identificador", identificador);
       return "auth/login";
     }
+
+    // Validar rol
+    if (usuario.getRol() == null) {
+      model.addAttribute("error", "La cuenta no tiene un perfil asignado.");
+      return "auth/login";
+    }
+
+    // ==========================================
+    // CAMBIO OBLIGATORIO DE CONTRASEÑA
+    // ==========================================
+
+    if (Boolean.TRUE.equals(usuario.getCambioPasswordPendiente())) {
+
+      // Evitar reutilizar una sesión anterior
+      HttpSession anterior = request.getSession(false);
+
+      if (anterior != null) {
+        anterior.invalidate();
+      }
+
+      // Crear sesión temporal restringida
+      HttpSession temporal = request.getSession(true);
+
+      temporal.setAttribute("idUsuarioCambioPassword", usuario.getIdUsuario());
+
+      temporal.setAttribute(
+          "identificadorCambioPassword",
+          usuario.getUsuario() != null && !usuario.getUsuario().isBlank()
+              ? "@" + usuario.getUsuario()
+              : usuario.getCorreo());
+
+      return "redirect:/login?cambioPassword";
+    }
+
+    // ==========================================
+    // LOGIN NORMAL
+    // ==========================================
+
+    HttpSession anterior = request.getSession(false);
+
+    if (anterior != null) {
+      anterior.invalidate();
+    }
+
+    HttpSession session = request.getSession(true);
 
     session.setAttribute("idUsuario", usuario.getIdUsuario());
     session.setAttribute("rol", usuario.getRol().getNombre());
@@ -224,6 +272,8 @@ public class AuthController {
           clienteRepository.findByUsuario_IdUsuario(usuario.getIdUsuario()).orElse(null);
 
       if (cliente == null) {
+        session.invalidate();
+
         model.addAttribute("error", "No se encontró el perfil del cliente.");
         return "auth/login";
       }
@@ -234,6 +284,113 @@ public class AuthController {
     }
 
     // Acceso del administrador
+    if ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre())) {
+      return "redirect:/admin";
+    }
+
+    return "redirect:/";
+  }
+
+  @PostMapping("/cambiar-password")
+  @Transactional
+  public String guardarCambioPassword(
+      @RequestParam(required = false) String nuevaPassword,
+      @RequestParam(required = false) String confirmarPassword,
+      HttpServletRequest request,
+      RedirectAttributes redirectAttributes) {
+
+    HttpSession temporal = request.getSession(false);
+
+    // Comprobar que exista una sesión temporal autorizada
+    if (temporal == null
+        || !(temporal.getAttribute("idUsuarioCambioPassword") instanceof Long idUsuario)) {
+
+      redirectAttributes.addFlashAttribute(
+          "error", "No existe una solicitud de cambio de contraseña válida.");
+
+      return "redirect:/login";
+    }
+
+    Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+
+    // Comprobar que la cuenta siga habilitada
+    if (usuario == null
+        || !"ACTIVO".equalsIgnoreCase(usuario.getEstado())
+        || !Boolean.TRUE.equals(usuario.getCambioPasswordPendiente())
+        || usuario.getRol() == null) {
+
+      temporal.invalidate();
+
+      redirectAttributes.addFlashAttribute(
+          "error", "La cuenta ya no está habilitada para realizar esta operación.");
+
+      return "redirect:/login";
+    }
+
+    // Validar longitud
+    if (nuevaPassword == null || nuevaPassword.length() < 8) {
+
+      redirectAttributes.addFlashAttribute(
+          "errorCambioPassword", "La nueva contraseña debe tener al menos 8 caracteres.");
+
+      return "redirect:/login?cambioPassword";
+    }
+
+    // Validar coincidencia
+    if (confirmarPassword == null || !nuevaPassword.equals(confirmarPassword)) {
+
+      redirectAttributes.addFlashAttribute("errorCambioPassword", "Las contraseñas no coinciden.");
+
+      return "redirect:/login?cambioPassword";
+    }
+
+    // No permitir reutilizar la contraseña temporal
+    if (passwordEncoder.matches(nuevaPassword, usuario.getPasswordHash())) {
+
+      redirectAttributes.addFlashAttribute(
+          "errorCambioPassword", "Debes elegir una contraseña diferente a la temporal.");
+
+      return "redirect:/login?cambioPassword";
+    }
+
+    // Comprobar que el cliente tenga su perfil
+    Cliente cliente = null;
+
+    if ("CLIENTE".equalsIgnoreCase(usuario.getRol().getNombre())) {
+
+      cliente = clienteRepository.findByUsuario_IdUsuario(usuario.getIdUsuario()).orElse(null);
+
+      if (cliente == null) {
+        temporal.invalidate();
+
+        redirectAttributes.addFlashAttribute("error", "No se encontró el perfil del cliente.");
+
+        return "redirect:/login";
+      }
+    }
+
+    // Actualizar contraseña y quitar restricción
+    usuario.setPasswordHash(passwordEncoder.encode(nuevaPassword));
+    usuario.setCambioPasswordPendiente(false);
+
+    usuarioRepository.save(usuario);
+
+    // Destruir sesión temporal
+    temporal.invalidate();
+
+    // Crear una nueva sesión autenticada
+    HttpSession nuevaSesion = request.getSession(true);
+
+    nuevaSesion.setAttribute("idUsuario", usuario.getIdUsuario());
+    nuevaSesion.setAttribute("rol", usuario.getRol().getNombre());
+
+    if (cliente != null) {
+      nuevaSesion.setAttribute("idCliente", cliente.getIdCliente());
+    }
+
+    redirectAttributes.addFlashAttribute(
+        "mensajeLogin", "¡Contraseña actualizada correctamente! Ya puedes ingresar a PowerFit.");
+
     if ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre())) {
       return "redirect:/admin";
     }

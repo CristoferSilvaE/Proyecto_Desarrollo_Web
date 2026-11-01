@@ -93,9 +93,18 @@
   });
   document.querySelectorAll("dialog.adm-modal").forEach((dialog) => {
     dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) dialog.close();
+      if (event.target === dialog && !dialog.hasAttribute("data-no-backdrop-close")) {
+        dialog.close();
+      }
     });
   });
+
+  // Abrir automáticamente el modal de contraseña temporal
+  const modalPasswordTemporal = document.getElementById("modalPasswordTemporal");
+
+  if (modalPasswordTemporal && !modalPasswordTemporal.open) {
+    modalPasswordTemporal.showModal();
+  }
   document.querySelectorAll("[data-demo-form]").forEach((form) => {
     form.addEventListener("submit", (event) => {
       event.preventDefault();

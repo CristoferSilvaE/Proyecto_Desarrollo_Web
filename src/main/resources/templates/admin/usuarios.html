@@ -28,32 +28,12 @@
           <div th:replace="~{admin/fragments/clientes-tabs :: tabs('usuarios')}"></div>
 
           <!-- MENSAJES -->
-          <div class="adm-alert" th:if="${mensaje}">
+          <div class="adm-alert" th:if="${mensaje != null and passwordTemporal == null}">
             <strong th:text="${mensaje}"></strong>
           </div>
 
           <div class="adm-alert" th:if="${error}">
             <strong th:text="${error}"></strong>
-          </div>
-
-          <!-- CREDENCIAL TEMPORAL GENERADA -->
-          <div class="adm-temp-password" th:if="${passwordTemporal}">
-            <div>
-              <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
-
-              <h3>CONTRASEÑA TEMPORAL GENERADA</h3>
-
-              <p>
-                Cuenta:
-                <strong th:text="${usuarioRestablecido}"></strong>
-              </p>
-            </div>
-
-            <div class="adm-temp-password-value">
-              <code th:text="${passwordTemporal}"></code>
-            </div>
-
-            <p>Entrega esta contraseña al usuario por un canal seguro. Solo se mostrará en esta pantalla después del restablecimiento.</p>
           </div>
 
           <!-- ESTADÍSTICAS -->
@@ -406,6 +386,38 @@
                   <button type="submit" class="adm-btn adm-btn-warning">CONFIRMAR RESTABLECIMIENTO</button>
                 </div>
               </form>
+            </dialog>
+
+            <!-- MODAL DE CONTRASEÑA TEMPORAL -->
+            <dialog class="adm-modal" id="modalPasswordTemporal" data-no-backdrop-close th:if="${passwordTemporal != null}">
+              <div class="adm-modal-form">
+                <div class="adm-modal-head">
+                  <div>
+                    <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
+                    <h2>CONTRASEÑA RESTABLECIDA</h2>
+                    <p>Las nuevas credenciales están listas.</p>
+                  </div>
+
+                  <button type="button" class="adm-close" data-close-modal>×</button>
+                </div>
+
+                <div class="adm-modal-body">
+                  <p>
+                    Cuenta:
+                    <strong th:text="${usuarioRestablecido}"></strong>
+                  </p>
+
+                  <div class="adm-temp-password-value">
+                    <code th:text="${passwordTemporal}"></code>
+                  </div>
+
+                  <p class="adm-note">Entrega esta contraseña al usuario por un canal seguro. Por seguridad, deberá cambiarla obligatoriamente al iniciar sesión.</p>
+                </div>
+
+                <div class="adm-modal-footer">
+                  <button type="button" class="adm-btn adm-btn-primary" data-close-modal>ENTENDIDO</button>
+                </div>
+              </div>
             </dialog>
           </div>
         </main>

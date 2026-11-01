@@ -34,7 +34,17 @@ public class NavegacionController {
   }
 
   @GetMapping("/login")
-  public String login() {
+  public String login(HttpSession session, Model model) {
+
+    boolean cambioPendiente = session.getAttribute("idUsuarioCambioPassword") instanceof Long;
+
+    model.addAttribute("mostrarCambioPassword", cambioPendiente);
+
+    if (cambioPendiente) {
+      model.addAttribute(
+          "identificadorCambioPassword", session.getAttribute("identificadorCambioPassword"));
+    }
+
     return "auth/login";
   }
 

@@ -38,5 +38,93 @@
         <a th:href="@{/registro}" class="auth-link ml-1">REGÍSTRATE</a>
       </div>
     </div>
+
+    <!-- MODAL OBLIGATORIO DE CAMBIO DE CONTRASEÑA -->
+    <dialog id="modalCambioPassword" class="password-change-modal" th:if="${mostrarCambioPassword == true}">
+      <div class="password-change-inner">
+        <div class="password-change-icon">
+          <span>🔐</span>
+        </div>
+
+        <span class="password-change-kicker">POWERFIT / SEGURIDAD DE CUENTA</span>
+
+        <h2 class="password-change-title">ACTUALIZA TU CONTRASEÑA</h2>
+
+        <p class="password-change-description">Tu contraseña temporal debe ser reemplazada antes de continuar.</p>
+
+        <p class="password-change-account" th:if="${identificadorCambioPassword != null}">
+          Cuenta:
+          <strong th:text="${identificadorCambioPassword}"></strong>
+        </p>
+
+        <form id="formCambioPassword" th:action="@{/cambiar-password}" method="post">
+          <div th:if="${errorCambioPassword}" class="form-error" th:text="${errorCambioPassword}"></div>
+
+          <div class="password-change-fields">
+            <div>
+              <label class="auth-label" for="nuevaPassword">NUEVA CONTRASEÑA</label>
+
+              <input type="password" id="nuevaPassword" name="nuevaPassword" class="login-input" placeholder="Mínimo 8 caracteres" minlength="8" maxlength="72" autocomplete="new-password" required />
+            </div>
+
+            <div>
+              <label class="auth-label" for="confirmarPassword">CONFIRMAR NUEVA CONTRASEÑA</label>
+
+              <input
+                type="password"
+                id="confirmarPassword"
+                name="confirmarPassword"
+                class="login-input"
+                placeholder="Repite tu nueva contraseña"
+                minlength="8"
+                maxlength="72"
+                autocomplete="new-password"
+                required />
+            </div>
+          </div>
+
+          <p id="errorCoincidenciaPassword" class="form-error password-change-hidden">Las contraseñas no coinciden.</p>
+
+          <p class="password-change-note">Por seguridad, este cambio es obligatorio. No podrás cerrar esta ventana sin actualizar tu contraseña.</p>
+
+          <button type="submit" class="auth-submit">GUARDAR NUEVA CONTRASEÑA</button>
+        </form>
+      </div>
+    </dialog>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("modalCambioPassword");
+
+        if (modal) {
+          modal.showModal();
+
+          // Impedir cerrar el modal con ESC
+          modal.addEventListener("cancel", function (event) {
+            event.preventDefault();
+          });
+        }
+
+        const form = document.getElementById("formCambioPassword");
+
+        if (!form) return;
+
+        const nueva = document.getElementById("nuevaPassword");
+        const confirmar = document.getElementById("confirmarPassword");
+        const error = document.getElementById("errorCoincidenciaPassword");
+
+        form.addEventListener("submit", function (event) {
+          if (nueva.value !== confirmar.value) {
+            event.preventDefault();
+            error.classList.remove("password-change-hidden");
+            confirmar.focus();
+          }
+        });
+
+        confirmar.addEventListener("input", function () {
+          error.classList.add("password-change-hidden");
+        });
+      });
+    </script>
   </body>
 </html>

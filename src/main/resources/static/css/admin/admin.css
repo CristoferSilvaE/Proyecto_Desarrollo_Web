@@ -849,26 +849,53 @@ html {
   border-color: #6c91d8;
 }
 
-/* Contenedor de botones */
+/* DISTRIBUCIÓN DE ACCIONES DE USUARIOS */
+
+/* ==========================================
+   ACCIONES DE USUARIOS - DISTRIBUCIÓN
+========================================== */
+
 .adm-user-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(125px, 150px));
+  align-items: stretch;
+  justify-content: start;
   gap: 8px;
+  width: 100%;
+  max-width: 308px;
 }
 
-/* Celda de acciones */
 .adm-actions-cell {
-  min-width: 210px;
+  min-width: 320px;
   white-space: normal;
+  vertical-align: middle;
 }
 
-/* Botones compactos */
 .adm-user-actions .adm-btn {
-  padding: 9px 12px;
-  font-size: 10px;
+  width: 100%;
+  max-width: 150px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 9px 10px;
   margin: 0;
+  font-size: 10px;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Restablecer contraseña ocupa toda la fila */
+.adm-user-actions .adm-btn-warning {
+  grid-column: 1 / -1;
+  max-width: 308px;
+}
+
+/* Administrador protegido */
+.adm-user-actions .adm-badge {
+  justify-self: start;
+  min-width: 145px;
+  text-align: center;
 }
 
 /* ==========================================
