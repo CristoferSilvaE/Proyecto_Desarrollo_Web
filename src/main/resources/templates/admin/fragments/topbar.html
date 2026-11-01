@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <header class="adm-topbar" th:fragment="topbar(section, title, subtitle)">
+      <div>
+        <div class="adm-breadcrumb">
+          SISTEMA /
+          <span th:text="${section}">PANEL</span>
+        </div>
+
+        <h1 th:text="${title}">Panel de administración</h1>
+
+        <p th:text="${subtitle}">Gestión del sistema</p>
+      </div>
+
+      <div class="adm-top-actions">
+        <span class="adm-notification" title="Notificaciones (próximamente)">
+          <svg class="adm-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+            <path d="M10 21h4" />
+          </svg>
+
+          <i></i>
+        </span>
+
+        <div class="adm-profile">
+          <span class="adm-profile-avatar">PF</span>
+
+          <span>
+            <strong th:text="${usuario != null ? usuario.correo : 'Administrador'}">Administrador</strong>
+
+            <small>ADMINISTRADOR</small>
+          </span>
+        </div>
+      </div>
+    </header>
+  </body>
+</html>

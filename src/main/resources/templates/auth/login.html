@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
+  </head>
+  <body class="auth-body login-body" th:style="'background-image: linear-gradient(to bottom, rgba(10,10,12,0.85), rgba(10,10,12,0.95)), url(' + @{/imagenes/login1.jpg} + ');'">
+    <div class="auth-watermark">PowerFit</div>
+
+    <div class="login-card">
+      <div class="auth-brand">
+        <h1 class="auth-brand-title">POWERFIT</h1>
+        <p class="auth-brand-subtitle">Rendimiento Máximo</p>
+      </div>
+
+      <form class="auth-form" th:action="@{/login}" method="post">
+        <div th:if="${error}" class="form-error" th:text="${error}">Error</div>
+        <div>
+          <label class="auth-label">Correo electrónico o nombre de usuario</label>
+          <input type="text" name="identificador" th:value="${identificador}" placeholder="atleta@ejemplo.com o diego123" class="login-input" autocomplete="username" required />
+        </div>
+
+        <div>
+          <label class="auth-label">Contraseña</label>
+          <input type="password" name="password" placeholder="••••••••" class="login-input" required />
+        </div>
+
+        <button type="submit" class="auth-submit">Ingresar</button>
+      </form>
+
+      <div class="auth-footer">
+        ¿No tienes una cuenta?
+        <a th:href="@{/registro}" class="auth-link ml-1">REGÍSTRATE</a>
+      </div>
+    </div>
+
+    <!-- MODAL OBLIGATORIO DE CAMBIO DE CONTRASEÑA -->
+    <dialog id="modalCambioPassword" class="password-change-modal" th:if="${mostrarCambioPassword == true}">
+      <div class="password-change-inner">
+        <div class="password-change-icon">
+          <span>🔐</span>
+        </div>
+
+        <span class="password-change-kicker">POWERFIT / SEGURIDAD DE CUENTA</span>
+
+        <h2 class="password-change-title">ACTUALIZA TU CONTRASEÑA</h2>
+
+        <p class="password-change-description">Tu contraseña temporal debe ser reemplazada antes de continuar.</p>
+
+        <p class="password-change-account" th:if="${identificadorCambioPassword != null}">
+          Cuenta:
+          <strong th:text="${identificadorCambioPassword}"></strong>
+        </p>
+
+        <form id="formCambioPassword" th:action="@{/cambiar-password}" method="post">
+          <div th:if="${errorCambioPassword}" class="form-error" th:text="${errorCambioPassword}"></div>
+
+          <div class="password-change-fields">
+            <div>
+              <label class="auth-label" for="nuevaPassword">NUEVA CONTRASEÑA</label>
+
+              <input type="password" id="nuevaPassword" name="nuevaPassword" class="login-input" placeholder="Mínimo 8 caracteres" minlength="8" maxlength="72" autocomplete="new-password" required />
+            </div>
+
+            <div>
+              <label class="auth-label" for="confirmarPassword">CONFIRMAR NUEVA CONTRASEÑA</label>
+
+              <input
+                type="password"
+                id="confirmarPassword"
+                name="confirmarPassword"
+                class="login-input"
+                placeholder="Repite tu nueva contraseña"
+                minlength="8"
+                maxlength="72"
+                autocomplete="new-password"
+                required />
+            </div>
+          </div>
+
+          <p id="errorCoincidenciaPassword" class="form-error password-change-hidden">Las contraseñas no coinciden.</p>
+
+          <p class="password-change-note">Por seguridad, este cambio es obligatorio. No podrás cerrar esta ventana sin actualizar tu contraseña.</p>
+
+          <button type="submit" class="auth-submit">GUARDAR NUEVA CONTRASEÑA</button>
+        </form>
+      </div>
+    </dialog>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("modalCambioPassword");
+
+        if (modal) {
+          modal.showModal();
+
+          // Impedir cerrar el modal con ESC
+          modal.addEventListener("cancel", function (event) {
+            event.preventDefault();
+          });
+        }
+
+        const form = document.getElementById("formCambioPassword");
+
+        if (!form) return;
+
+        const nueva = document.getElementById("nuevaPassword");
+        const confirmar = document.getElementById("confirmarPassword");
+        const error = document.getElementById("errorCoincidenciaPassword");
+
+        form.addEventListener("submit", function (event) {
+          if (nueva.value !== confirmar.value) {
+            event.preventDefault();
+            error.classList.remove("password-change-hidden");
+            confirmar.focus();
+          }
+        });
+
+        confirmar.addEventListener("input", function () {
+          error.classList.add("password-change-hidden");
+        });
+      });
+    </script>
+  </body>
+</html>

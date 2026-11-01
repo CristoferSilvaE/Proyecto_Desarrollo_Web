@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit - Carrito</title>
+    <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
+  </head>
+  <body class="app-body">
+    <div th:replace="~{fragments/header :: header('tienda')}"></div>
+
+    <main class="page-container-sm">
+      <!-- ENCABEZADO -->
+      <div class="page-header">
+        <h1 class="page-title text-indigo-200">Mi carrito</h1>
+
+        <p class="page-subtitle">Revisa tus productos antes de finalizar la compra.</p>
+      </div>
+
+      <!-- MENSAJES -->
+      <div th:if="${error}" class="section-card" style="margin-bottom: 20px; border: 1px solid #ef4444">
+        <p style="color: #f87171" th:text="${error}"></p>
+      </div>
+
+      <!-- CARRITO VACÍO -->
+      <section th:if="${#lists.isEmpty(itemsCarrito)}" class="empty-state">
+        <h2 class="empty-title">Tu carrito está vacío</h2>
+
+        <p class="empty-text mb-6">Todavía no has añadido productos.</p>
+
+        <a th:href="@{/tienda}" class="btn-primary">Explorar productos</a>
+      </section>
+
+      <!-- CARRITO CON PRODUCTOS -->
+      <div th:if="${!#lists.isEmpty(itemsCarrito)}" class="cart-layout">
+        <!-- LISTA DE PRODUCTOS -->
+        <div class="cart-items">
+          <div th:each="item : ${itemsCarrito}" class="cart-item">
+            <div class="cart-item-main">
+              <!-- IMAGEN -->
+              <div class="cart-thumb">
+                <img
+                  th:if="${item.producto.imagen != null and !item.producto.imagen.isBlank()}"
+                  th:src="@{/imagenes/{imagen}(imagen=${item.producto.imagen})}"
+                  th:alt="${item.producto.nombre}"
+                  class="cart-thumb-img" />
+
+                <div th:if="${item.producto.imagen == null or item.producto.imagen.isBlank()}" class="product-placeholder">Sin imagen</div>
+              </div>
+
+              <!-- INFORMACIÓN -->
+              <div>
+                <h3 class="cart-item-title" th:text="${item.producto.nombre}">Producto</h3>
+
+                <p class="cart-item-category" th:text="${item.producto.categoria}">Categoría</p>
+
+                <p class="cart-item-category" th:text="${'Precio unitario: S/ ' + #numbers.formatDecimal(item.producto.precio, 1, 2)}"></p>
+
+                <!-- CONTROLES DE CANTIDAD -->
+                <div class="quantity-control">
+                  <!-- DISMINUIR -->
+                  <form th:action="@{/carrito/disminuir/{id}(id=${item.producto.idProducto})}" method="post">
+                    <button type="submit" class="quantity-button">−</button>
+                  </form>
+
+                  <!-- CANTIDAD -->
+                  <span class="quantity-value" th:text="${item.cantidad}">1</span>
+
+                  <!-- AUMENTAR -->
+                  <form th:action="@{/carrito/aumentar/{id}(id=${item.producto.idProducto})}" method="post">
+                    <button type="submit" class="quantity-button" th:disabled="${item.cantidad >= item.producto.stock}">+</button>
+                  </form>
+                </div>
+
+                <p class="cart-item-category" th:text="${'Stock disponible: ' + item.producto.stock}"></p>
+              </div>
+            </div>
+
+            <!-- PRECIO Y ELIMINAR -->
+            <div class="cart-item-side">
+              <form th:action="@{/carrito/eliminar/{id}(id=${item.producto.idProducto})}" method="post">
+                <button type="submit" class="cart-remove" title="Eliminar producto">✕</button>
+              </form>
+
+              <p class="cart-item-price" th:text="${'S/ ' + #numbers.formatDecimal(item.subtotal, 1, 2)}">S/ 0.00</p>
+            </div>
+          </div>
+
+          <!-- ACCIONES -->
+          <a th:href="@{/tienda}" class="continue-shopping">← Seguir comprando</a>
+
+          <div style="margin-top: 15px">
+            <button type="button" class="btn-danger" onclick="abrirModalVaciar()">Vaciar carrito</button>
+          </div>
+        </div>
+
+        <!-- RESUMEN -->
+        <aside class="cart-summary">
+          <h2 class="cart-summary-title">Resumen de compra</h2>
+
+          <div class="cart-summary-list">
+            <div class="cart-summary-row">
+              <span th:text="${'Subtotal (' + cantidadTotal + ' artículos)'}">Subtotal</span>
+
+              <span class="cart-summary-value" th:text="${'S/ ' + #numbers.formatDecimal(subtotal, 1, 2)}">S/ 0.00</span>
+            </div>
+
+            <div class="cart-summary-row">
+              <span>Envío</span>
+
+              <span class="cart-summary-value">Calculado en checkout</span>
+            </div>
+
+            <div class="cart-total-row">
+              <span class="cart-total-label">Subtotal</span>
+
+              <span class="cart-total" th:text="${'S/ ' + #numbers.formatDecimal(subtotal, 1, 2)}">S/ 0.00</span>
+            </div>
+          </div>
+
+          <!-- CHECKOUT -->
+          <a th:href="@{/checkout}" class="btn-primary-block mt-7">Finalizar compra</a>
+        </aside>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    
+
+    <!-- MODAL PARA VACIAR CARRITO -->
+    <dialog id="modalVaciar" class="cart-modal">
+      <div class="cart-modal-icon">🗑</div>
+
+      <h2 class="cart-modal-title">¿Vaciar carrito?</h2>
+
+      <p class="cart-modal-text">Se eliminarán todos los productos de tu carrito. Esta acción no se puede deshacer.</p>
+
+      <div class="cart-modal-actions">
+        <button type="button" class="cart-modal-cancel" onclick="cerrarModalVaciar()">Cancelar</button>
+
+        <form th:action="@{/carrito/vaciar}" method="post" style="flex: 1; display: flex">
+          <button type="submit" class="cart-modal-confirm" style="width: 100%">Sí, vaciar</button>
+        </form>
+      </div>
+    </dialog>
+
+    <script>
+      function abrirModalVaciar() {
+        document.getElementById("modalVaciar").showModal();
+      }
+
+      function cerrarModalVaciar() {
+        document.getElementById("modalVaciar").close();
+      }
+    </script>
+    <script th:src="@{/js/components/header.js}"></script>
+</body>
+</html>

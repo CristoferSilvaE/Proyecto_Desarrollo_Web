@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,14 +66,14 @@ public class PerfilController {
     Long idCliente = (Long) session.getAttribute("idCliente");
 
     if (idCliente == null) {
-      return "perfilUsuario";
+      return "perfil/perfilUsuario";
     }
 
     Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
 
     if (cliente == null) {
       session.invalidate();
-      return "perfilUsuario";
+      return "perfil/perfilUsuario";
     }
 
     Membresia membresiaActiva =
@@ -102,7 +103,7 @@ public class PerfilController {
         "pagos",
         pagoMembresiaRepository.findByMembresia_Cliente_IdClienteOrderByFechaPagoDesc(idCliente));
 
-    return "perfilUsuario";
+    return "perfil/perfilUsuario";
   }
 
   @PostMapping("/perfil/actualizar")
@@ -223,6 +224,73 @@ public class PerfilController {
     return "redirect:/perfil";
   }
 
+  @PostMapping("/perfil/usuario/actualizar")
+  public String actualizarNombreUsuario(
+      @RequestParam String nombreUsuario,
+      HttpSession session,
+      RedirectAttributes redirectAttributes) {
+
+    Long idUsuario = (Long) session.getAttribute("idUsuario");
+
+    if (idUsuario == null) {
+      return "redirect:/login";
+    }
+
+    Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+
+    if (usuario == null) {
+      return "redirect:/login";
+    }
+
+    nombreUsuario = nombreUsuario.trim().toLowerCase();
+
+    // Validar formato del nombre de usuario
+    if (!nombreUsuario.matches("[a-z0-9._-]{4,30}")) {
+
+      redirectAttributes.addFlashAttribute(
+          "error",
+          "El usuario debe tener entre 4 y 30 caracteres. Solo se permiten letras, números, puntos,"
+              + " guiones y guiones bajos.");
+
+      return "redirect:/perfil";
+    }
+
+    // Comprobar si mantiene su mismo nickname
+    if (nombreUsuario.equalsIgnoreCase(usuario.getUsuario())) {
+
+      redirectAttributes.addFlashAttribute("mensaje", "Tu nombre de usuario no ha cambiado.");
+
+      return "redirect:/perfil";
+    }
+
+    // Comprobar que el nickname esté disponible
+    if (usuarioRepository.existsByUsuario(nombreUsuario)) {
+
+      redirectAttributes.addFlashAttribute(
+          "error", "Ese nombre de usuario ya está registrado. Elige otro.");
+
+      return "redirect:/perfil";
+    }
+
+    // Guardar el nuevo nickname
+    usuario.setUsuario(nombreUsuario);
+
+    try {
+
+      usuarioRepository.saveAndFlush(usuario);
+
+      redirectAttributes.addFlashAttribute(
+          "mensaje", "Tu nombre de usuario se actualizó correctamente.");
+
+    } catch (DataIntegrityViolationException e) {
+
+      redirectAttributes.addFlashAttribute(
+          "error", "Ese nombre de usuario acaba de ser ocupado. Prueba con otro.");
+    }
+
+    return "redirect:/perfil";
+  }
+
   @PostMapping("/perfil/desactivar")
   @Transactional
   public String desactivarCuenta(HttpSession session) {
@@ -289,7 +357,7 @@ public class PerfilController {
       model.addAttribute("nuevoSeguimiento", new SeguimientoFisico());
     }
 
-    return "seguimientoFisico";
+    return "perfil/seguimientoFisico";
   }
 
   @PostMapping("/perfil/seguimiento/guardar")

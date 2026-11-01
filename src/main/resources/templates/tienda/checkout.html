@@ -4,58 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PowerFit - Checkout</title>
-    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
   </head>
   <body class="app-body">
-    <header class="navbar">
-      <div class="navbar-container">
-        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
-
-        <nav class="navbar-menu">
-          <a th:href="@{/}" class="nav-link">Inicio</a>
-          <a th:href="@{/membresia}" class="nav-link">Membresía</a>
-          <a th:href="@{/tienda}" class="nav-link-active">Tienda</a>
-          <a th:href="@{/clases}" class="nav-link">Clases</a>
-          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
-        </nav>
-
-        <div class="navbar-actions">
-          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
-            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-            </svg>
-          </a>
-
-          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
-
-          <div th:if="${cliente != null}" class="user-session">
-            <span class="user-name" th:text="${cliente.nombres}">Usuario</span>
-
-            <div class="user-menu">
-              <button type="button" class="avatar-link user-menu-button" onclick="toggleUserMenu(event)">
-                <img
-                  th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
-                  th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
-                  th:alt="${cliente.nombres}"
-                  class="avatar-image" />
-
-                <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
-              </button>
-
-              <div id="userDropdown" class="user-dropdown">
-                <a th:href="@{/perfil}" class="user-dropdown-item">Perfil</a>
-
-                <a th:href="@{/logout}" class="user-dropdown-item user-dropdown-logout">Cerrar sesión</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <div th:replace="~{fragments/header :: header('tienda')}"></div>
 
     <section th:if="${cliente == null}" class="login-gate">
       <div class="login-gate-card">
@@ -75,6 +28,7 @@
     </section>
 
     <main th:if="${cliente != null}" class="page-container">
+      <div th:if="${error}" class="alert-error" style="margin-bottom: 20px" th:text="${error}"></div>
       <div class="checkout-header">
         <p class="eyebrow">Tienda PowerFit</p>
         <h1 class="page-title">Checkout</h1>
@@ -82,7 +36,7 @@
       </div>
 
       <div class="checkout-layout">
-        <form class="checkout-form" onsubmit="event.preventDefault()">
+        <form id="formCheckout" class="checkout-form" th:action="@{/pedidos/confirmar}" method="post">
           <section class="section-card">
             <div class="checkout-step-head">
               <span class="checkout-step-number">1</span>
@@ -111,18 +65,29 @@
               </label>
             </div>
 
-            <div id="datosDelivery" class="form-grid-hidden">
+            <!-- SELECCIÓN DE SEDE -->
+            <div id="datosSede" class="mt-6">
+              <label for="idSede" class="field-label">Selecciona la sede de recojo</label>
+
+              <select id="idSede" name="idSede" class="field-input" required>
+                <option value="">-- Selecciona una sede --</option>
+
+                <option th:each="sede : ${sedes}" th:value="${sede.idSede}" th:text="${sede.nombre + ' - ' + sede.distrito}"></option>
+              </select>
+            </div>
+
+            <div id="datosDelivery" class="form-grid hidden mt-6">
               <div class="field-span-2">
                 <label class="field-label">Dirección</label>
-                <input type="text" name="direccionEntrega" class="field-input" />
+                <input id="direccionEntrega" type="text" name="direccionEntrega" class="field-input" maxlength="200" />
               </div>
               <div>
                 <label class="field-label">Distrito</label>
-                <input type="text" name="distrito" class="field-input" />
+                <input id="distritoEntrega" type="text" name="distrito" class="field-input" maxlength="80" />
               </div>
               <div>
                 <label class="field-label">Referencia</label>
-                <input type="text" name="referencia" class="field-input" />
+                <input type="text" name="referencia" class="field-input" maxlength="200" />
               </div>
             </div>
           </section>
@@ -166,14 +131,18 @@
               </div>
             </div>
 
-            <div id="datosFactura" class="form-grid-hidden">
+            <!-- DATOS DE FACTURA -->
+            <div id="datosFactura" class="form-grid hidden mt-6">
               <div>
-                <label class="field-label">RUC</label>
-                <input type="text" name="ruc" maxlength="11" class="field-input" />
+                <label for="rucFactura" class="field-label">RUC</label>
+
+                <input id="rucFactura" type="text" name="ruc" maxlength="11" pattern="[0-9]{11}" placeholder="Ingresa 11 dígitos" class="field-input" />
               </div>
+
               <div>
-                <label class="field-label">Razón social</label>
-                <input type="text" name="razonSocial" class="field-input" />
+                <label for="razonSocialFactura" class="field-label">Razón social</label>
+
+                <input id="razonSocialFactura" type="text" name="razonSocial" maxlength="150" placeholder="Nombre o razón social" class="field-input" />
               </div>
             </div>
           </section>
@@ -202,7 +171,7 @@
             <p class="payment-note">PowerFit no almacenará números de tarjeta ni códigos CVV.</p>
           </section>
 
-          <button type="submit" class="btn-primary-block py-4">Confirmar compra</button>
+          <button type="button" class="btn-primary-block py-4" onclick="abrirModalCompra()">Confirmar compra</button>
         </form>
 
         <aside class="checkout-summary">
@@ -241,45 +210,98 @@
       </div>
     </main>
 
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-logo">POWERFIT</div>
-        <div class="footer-links">
-          <a href="#" class="footer-link">Política de Privacidad</a>
-          <a href="#" class="footer-link">Términos de Servicio</a>
-          <a href="#" class="footer-link">Soporte</a>
-          <a href="#" class="footer-link">Instagram</a>
-        </div>
-        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-      </div>
-    </footer>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script>
       function actualizarEntrega() {
         const metodo = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
-        document.getElementById("datosDelivery").classList.toggle("hidden", metodo !== "DELIVERY");
+
+        const datosDelivery = document.getElementById("datosDelivery");
+        const datosSede = document.getElementById("datosSede");
+
+        const selectSede = document.getElementById("idSede");
+        const direccion = document.getElementById("direccionEntrega");
+        const distrito = document.getElementById("distritoEntrega");
+
+        const esRecojo = metodo === "RECOJO";
+
+        datosSede.classList.toggle("hidden", !esRecojo);
+        datosDelivery.classList.toggle("hidden", esRecojo);
+
+        selectSede.required = esRecojo;
+        direccion.required = !esRecojo;
+        distrito.required = !esRecojo;
+
+        if (!esRecojo) {
+          selectSede.value = "";
+        }
       }
+
+      document.addEventListener("DOMContentLoaded", actualizarEntrega);
 
       function actualizarComprobante() {
         const tipo = document.querySelector('input[name="tipoComprobante"]:checked')?.value;
-        document.getElementById("datosFactura").classList.toggle("hidden", tipo !== "FACTURA");
-      }
 
-      function toggleUserMenu(event) {
-        event.stopPropagation();
+        const esFactura = tipo === "FACTURA";
 
-        const menu = document.getElementById("userDropdown");
+        const datosFactura = document.getElementById("datosFactura");
+        const ruc = document.getElementById("rucFactura");
+        const razonSocial = document.getElementById("razonSocialFactura");
 
-        menu.classList.toggle("active");
-      }
+        // Mostrar u ocultar los campos
+        datosFactura.classList.toggle("hidden", !esFactura);
 
-      document.addEventListener("click", function () {
-        const menu = document.getElementById("userDropdown");
+        // Campos obligatorios solamente para factura
+        ruc.required = esFactura;
+        razonSocial.required = esFactura;
 
-        if (menu) {
-          menu.classList.remove("active");
+        // Limpiar datos cuando se seleccione boleta
+        if (!esFactura) {
+          ruc.value = "";
+          razonSocial.value = "";
         }
-      });
+      }
+
+      document.addEventListener("DOMContentLoaded", actualizarComprobante);
     </script>
-  </body>
+    <!-- MODAL CONFIRMAR COMPRA -->
+    <dialog id="modalConfirmarCompra" class="cart-modal">
+      <div class="cart-modal-icon" style="color: #c7d2fe">🛒</div>
+
+      <h2 class="cart-modal-title">¿Confirmar pedido?</h2>
+
+      <p class="cart-modal-text">Revisa que los productos y los datos de entrega sean correctos. Tu pedido quedará pendiente de pago y procesamiento.</p>
+
+      <div class="cart-modal-actions">
+        <button type="button" class="cart-modal-cancel" onclick="cerrarModalCompra()">Volver</button>
+
+        <button id="btnConfirmarPedido" type="button" class="cart-modal-confirm" style="background: #818cf8; color: #111118" onclick="enviarPedido()">Sí, confirmar</button>
+      </div>
+    </dialog>
+
+    <script>
+      function abrirModalCompra() {
+        const formulario = document.getElementById("formCheckout");
+
+        if (!formulario.reportValidity()) {
+          return;
+        }
+
+        document.getElementById("modalConfirmarCompra").showModal();
+      }
+
+      function cerrarModalCompra() {
+        document.getElementById("modalConfirmarCompra").close();
+      }
+
+      function enviarPedido() {
+        const formulario = document.getElementById("formCheckout");
+
+        document.getElementById("btnConfirmarPedido").disabled = true;
+
+        formulario.requestSubmit();
+      }
+    </script>
+    <script th:src="@{/js/components/header.js}"></script>
+</body>
 </html>

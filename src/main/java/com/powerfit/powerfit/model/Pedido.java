@@ -25,6 +25,10 @@ public class Pedido {
   @JoinColumn(name = "id_cliente", nullable = false)
   private Cliente cliente;
 
+  @ManyToOne
+  @JoinColumn(name = "id_sede")
+  private Sede sede;
+
   @Column(name = "fecha_pedido", nullable = false)
   private LocalDateTime fechaPedido;
 
@@ -213,5 +217,13 @@ public class Pedido {
 
   public void setRazonSocial(String razonSocial) {
     this.razonSocial = razonSocial;
+  }
+
+  public Sede getSede() {
+    return sede;
+  }
+
+  public void setSede(Sede sede) {
+    this.sede = sede;
   }
 }

@@ -9,4 +9,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
   Optional<Cliente> findByUsuario_IdUsuario(Long idUsuario);
 
   boolean existsByDni(String dni);
+
+  boolean existsByDniAndIdClienteNot(String dni, Long idCliente);
 }

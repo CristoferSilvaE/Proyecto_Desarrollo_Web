@@ -27,6 +27,9 @@ public class Usuario {
   @Column(name = "correo", nullable = false, length = 120, unique = true)
   private String correo;
 
+  @Column(name = "usuario", length = 30, unique = true)
+  private String usuario;
+
   @Column(name = "password_hash", nullable = false, length = 255)
   private String passwordHash;
 
@@ -77,6 +80,14 @@ public class Usuario {
 
   public void setCorreo(String correo) {
     this.correo = correo;
+  }
+
+  public String getUsuario() {
+    return usuario;
+  }
+
+  public void setUsuario(String usuario) {
+    this.usuario = usuario;
   }
 
   public String getPasswordHash() {

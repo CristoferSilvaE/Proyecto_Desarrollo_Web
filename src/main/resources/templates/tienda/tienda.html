@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PowerFit - Tienda</title>
+
+    <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
+  </head>
+
+  <body class="app-body">
+    <!-- NAVBAR -->
+    <div th:replace="~{fragments/header :: header('tienda')}"></div>
+
+    <!-- CONTENIDO -->
+    <main class="page-container">
+      <!-- MENSAJE DE ÉXITO -->
+      <div th:if="${mensaje}" class="section-card" style="margin-bottom: 20px; border: 1px solid #22c55e">
+        <p style="color: #4ade80" th:text="${mensaje}"></p>
+
+        <a th:href="@{/carrito}" class="continue-shopping">Ver carrito →</a>
+      </div>
+
+      <!-- MENSAJE DE ERROR -->
+      <div th:if="${error}" class="section-card" style="margin-bottom: 20px; border: 1px solid #ef4444">
+        <p style="color: #f87171" th:text="${error}"></p>
+      </div>
+      <!-- CABECERA -->
+      <div class="store-header">
+        <h1 class="store-title">Tienda PowerFit</h1>
+
+        <p class="store-subtitle">Tu arsenal completo para el máximo rendimiento deportivo.</p>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <section>
+        <div class="section-heading">
+          <h2 class="section-title">Productos</h2>
+          <div class="section-line"></div>
+        </div>
+
+        <!-- SIN PRODUCTOS -->
+        <div th:if="${productos == null or #lists.isEmpty(productos)}" class="empty-state">
+          <h3 class="empty-title">No hay productos disponibles</h3>
+
+          <p class="empty-text">En este momento no tenemos productos activos en la tienda.</p>
+        </div>
+
+        <!-- PRODUCTOS DESDE MYSQL -->
+        <div th:if="${productos != null and !#lists.isEmpty(productos)}" class="product-grid">
+          <article th:each="producto : ${productos}" class="product-card">
+            <div>
+              <!-- IMAGEN -->
+              <div class="product-image-container">
+                <img th:if="${producto.imagen != null and !producto.imagen.isBlank()}" th:src="@{/imagenes/{imagen}(imagen=${producto.imagen})}" th:alt="${producto.nombre}" class="product-image" />
+
+                <div th:if="${producto.imagen == null or producto.imagen.isBlank()}" class="product-placeholder">Sin imagen</div>
+              </div>
+
+              <!-- CATEGORÍA -->
+              <span class="product-category" th:text="${producto.categoria}">Categoría</span>
+
+              <!-- NOMBRE -->
+              <h3 class="product-title" th:text="${producto.nombre}">Producto</h3>
+
+              <!-- DESCRIPCIÓN -->
+              <p class="product-description" th:text="${producto.descripcion != null ? producto.descripcion : 'Producto PowerFit'}">Descripción</p>
+            </div>
+
+            <!-- PARTE INFERIOR -->
+            <div class="product-footer">
+              <!-- DISPONIBILIDAD -->
+              <div class="stock-row">
+                <span class="stock-label">Disponibilidad</span>
+
+                <span th:if="${producto.stock > 0}" class="stock-available">Disponible</span>
+
+                <span th:if="${producto.stock <= 0}" class="stock-out">Agotado</span>
+              </div>
+
+              <!-- PRECIO + BOTÓN -->
+              <div class="product-bottom">
+                <span class="product-price" th:text="${'S/ ' + #numbers.formatDecimal(producto.precio, 1, 2)}">S/ 0.00</span>
+
+                <!-- AÑADIR AL CARRITO -->
+                <form th:if="${producto.stock > 0}" th:action="@{/carrito/agregar/{id}(id=${producto.idProducto})}" method="post">
+                  <button type="submit" class="product-button">
+                    <svg class="product-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63 1.707.707 1.707H17" />
+                    </svg>
+
+                    Añadir
+                  </button>
+                </form>
+
+                <!-- AGOTADO -->
+                <button th:if="${producto.stock <= 0}" type="button" disabled class="product-button-disabled">Agotado</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script th:src="@{/js/components/header.js}"></script>
+  </body>
+</html>

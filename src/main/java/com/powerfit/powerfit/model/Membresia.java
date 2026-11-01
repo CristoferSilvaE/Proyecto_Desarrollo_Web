@@ -44,6 +44,18 @@ public class Membresia {
   @Column(name = "observacion", length = 255)
   private String observacion;
 
+  @Column(name = "duracion_meses", nullable = false)
+  private Integer duracionMeses = 1;
+
+  @Column(name = "horario_preferido", length = 20)
+  private String horarioPreferido;
+
+  @Column(name = "fecha_inicio_deseada")
+  private LocalDate fechaInicioDeseada;
+
+  @Column(name = "metodo_pago_preferido", length = 30)
+  private String metodoPagoPreferido;
+
   @PrePersist
   public void prePersist() {
 
@@ -118,5 +130,37 @@ public class Membresia {
 
   public void setObservacion(String observacion) {
     this.observacion = observacion;
+  }
+
+  public Integer getDuracionMeses() {
+    return duracionMeses;
+  }
+
+  public void setDuracionMeses(Integer duracionMeses) {
+    this.duracionMeses = duracionMeses;
+  }
+
+  public String getHorarioPreferido() {
+    return horarioPreferido;
+  }
+
+  public void setHorarioPreferido(String horarioPreferido) {
+    this.horarioPreferido = horarioPreferido;
+  }
+
+  public LocalDate getFechaInicioDeseada() {
+    return fechaInicioDeseada;
+  }
+
+  public void setFechaInicioDeseada(LocalDate fechaInicioDeseada) {
+    this.fechaInicioDeseada = fechaInicioDeseada;
+  }
+
+  public String getMetodoPagoPreferido() {
+    return metodoPagoPreferido;
+  }
+
+  public void setMetodoPagoPreferido(String metodoPagoPreferido) {
+    this.metodoPagoPreferido = metodoPagoPreferido;
   }
 }

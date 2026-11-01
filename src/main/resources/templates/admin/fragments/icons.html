@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <svg
+      th:fragment="icon(name)"
+      xmlns="http://www.w3.org/2000/svg"
+      class="adm-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true">
+      <g th:switch="${name}">
+        <g th:case="'dashboard'">
+          <rect x="3" y="3" width="7" height="9" rx="1" />
+          <rect x="14" y="3" width="7" height="5" rx="1" />
+          <rect x="14" y="12" width="7" height="9" rx="1" />
+          <rect x="3" y="16" width="7" height="5" rx="1" />
+        </g>
+
+        <g th:case="'users'">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="10" cy="7" r="4" />
+          <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </g>
+
+        <g th:case="'user'">
+          <circle cx="12" cy="8" r="5" />
+          <path d="M20 21a8 8 0 0 0-16 0" />
+        </g>
+
+        <g th:case="'calendar'">
+          <rect x="3" y="4" width="18" height="17" rx="2" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+          <path d="m9 16 2 2 4-4" />
+        </g>
+
+        <g th:case="'dumbbell'">
+          <path d="m6.5 6.5 11 11" />
+          <path d="m3 7 4-4 4 4-4 4z" />
+          <path d="m13 17 4-4 4 4-4 4z" />
+          <path d="m2 6 4-4M18 22l4-4" />
+        </g>
+
+        <g th:case="'package'">
+          <path d="m12 3 9 5-9 5-9-5 9-5Z" />
+          <path d="M3 8v9l9 5 9-5V8" />
+          <path d="M12 13v9" />
+        </g>
+
+        <g th:case="'shopping'">
+          <circle cx="8" cy="21" r="1" />
+          <circle cx="19" cy="21" r="1" />
+          <path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L22 8H6" />
+        </g>
+
+        <g th:case="'card'">
+          <rect x="2" y="5" width="20" height="14" rx="2" />
+          <path d="M2 10h20" />
+          <path d="M6 15h3" />
+        </g>
+
+        <g th:case="'bell'">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+          <path d="M10 21h4" />
+        </g>
+
+        <g th:case="'logout'">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <path d="m16 17 5-5-5-5" />
+          <path d="M21 12H9" />
+        </g>
+
+        <g th:case="'search'">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-4-4" />
+        </g>
+
+        <g th:case="'plus'">
+          <path d="M12 5v14M5 12h14" />
+        </g>
+
+        <g th:case="'check'">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m8 12 3 3 5-6" />
+        </g>
+
+        <g th:case="'close'">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m15 9-6 6m0-6 6 6" />
+        </g>
+
+        <g th:case="'edit'">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+        </g>
+
+        <g th:case="'key'">
+          <circle cx="7.5" cy="15.5" r="5.5" />
+          <path d="m21 2-9.6 9.6" />
+          <path d="m15.5 7.5 3 3L22 7l-3-3" />
+        </g>
+
+        <g th:case="'download'">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <path d="m7 10 5 5 5-5" />
+          <path d="M12 15V3" />
+        </g>
+      </g>
+    </svg>
+  </body>
+</html>

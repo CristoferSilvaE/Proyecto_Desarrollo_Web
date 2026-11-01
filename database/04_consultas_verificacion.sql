@@ -28,12 +28,16 @@ SELECT
 FROM clases;
 
 SELECT
-    id_instructor,
-    nombres,
-    apellidos,
-    especialidad,
-    estado
-FROM instructores;
+    i.id_instructor,
+    i.nombres,
+    i.apellidos,
+    c.nombre AS clase_asignada,
+    i.telefono,
+    i.correo,
+    i.estado
+FROM instructores i
+INNER JOIN clases c
+    ON c.id_clase = i.id_clase;
 
 SELECT
     id_producto,

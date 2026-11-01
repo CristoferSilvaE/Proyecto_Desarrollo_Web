@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
   </head>
   <body class="auth-body" th:style="'background-image: linear-gradient(to bottom, rgba(10,10,12,0.88), rgba(10,10,12,0.96)), url(' + @{/imagenes/login1.jpg} + ');'">
     <header class="register-topbar">
@@ -63,6 +63,20 @@
             <div>
               <label class="register-label">Correo electrónico *</label>
               <input name="correo" type="email" th:value="${correo}" placeholder="atleta@ejemplo.com" required maxlength="120" class="register-input" />
+            </div>
+            <div>
+              <label class="register-label">Nombre de usuario *</label>
+              <input
+                name="usuario"
+                type="text"
+                th:value="${nombreUsuario}"
+                placeholder="Ej. diego123"
+                required
+                minlength="4"
+                maxlength="30"
+                pattern="[A-Za-z0-9._-]{4,30}"
+                title="Entre 4 y 30 caracteres. Letras, números, puntos, guiones y guiones bajos."
+                class="register-input" />
             </div>
           </div>
 

@@ -7,7 +7,9 @@ import com.powerfit.powerfit.repository.ClienteRepository;
 import com.powerfit.powerfit.repository.MembresiaRepository;
 import com.powerfit.powerfit.repository.PlanMembresiaRepository;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,13 +43,13 @@ public class MembresiaController {
     Long idCliente = (Long) session.getAttribute("idCliente");
 
     if (idCliente == null) {
-      return "membresia";
+      return "membresias/membresia";
     }
 
     Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
 
     if (cliente == null) {
-      return "membresia";
+      return "membresias/membresia";
     }
 
     List<Membresia> historial =
@@ -68,12 +70,19 @@ public class MembresiaController {
     model.addAttribute("membresiaActiva", activa);
     model.addAttribute("planSeleccionado", plan);
 
-    return "membresia";
+    return "membresias/membresia";
   }
 
   @PostMapping("/membresia/solicitar")
   public String solicitar(
-      @RequestParam Long idPlan, HttpSession session, RedirectAttributes redirectAttributes) {
+      @RequestParam Long idPlan,
+      @RequestParam Integer duracionMeses,
+      @RequestParam String horarioPreferido,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicioDeseada,
+      @RequestParam String metodoPagoPreferido,
+      @RequestParam(required = false) String observacion,
+      HttpSession session,
+      RedirectAttributes redirectAttributes) {
 
     Long idCliente = (Long) session.getAttribute("idCliente");
 
@@ -84,7 +93,8 @@ public class MembresiaController {
     Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
     PlanMembresia plan = planMembresiaRepository.findById(idPlan).orElse(null);
 
-    if (cliente == null || plan == null) {
+    if (cliente == null || plan == null || !"ACTIVO".equalsIgnoreCase(plan.getEstado())) {
+
       redirectAttributes.addFlashAttribute("error", "No se pudo procesar la solicitud.");
 
       return "redirect:/membresia";
@@ -107,9 +117,29 @@ public class MembresiaController {
       return "redirect:/membresia";
     }
 
+    // Validaciones de los nuevos campos
+    if (duracionMeses == null
+        || (duracionMeses != 1 && duracionMeses != 3 && duracionMeses != 6)
+        || !List.of("Mañana", "Tarde", "Noche").contains(horarioPreferido)
+        || fechaInicioDeseada == null
+        || fechaInicioDeseada.isBefore(LocalDate.now())
+        || !List.of("Efectivo", "Tarjeta", "Yape/Plin").contains(metodoPagoPreferido)
+        || (observacion != null && observacion.length() > 255)) {
+
+      redirectAttributes.addFlashAttribute("error", "Verifica los datos de la solicitud.");
+
+      return "redirect:/membresia";
+    }
+
     Membresia membresia = new Membresia();
+
     membresia.setCliente(cliente);
     membresia.setPlan(plan);
+    membresia.setDuracionMeses(duracionMeses);
+    membresia.setHorarioPreferido(horarioPreferido);
+    membresia.setFechaInicioDeseada(fechaInicioDeseada);
+    membresia.setMetodoPagoPreferido(metodoPagoPreferido);
+    membresia.setObservacion(observacion);
     membresia.setEstado("PENDIENTE");
 
     membresiaRepository.save(membresia);
@@ -124,6 +154,11 @@ public class MembresiaController {
   public String actualizar(
       @RequestParam Long idMembresia,
       @RequestParam Long idPlan,
+      @RequestParam Integer duracionMeses,
+      @RequestParam String horarioPreferido,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicioDeseada,
+      @RequestParam String metodoPagoPreferido,
+      @RequestParam(required = false) String observacion,
       HttpSession session,
       RedirectAttributes redirectAttributes) {
 
@@ -134,11 +169,12 @@ public class MembresiaController {
     }
 
     Membresia membresia = membresiaRepository.findById(idMembresia).orElse(null);
-
     PlanMembresia plan = planMembresiaRepository.findById(idPlan).orElse(null);
 
+    // Verificar que la membresía pertenezca al cliente
     if (membresia == null
         || plan == null
+        || !"ACTIVO".equalsIgnoreCase(plan.getEstado())
         || !membresia.getCliente().getIdCliente().equals(idCliente)) {
 
       redirectAttributes.addFlashAttribute("error", "No se pudo actualizar la membresía.");
@@ -146,18 +182,41 @@ public class MembresiaController {
       return "redirect:/membresia";
     }
 
+    // Solo se pueden editar solicitudes pendientes
     if (!"PENDIENTE".equalsIgnoreCase(membresia.getEstado())) {
+
       redirectAttributes.addFlashAttribute(
           "error", "Solo puedes modificar solicitudes pendientes.");
 
       return "redirect:/membresia";
     }
 
+    // Validar los datos ingresados
+    if (duracionMeses == null
+        || (duracionMeses != 1 && duracionMeses != 3 && duracionMeses != 6)
+        || !List.of("Mañana", "Tarde", "Noche").contains(horarioPreferido)
+        || fechaInicioDeseada == null
+        || fechaInicioDeseada.isBefore(LocalDate.now())
+        || !List.of("Efectivo", "Tarjeta", "Yape/Plin").contains(metodoPagoPreferido)
+        || (observacion != null && observacion.length() > 255)) {
+
+      redirectAttributes.addFlashAttribute("error", "Verifica los datos ingresados.");
+
+      return "redirect:/membresia";
+    }
+
+    // Actualizar los datos de la solicitud
     membresia.setPlan(plan);
+    membresia.setDuracionMeses(duracionMeses);
+    membresia.setHorarioPreferido(horarioPreferido);
+    membresia.setFechaInicioDeseada(fechaInicioDeseada);
+    membresia.setMetodoPagoPreferido(metodoPagoPreferido);
+    membresia.setObservacion(observacion);
 
     membresiaRepository.save(membresia);
 
-    redirectAttributes.addFlashAttribute("mensaje", "Plan actualizado correctamente.");
+    redirectAttributes.addFlashAttribute(
+        "mensaje", "Solicitud de membresía actualizada correctamente.");
 
     return "redirect:/membresia";
   }

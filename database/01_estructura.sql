@@ -113,10 +113,16 @@ CREATE TABLE membresias (
     id_cliente BIGINT NOT NULL,
     id_plan BIGINT NOT NULL,
     fecha_solicitud DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fecha_inicio DATE NULL,
+        fecha_inicio DATE NULL,
     fecha_fin DATE NULL,
     estado VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE',
     observacion VARCHAR(255) NULL,
+
+    -- Nuevos campos del tercer avance
+    duracion_meses INT NOT NULL DEFAULT 1,
+    horario_preferido VARCHAR(20) NULL,
+    fecha_inicio_deseada DATE NULL,
+    metodo_pago_preferido VARCHAR(30) NULL,
 
     CONSTRAINT fk_membresia_cliente
         FOREIGN KEY (id_cliente)
@@ -160,7 +166,7 @@ CREATE TABLE instructores (
     id_instructor BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombres VARCHAR(80) NOT NULL,
     apellidos VARCHAR(80) NOT NULL,
-    especialidad VARCHAR(80),
+    id_clase BIGINT NOT NULL,
     telefono VARCHAR(15),
     correo VARCHAR(120) UNIQUE,
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO'
@@ -179,6 +185,13 @@ CREATE TABLE clases (
     estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
     imagen VARCHAR(255) NULL
 ) ENGINE=InnoDB;
+
+ALTER TABLE instructores
+ADD CONSTRAINT fk_instructor_clase
+FOREIGN KEY (id_clase)
+REFERENCES clases(id_clase)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
 
 
 -- ============================================================

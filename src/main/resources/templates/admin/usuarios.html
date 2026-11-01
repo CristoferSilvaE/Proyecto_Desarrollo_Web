@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PowerFit | GESTIÓN DE USUARIOS</title>
+
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+  </head>
+
+  <body class="adm-body">
+    <div class="adm-shell">
+      <!-- SIDEBAR -->
+      <div th:replace="~{admin/fragments/sidebar :: sidebar('clientes')}"></div>
+
+      <div class="adm-workspace">
+        <!-- TOPBAR -->
+        <div
+          th:replace="~{admin/fragments/topbar :: topbar(
+            'USUARIOS',
+            'GESTIÓN DE USUARIOS',
+            'Administración de cuentas y accesos del sistema'
+        )}"></div>
+
+        <main class="adm-main">
+          <!-- NAVEGACIÓN -->
+          <div th:replace="~{admin/fragments/clientes-tabs :: tabs('usuarios')}"></div>
+
+          <!-- MENSAJES -->
+          <div class="adm-alert" th:if="${mensaje != null and passwordTemporal == null}">
+            <strong th:text="${mensaje}"></strong>
+          </div>
+
+          <div class="adm-alert" th:if="${error}">
+            <strong th:text="${error}"></strong>
+          </div>
+
+          <!-- ESTADÍSTICAS -->
+          <section class="adm-stats">
+            <article class="adm-stat">
+              <div class="adm-stat-label">TOTAL DE USUARIOS</div>
+              <strong th:text="${totalUsuarios}">0</strong>
+              <small>Cuentas registradas</small>
+            </article>
+
+            <article class="adm-stat">
+              <div class="adm-stat-label">CUENTAS ACTIVAS</div>
+              <strong th:text="${usuariosActivos}">0</strong>
+              <small>Acceso habilitado</small>
+            </article>
+
+            <article class="adm-stat adm-stat-warn">
+              <div class="adm-stat-label">CUENTAS INACTIVAS</div>
+              <strong th:text="${usuariosInactivos}">0</strong>
+              <small>Acceso restringido</small>
+            </article>
+
+            <article class="adm-stat">
+              <div class="adm-stat-label">ADMINISTRADORES</div>
+              <strong th:text="${totalAdministradores}">0</strong>
+              <small>Perfiles administrativos</small>
+            </article>
+          </section>
+
+          <!-- BUSCADOR -->
+          <form class="adm-toolbar" method="get" th:action="@{/admin/usuarios}">
+            <label class="adm-search">
+              <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+              <input type="search" name="buscar" th:value="${buscar}" placeholder="Buscar por nombre, DNI, correo o usuario..." />
+            </label>
+
+            <button type="submit" class="adm-btn adm-btn-primary">BUSCAR</button>
+
+            <a th:href="@{/admin/usuarios}" class="adm-btn adm-btn-ghost">LIMPIAR</a>
+          </form>
+
+          <!-- TABLA DE USUARIOS -->
+          <section class="adm-panel">
+            <div class="adm-panel-head">
+              <h2>DIRECTORIO DE USUARIOS</h2>
+              <span class="adm-badge" th:text="${#lists.size(usuarios)} + ' REGISTROS'">0 REGISTROS</span>
+            </div>
+
+            <div class="adm-table-scroll">
+              <table class="adm-table">
+                <thead>
+                  <tr>
+                    <th>USUARIO</th>
+                    <th>DNI</th>
+                    <th>CORREO ELECTRÓNICO</th>
+                    <th>NICKNAME</th>
+                    <th>PERFIL</th>
+                    <th>ESTADO</th>
+                    <th>ACCIONES</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr th:each="fila : ${usuarios}">
+                    <td>
+                      <strong th:text="${fila.nombreCompleto}">Nombre completo</strong>
+                      <small th:text="${'ID: ' + fila.usuario.idUsuario}">ID</small>
+                    </td>
+
+                    <td th:text="${fila.dni}">DNI</td>
+
+                    <td th:text="${fila.usuario.correo}">correo@ejemplo.com</td>
+
+                    <td>
+                      <strong
+                        th:if="${fila.usuario.usuario != null
+                                            and !#strings.isEmpty(fila.usuario.usuario)}"
+                        th:text="${'@' + fila.usuario.usuario}">
+                        @usuario
+                      </strong>
+
+                      <small
+                        th:if="${fila.usuario.usuario == null
+                                            or #strings.isEmpty(fila.usuario.usuario)}">
+                        Sin nickname
+                      </small>
+                    </td>
+
+                    <td>
+                      <span class="adm-badge" th:text="${fila.usuario.rol.nombre}">CLIENTE</span>
+                    </td>
+
+                    <td>
+                      <span
+                        class="adm-badge"
+                        th:classappend="${#strings.equalsIgnoreCase(
+                                              fila.usuario.estado, 'ACTIVO'
+                                          )} ? ' green' : ' orange'"
+                        th:text="${fila.usuario.estado}">
+                        ACTIVO
+                      </span>
+                    </td>
+
+                    <td class="adm-actions-cell">
+                      <div class="adm-user-actions">
+                        <!-- EDITAR: solamente clientes -->
+                        <button
+                          type="button"
+                          class="adm-btn adm-btn-edit"
+                          th:if="${fila.cliente != null
+                            and fila.usuario.rol != null
+                            and #strings.equalsIgnoreCase(
+                                fila.usuario.rol.nombre, 'CLIENTE'
+                            )}"
+                          th:attr="data-open-modal=|modalEditarUsuario-${fila.usuario.idUsuario}|">
+                          EDITAR
+                        </button>
+
+                        <!-- DESACTIVAR / REACTIVAR -->
+                        <button
+                          type="button"
+                          th:class="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')}
+                            ? 'adm-btn adm-btn-danger'
+                            : 'adm-btn adm-btn-success'"
+                          th:if="${fila.usuario.rol != null
+                            and !#strings.equalsIgnoreCase(
+                                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+                            )}"
+                          th:attr="data-open-modal=|modalEstadoUsuario-${fila.usuario.idUsuario}|"
+                          th:text="${#strings.equalsIgnoreCase(
+                                fila.usuario.estado, 'ACTIVO'
+                            )} ? 'DESACTIVAR' : 'REACTIVAR'">
+                          DESACTIVAR
+                        </button>
+
+                        <!-- RESTABLECER CONTRASEÑA -->
+                        <button
+                          type="button"
+                          class="adm-btn adm-btn-warning"
+                          th:if="${fila.usuario.rol != null
+                            and !#strings.equalsIgnoreCase(
+                                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+                            )}"
+                          th:attr="data-open-modal=|modalRestablecerPassword-${fila.usuario.idUsuario}|">
+                          RESTABLECER CLAVE
+                        </button>
+
+                        <!-- ADMINISTRADOR PROTEGIDO -->
+                        <span
+                          class="adm-badge"
+                          th:if="${fila.usuario.rol == null
+                            or #strings.equalsIgnoreCase(
+                                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+                            )}">
+                          PROTEGIDO
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="7" style="text-align: center; padding: 35px">No se encontraron usuarios registrados.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="adm-table-foot">Información obtenida directamente de la base de datos PowerFit.</div>
+          </section>
+
+          <!-- MODALES DE EDICIÓN DE USUARIOS -->
+
+          <div
+            th:each="fila : ${usuarios}"
+            th:if="${fila.cliente != null
+                and fila.usuario.rol != null
+                and #strings.equalsIgnoreCase(
+                    fila.usuario.rol.nombre, 'CLIENTE'
+                )}">
+            <dialog class="adm-modal adm-modal-wide" th:id="'modalEditarUsuario-' + ${fila.usuario.idUsuario}">
+              <form class="adm-modal-form" method="post" th:action="@{/admin/usuarios/{id}/editar(id=${fila.usuario.idUsuario})}">
+                <div class="adm-modal-head">
+                  <div>
+                    <span class="adm-kicker">POWERFIT / USUARIOS</span>
+                    <h2>EDITAR USUARIO</h2>
+                    <p>Actualiza la información personal y de acceso.</p>
+                  </div>
+
+                  <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+                </div>
+
+                <div class="adm-modal-body">
+                  <h3 class="adm-form-section">INFORMACIÓN PERSONAL</h3>
+
+                  <div class="adm-form-grid">
+                    <label>
+                      NOMBRES *
+                      <input type="text" name="nombres" th:value="${fila.cliente.nombres}" maxlength="80" required />
+                    </label>
+
+                    <label>
+                      APELLIDOS *
+                      <input type="text" name="apellidos" th:value="${fila.cliente.apellidos}" maxlength="80" required />
+                    </label>
+
+                    <label>
+                      DNI *
+                      <input type="text" name="dni" th:value="${fila.cliente.dni}" inputmode="numeric" minlength="8" maxlength="8" pattern="[0-9]{8}" required />
+                    </label>
+
+                    <label>
+                      CORREO ELECTRÓNICO *
+                      <input type="email" name="correo" th:value="${fila.usuario.correo}" maxlength="120" required />
+                    </label>
+                  </div>
+
+                  <h3 class="adm-form-section">DATOS DE ACCESO</h3>
+
+                  <div class="adm-form-grid">
+                    <label class="adm-full">
+                      NOMBRE DE USUARIO
+                      <input
+                        type="text"
+                        name="nombreUsuario"
+                        th:value="${fila.usuario.usuario}"
+                        minlength="4"
+                        maxlength="30"
+                        pattern="[A-Za-z0-9._-]{4,30}"
+                        title="Entre 4 y 30 caracteres: letras, números, puntos, guiones y guiones bajos." />
+                    </label>
+                  </div>
+
+                  <p class="adm-note">El perfil del usuario no puede modificarse desde este formulario. La contraseña y el estado de la cuenta se administran mediante acciones independientes.</p>
+                </div>
+
+                <div class="adm-modal-footer">
+                  <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                  <button type="submit" class="adm-btn" th:classappend="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')} ? 'adm-btn-danger' : 'adm-btn-success'">GUARDAR CAMBIOS</button>
+                </div>
+              </form>
+            </dialog>
+          </div>
+
+          <!-- MODALES DE CAMBIO DE ESTADO -->
+
+          <div
+            th:each="fila : ${usuarios}"
+            th:if="${fila.usuario.rol != null
+            and !#strings.equalsIgnoreCase(
+                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+            )}">
+            <dialog class="adm-modal" th:id="|modalEstadoUsuario-${fila.usuario.idUsuario}|">
+              <form method="post" th:action="@{/admin/usuarios/{id}/estado(id=${fila.usuario.idUsuario})}">
+                <!-- ENCABEZADO -->
+                <div class="adm-modal-head">
+                  <div>
+                    <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
+
+                    <h2
+                      th:text="${#strings.equalsIgnoreCase(
+                            fila.usuario.estado, 'ACTIVO'
+                        )} ? 'DESACTIVAR CUENTA' : 'REACTIVAR CUENTA'">
+                      CAMBIAR ESTADO
+                    </h2>
+
+                    <p>Confirmación de cambio de estado del usuario.</p>
+                  </div>
+
+                  <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+                </div>
+
+                <!-- CONTENIDO -->
+                <div class="adm-modal-body">
+                  <input
+                    type="hidden"
+                    name="estado"
+                    th:value="${#strings.equalsIgnoreCase(
+                        fila.usuario.estado, 'ACTIVO'
+                    )} ? 'INACTIVO' : 'ACTIVO'" />
+
+                  <!-- Mensaje para desactivar -->
+                  <p th:if="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')}">
+                    ¿Estás seguro de desactivar la cuenta de
+                    <strong th:text="${fila.nombreCompleto}">Nombre del usuario</strong>
+                    ?
+                  </p>
+
+                  <!-- Mensaje para reactivar -->
+                  <p th:unless="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')}">
+                    ¿Deseas reactivar la cuenta de
+                    <strong th:text="${fila.nombreCompleto}">Nombre del usuario</strong>
+                    ?
+                  </p>
+
+                  <p class="adm-note">Esta operación no elimina los datos del usuario. Su información e historial permanecerán guardados.</p>
+                </div>
+
+                <!-- BOTONES -->
+                <div class="adm-modal-footer">
+                  <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                  <button
+                    type="submit"
+                    class="adm-btn adm-btn-primary"
+                    th:text="${#strings.equalsIgnoreCase(
+                        fila.usuario.estado, 'ACTIVO'
+                    )} ? 'CONFIRMAR DESACTIVACIÓN' : 'CONFIRMAR REACTIVACIÓN'">
+                    CONFIRMAR
+                  </button>
+                </div>
+              </form>
+            </dialog>
+          </div>
+
+          <!-- MODALES DE RESTABLECIMIENTO DE CONTRASEÑA -->
+
+          <div
+            th:each="fila : ${usuarios}"
+            th:if="${fila.usuario.rol != null
+        and !#strings.equalsIgnoreCase(
+            fila.usuario.rol.nombre, 'ADMINISTRADOR'
+        )}">
+            <dialog class="adm-modal" th:id="|modalRestablecerPassword-${fila.usuario.idUsuario}|">
+              <form method="post" th:action="@{/admin/usuarios/{id}/restablecer-password(id=${fila.usuario.idUsuario})}">
+                <div class="adm-modal-head">
+                  <div>
+                    <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
+                    <h2>RESTABLECER CONTRASEÑA</h2>
+                    <p>Generación de credenciales temporales.</p>
+                  </div>
+
+                  <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+                </div>
+
+                <div class="adm-modal-body">
+                  <p>
+                    ¿Estás seguro de restablecer la contraseña de
+                    <strong th:text="${fila.nombreCompleto}">Nombre del usuario</strong>
+                    ?
+                  </p>
+
+                  <p class="adm-note">Se generará una contraseña temporal. El usuario deberá cambiarla obligatoriamente antes de acceder al sistema.</p>
+                </div>
+
+                <div class="adm-modal-footer">
+                  <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                  <button type="submit" class="adm-btn adm-btn-warning">CONFIRMAR RESTABLECIMIENTO</button>
+                </div>
+              </form>
+            </dialog>
+
+            <!-- MODAL DE CONTRASEÑA TEMPORAL -->
+            <dialog class="adm-modal" id="modalPasswordTemporal" data-no-backdrop-close th:if="${passwordTemporal != null}">
+              <div class="adm-modal-form">
+                <div class="adm-modal-head">
+                  <div>
+                    <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
+                    <h2>CONTRASEÑA RESTABLECIDA</h2>
+                    <p>Las nuevas credenciales están listas.</p>
+                  </div>
+
+                  <button type="button" class="adm-close" data-close-modal>×</button>
+                </div>
+
+                <div class="adm-modal-body">
+                  <p>
+                    Cuenta:
+                    <strong th:text="${usuarioRestablecido}"></strong>
+                  </p>
+
+                  <div class="adm-temp-password-value">
+                    <code th:text="${passwordTemporal}"></code>
+                  </div>
+
+                  <p class="adm-note">Entrega esta contraseña al usuario por un canal seguro. Por seguridad, deberá cambiarla obligatoriamente al iniciar sesión.</p>
+                </div>
+
+                <div class="adm-modal-footer">
+                  <button type="button" class="adm-btn adm-btn-primary" data-close-modal>ENTENDIDO</button>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+
+    <script th:src="@{/js/admin/admin.js}"></script>
+  </body>
+</html>

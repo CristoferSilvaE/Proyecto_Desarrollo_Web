@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit | Gestión de Clientes</title>
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+  </head>
+
+  <body class="adm-body">
+    <div class="adm-shell">
+      <div th:replace="~{admin/fragments/sidebar :: sidebar('clientes')}"></div>
+
+      <div class="adm-workspace">
+        <div th:replace="~{admin/fragments/topbar :: topbar('CLIENTES', 'GESTIÓN DE CLIENTES', 'Administración de fichas personales')}"></div>
+
+        <main class="adm-main">
+          <!-- PESTAÑAS -->
+          <div th:replace="~{admin/fragments/clientes-tabs :: tabs('clientes')}"></div>
+
+          <!-- MENSAJES -->
+          <div class="adm-alert" th:if="${mensaje}">
+            <strong th:text="${mensaje}"></strong>
+          </div>
+
+          <div class="adm-alert" th:if="${error}">
+            <strong th:text="${error}"></strong>
+          </div>
+
+          <!-- ESTADÍSTICAS -->
+          <section class="adm-stats">
+            <article class="adm-stat">
+              <div class="adm-stat-label">TOTAL CLIENTES</div>
+              <strong th:text="${totalClientes}">0</strong>
+              <small>Clientes registrados</small>
+            </article>
+
+            <article class="adm-stat">
+              <div class="adm-stat-label">CLIENTES ACTIVOS</div>
+              <strong th:text="${clientesActivos}">0</strong>
+              <small>Acceso habilitado</small>
+            </article>
+
+            <article class="adm-stat adm-stat-warn">
+              <div class="adm-stat-label">CLIENTES INACTIVOS</div>
+              <strong th:text="${clientesInactivos}">0</strong>
+              <small>Acceso restringido</small>
+            </article>
+
+            <article class="adm-stat">
+              <div class="adm-stat-label">NUEVOS ESTE MES</div>
+              <strong th:text="${clientesNuevos}">0</strong>
+              <small>Registros recientes</small>
+            </article>
+          </section>
+
+          <!-- BÚSQUEDA Y FILTROS -->
+          <form class="adm-toolbar" method="get" th:action="@{/admin/clientes}">
+            <label class="adm-search">
+              <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+              <input type="search" name="buscar" placeholder="Buscar por nombre, apellidos, teléfono o correo..." th:value="${buscar}" />
+            </label>
+
+            <select name="estado" aria-label="Filtrar por estado">
+              <option value="TODOS" th:selected="${estadoFiltro == 'TODOS'}">Todos los estados</option>
+
+              <option value="ACTIVO" th:selected="${estadoFiltro == 'ACTIVO'}">ACTIVO</option>
+
+              <option value="INACTIVO" th:selected="${estadoFiltro == 'INACTIVO'}">INACTIVO</option>
+            </select>
+
+            <button type="submit" class="adm-btn adm-btn-primary">BUSCAR</button>
+
+            <a th:href="@{/admin/clientes}" class="adm-btn adm-btn-ghost">LIMPIAR</a>
+          </form>
+
+          <!-- DIRECTORIO -->
+          <section class="adm-panel">
+            <div class="adm-panel-head">
+              <h2>DIRECTORIO DE CLIENTES</h2>
+
+              <span class="adm-badge" th:text="${#lists.size(clientes)} + ' REGISTROS'">0 REGISTROS</span>
+            </div>
+
+            <div class="adm-table-scroll">
+              <table class="adm-table">
+                <thead>
+                  <tr>
+                    <th>CLIENTE</th>
+                    <th>CORREO ELECTRÓNICO</th>
+                    <th>TELÉFONO</th>
+                    <th>FECHA NACIMIENTO</th>
+                    <th>GÉNERO</th>
+                    <th>ESTADO</th>
+                    <th>ACCIONES</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr th:each="cliente : ${clientes}">
+                    <td>
+                      <strong th:text="${cliente.nombres + ' ' + cliente.apellidos}">Nombre del cliente</strong>
+
+                      <small th:text="|ID: ${cliente.idCliente}|">ID: 1</small>
+                    </td>
+
+                    <td th:text="${cliente.usuario.correo}">cliente@correo.com</td>
+
+                    <td th:text="${cliente.telefono != null ? cliente.telefono : '—'}">987654321</td>
+
+                    <td
+                      th:text="${cliente.fechaNacimiento != null ? cliente.fechaNacimiento : '—'}">
+                      2000-01-01
+                    </td>
+
+                    <td th:text="${cliente.genero != null ? cliente.genero : '—'}">MASCULINO</td>
+
+                    <td>
+                      <span
+                        class="adm-badge"
+                        th:classappend="${#strings.equalsIgnoreCase(cliente.estado, 'ACTIVO')}
+                                            ? ' green' : ' orange'"
+                        th:text="${cliente.estado}">
+                        ACTIVO
+                      </span>
+                    </td>
+
+                    <td class="adm-actions-cell">
+                      <div class="adm-user-actions">
+                        <button type="button" class="adm-btn adm-btn-edit" th:attr="data-open-modal=|modalEditarCliente-${cliente.idCliente}|">EDITAR</button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr th:if="${#lists.isEmpty(clientes)}">
+                    <td colspan="7" style="text-align: center; padding: 30px">No se encontraron clientes registrados.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="adm-table-foot">Información obtenida directamente de la base de datos PowerFit.</div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- =====================================
+     MODALES DE EDICIÓN DE CLIENTES
+===================================== -->
+
+    <div th:each="cliente : ${clientes}">
+      <dialog class="adm-modal adm-modal-wide" th:id="|modalEditarCliente-${cliente.idCliente}|">
+        <form class="adm-modal-form" method="post" th:action="@{/admin/clientes/{id}/editar(id=${cliente.idCliente})}">
+          <!-- ENCABEZADO -->
+          <div class="adm-modal-head">
+            <div>
+              <span class="adm-kicker">POWERFIT / CLIENTES</span>
+
+              <h2>EDITAR CLIENTE</h2>
+
+              <p>Actualiza la información personal del cliente.</p>
+            </div>
+
+            <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+          </div>
+
+          <!-- FORMULARIO -->
+          <div class="adm-modal-body">
+            <h3 class="adm-form-section">INFORMACIÓN PERSONAL</h3>
+
+            <div class="adm-form-grid">
+              <label>
+                NOMBRES *
+                <input type="text" name="nombres" th:value="${cliente.nombres}" maxlength="80" required />
+              </label>
+
+              <label>
+                APELLIDOS *
+                <input type="text" name="apellidos" th:value="${cliente.apellidos}" maxlength="80" required />
+              </label>
+
+              <label>
+                TELÉFONO
+                <input type="tel" name="telefono" th:value="${cliente.telefono}" maxlength="15" pattern="[0-9+() -]{7,15}" placeholder="987654321" />
+              </label>
+
+              <label>
+                FECHA DE NACIMIENTO
+                <input type="date" name="fechaNacimiento" th:value="${cliente.fechaNacimiento}" />
+              </label>
+
+              <label class="adm-full">
+                GÉNERO
+                <select name="genero">
+                  <option value="" th:selected="${cliente.genero == null or cliente.genero == ''}">Seleccionar género</option>
+
+                  <option value="MASCULINO" th:selected="${cliente.genero == 'MASCULINO'}">MASCULINO</option>
+
+                  <option value="FEMENINO" th:selected="${cliente.genero == 'FEMENINO'}">FEMENINO</option>
+                </select>
+              </label>
+            </div>
+
+            <p class="adm-note">El DNI, correo electrónico y nickname se administran desde el apartado Usuarios. El estado de la cuenta también se gestiona desde allí.</p>
+          </div>
+
+          <!-- BOTONES -->
+          <div class="adm-modal-footer">
+            <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+            <button type="submit" class="adm-btn adm-btn-primary">GUARDAR CAMBIOS</button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+
+    <!-- NOTIFICACIONES -->
+    <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+
+    <script th:src="@{/js/admin/admin.js}"></script>
+  </body>
+</html>

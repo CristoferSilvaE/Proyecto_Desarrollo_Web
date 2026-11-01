@@ -6,63 +6,13 @@
 
     <title>PowerFit - Mi Membresía</title>
 
-    <link rel="stylesheet" th:href="@{/css/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
   </head>
 
   <body class="app-body">
     <!-- NAVBAR -->
-    <header class="navbar">
-      <div class="navbar-container">
-        <a th:href="@{/}" class="navbar-logo">POWERFIT</a>
-
-        <nav class="navbar-menu">
-          <a th:href="@{/}" class="nav-link">Inicio</a>
-          <a th:href="@{/membresia}" class="nav-link-active">Membresía</a>
-          <a th:href="@{/tienda}" class="nav-link">Tienda</a>
-          <a th:href="@{/clases}" class="nav-link">Clases</a>
-          <a th:href="@{/perfil}" class="nav-link">Perfil</a>
-        </nav>
-
-        <div class="navbar-actions">
-          <!-- CARRITO -->
-          <a th:href="@{/carrito}" class="cart-link" title="Carrito">
-            <svg class="cart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-            </svg>
-          </a>
-
-          <!-- SIN SESIÓN -->
-          <a th:if="${cliente == null}" th:href="@{/login}" class="nav-login">Iniciar sesión</a>
-
-          <!-- CON SESIÓN -->
-          <div th:if="${cliente != null}" class="user-session">
-            <span class="user-name" th:text="${cliente.nombres}">Usuario</span>
-
-            <div class="user-menu">
-              <button type="button" class="avatar-link user-menu-button" onclick="toggleUserMenu(event)">
-                <img
-                  th:if="${cliente.fotoPerfil != null and !cliente.fotoPerfil.isBlank()}"
-                  th:src="@{/uploads/perfiles/{foto}(foto=${cliente.fotoPerfil})}"
-                  th:alt="${cliente.nombres}"
-                  class="avatar-image" />
-
-                <img th:if="${cliente.fotoPerfil == null or cliente.fotoPerfil.isBlank()}" th:src="@{/imagenes/perfil-default.jpg}" alt="Avatar" class="avatar-image" />
-              </button>
-
-              <div id="userDropdown" class="user-dropdown">
-                <a th:href="@{/perfil}" class="user-dropdown-item">Perfil</a>
-
-                <a th:href="@{/logout}" class="user-dropdown-item user-dropdown-logout">Cerrar sesión</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <div th:replace="~{fragments/header :: header('membresia')}"></div>
 
     <!-- USUARIO SIN SESIÓN -->
     <section th:if="${cliente == null}" class="login-gate">
@@ -252,21 +202,86 @@
             </div>
           </section>
 
-          <!-- FORMULARIO PARA ACTUALIZAR PLAN -->
+          <!-- FORMULARIO PARA ACTUALIZAR MEMBRESÍA -->
           <form id="formActualizarMembresia" th:action="@{/membresia/actualizar}" method="post">
             <input type="hidden" name="idMembresia" th:value="${membresiaPendiente.idMembresia}" />
 
-            <label class="field-label">Cambiar plan solicitado</label>
+            <!-- PLAN -->
+            <label class="field-label" for="idPlanActualizar">Plan de membresía</label>
 
-            <select name="idPlan" class="membership-select" required>
+            <select id="idPlanActualizar" name="idPlan" class="membership-select" onchange="calcularPrecioActualizacion()" required>
               <option
                 th:each="plan : ${planes}"
                 th:value="${plan.idPlan}"
                 th:text="${plan.nombre + ' - S/ ' + #numbers.formatDecimal(plan.precio, 1, 2)}"
-                th:selected="${plan.idPlan == membresiaPendiente.plan.idPlan}">
-                Plan
-              </option>
+                th:attr="data-precio=${plan.precio}"
+                th:selected="${plan.idPlan == membresiaPendiente.plan.idPlan}"></option>
             </select>
+
+            <!-- DURACIÓN -->
+            <label class="field-label" for="duracionMesesActualizar">Duración de la membresía</label>
+
+            <select id="duracionMesesActualizar" name="duracionMeses" class="membership-select" onchange="calcularPrecioActualizacion()" required>
+              <option value="1" th:selected="${membresiaPendiente.duracionMeses == 1}">1 mes</option>
+
+              <option value="3" th:selected="${membresiaPendiente.duracionMeses == 3}">3 meses</option>
+
+              <option value="6" th:selected="${membresiaPendiente.duracionMeses == 6}">6 meses</option>
+            </select>
+
+            <!-- HORARIO -->
+            <label class="field-label" for="horarioPreferidoActualizar">Horario preferido</label>
+
+            <select id="horarioPreferidoActualizar" name="horarioPreferido" class="membership-select" required>
+              <option value="">Selecciona un horario</option>
+
+              <option value="Mañana" th:selected="${membresiaPendiente.horarioPreferido == 'Mañana'}">Mañana</option>
+
+              <option value="Tarde" th:selected="${membresiaPendiente.horarioPreferido == 'Tarde'}">Tarde</option>
+
+              <option value="Noche" th:selected="${membresiaPendiente.horarioPreferido == 'Noche'}">Noche</option>
+            </select>
+
+            <!-- FECHA -->
+            <label class="field-label" for="fechaInicioDeseadaActualizar">Fecha de inicio deseada</label>
+
+            <input type="date" id="fechaInicioDeseadaActualizar" name="fechaInicioDeseada" class="membership-select" th:value="${membresiaPendiente.fechaInicioDeseada}" required />
+
+            <!-- MÉTODO DE PAGO -->
+            <label class="field-label" for="metodoPagoPreferidoActualizar">Método de pago preferido</label>
+
+            <select id="metodoPagoPreferidoActualizar" name="metodoPagoPreferido" class="membership-select" required>
+              <option value="">Selecciona un método</option>
+
+              <option value="Efectivo" th:selected="${membresiaPendiente.metodoPagoPreferido == 'Efectivo'}">Efectivo</option>
+
+              <option value="Tarjeta" th:selected="${membresiaPendiente.metodoPagoPreferido == 'Tarjeta'}">Tarjeta</option>
+
+              <option value="Yape/Plin" th:selected="${membresiaPendiente.metodoPagoPreferido == 'Yape/Plin'}">Yape / Plin</option>
+            </select>
+
+            <!-- OBSERVACIONES -->
+            <label class="field-label" for="observacionActualizar">Observaciones (opcional)</label>
+
+            <textarea
+              id="observacionActualizar"
+              name="observacion"
+              class="membership-select"
+              rows="3"
+              maxlength="255"
+              placeholder="Escribe alguna indicación adicional..."
+              th:text="${membresiaPendiente.observacion}"></textarea>
+
+            <!-- RESUMEN -->
+            <div class="section-card-soft" style="margin-top: 24px">
+              <h3 class="membership-section-title">Resumen actualizado</h3>
+
+              <p class="membership-field-label">Precio total estimado</p>
+
+              <p id="precioTotalActualizacion" class="membership-price" aria-live="polite">S/ 0.00</p>
+
+              <p class="membership-field-label">Importe referencial. No se realizará ningún cobro.</p>
+            </div>
           </form>
 
           <!-- BOTONES -->
@@ -335,14 +350,95 @@
               </p>
             </div>
 
-            <!-- SOLICITAR -->
-            <form th:action="@{/membresia/solicitar}" method="post" class="membership-plan-actions">
-              <input type="hidden" name="idPlan" th:value="${plan.idPlan}" />
-
-              <button type="submit" class="plan-button" th:classappend="${plan.nombre == 'Premium'} ? ' plan-button-premium' : ''">Solicitar Plan</button>
-            </form>
+            <!-- SELECCIONAR PLAN -->
+            <div class="membership-plan-actions">
+              <button
+                type="button"
+                class="plan-button"
+                th:classappend="${plan.nombre == 'Premium'} ? ' plan-button-premium' : ''"
+                th:attr="data-plan-id=${plan.idPlan}"
+                onclick="seleccionarPlan(this)">
+                Seleccionar Plan
+              </button>
+            </div>
           </article>
         </div>
+        <!-- FORMULARIO DE SOLICITUD -->
+        <section id="formularioSolicitud" class="membership-shell" style="margin-top: 32px">
+          <div class="membership-body">
+            <h2 class="membership-section-title">Completa tu solicitud de membresía</h2>
+
+            <p class="membership-subtitle">Selecciona tu plan y personaliza tu experiencia PowerFit.</p>
+
+            <form th:action="@{/membresia/solicitar}" method="post">
+              <!-- PLAN -->
+              <label class="field-label" for="idPlanSolicitud">Plan de membresía</label>
+
+              <select id="idPlanSolicitud" name="idPlan" class="membership-select" onchange="calcularPrecio()" required>
+                <option value="">Selecciona un plan</option>
+
+                <option
+                  th:each="plan : ${planes}"
+                  th:value="${plan.idPlan}"
+                  th:text="${plan.nombre + ' - S/ ' + #numbers.formatDecimal(plan.precio, 1, 2)}"
+                  th:attr="data-precio=${plan.precio}"></option>
+              </select>
+
+              <!-- DURACIÓN -->
+              <label class="field-label" for="duracionMeses">Duración de la membresía</label>
+
+              <select id="duracionMeses" name="duracionMeses" class="membership-select" onchange="calcularPrecio()" required>
+                <option value="1">1 mes</option>
+                <option value="3">3 meses</option>
+                <option value="6">6 meses</option>
+              </select>
+
+              <!-- HORARIO -->
+              <label class="field-label" for="horarioPreferido">Horario preferido</label>
+
+              <select id="horarioPreferido" name="horarioPreferido" class="membership-select" required>
+                <option value="">Selecciona un horario</option>
+                <option value="Mañana">Mañana</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Noche">Noche</option>
+              </select>
+
+              <!-- FECHA -->
+              <label class="field-label" for="fechaInicioDeseada">Fecha de inicio deseada</label>
+
+              <input type="date" id="fechaInicioDeseada" name="fechaInicioDeseada" class="membership-select" required />
+
+              <!-- MÉTODO DE PAGO -->
+              <label class="field-label" for="metodoPagoPreferido">Método de pago preferido</label>
+
+              <select id="metodoPagoPreferido" name="metodoPagoPreferido" class="membership-select" required>
+                <option value="">Selecciona un método</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Yape/Plin">Yape / Plin</option>
+              </select>
+
+              <!-- OBSERVACIONES -->
+              <label class="field-label" for="observacion">Observaciones (opcional)</label>
+
+              <textarea id="observacion" name="observacion" class="membership-select" rows="3" maxlength="255" placeholder="¿Tienes alguna indicación adicional?"></textarea>
+
+              <!-- RESUMEN -->
+              <div class="section-card-soft" style="margin-top: 24px; margin-bottom: 24px">
+                <h3 class="membership-section-title">Resumen de tu solicitud</h3>
+
+                <p class="membership-field-label">Precio total estimado</p>
+
+                <p id="precioTotal" class="membership-price" aria-live="polite">S/ 0.00</p>
+
+                <p class="membership-field-label">El importe es referencial. No se realizará ningún cobro en este paso.</p>
+              </div>
+
+              <!-- GUARDAR -->
+              <button type="submit" class="btn-primary-block">Confirmar solicitud</button>
+            </form>
+          </div>
+        </section>
       </section>
     </main>
 
@@ -380,20 +476,7 @@
     </div>
 
     <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-logo">POWERFIT</div>
-
-        <div class="footer-links">
-          <a href="#" class="footer-link">Política de Privacidad</a>
-          <a href="#" class="footer-link">Términos de Servicio</a>
-          <a href="#" class="footer-link">Soporte</a>
-          <a href="#" class="footer-link">Instagram</a>
-        </div>
-
-        <div>© 2026 POWERFIT. TODOS LOS DERECHOS RESERVADOS.</div>
-      </div>
-    </footer>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
     <!-- JAVASCRIPT MODAL -->
     <script>
@@ -417,21 +500,83 @@
         }
       });
 
-      function toggleUserMenu(event) {
-        event.stopPropagation();
+      // Seleccionar plan desde las tarjetas
+      function seleccionarPlan(boton) {
+        const idPlan = boton.dataset.planId;
 
-        const menu = document.getElementById("userDropdown");
+        const selector = document.getElementById("idPlanSolicitud");
 
-        menu.classList.toggle("active");
+        if (!selector) return;
+
+        selector.value = idPlan;
+
+        calcularPrecio();
+
+        document.getElementById("formularioSolicitud").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
 
-      document.addEventListener("click", function () {
-        const menu = document.getElementById("userDropdown");
+      // Calcular precio según plan y duración
+      function calcularPrecio() {
+        const selector = document.getElementById("idPlanSolicitud");
+        const duracion = document.getElementById("duracionMeses");
+        const precioTotal = document.getElementById("precioTotal");
 
-        if (menu) {
-          menu.classList.remove("active");
+        if (!selector || !duracion || !precioTotal) return;
+
+        const opcion = selector.options[selector.selectedIndex];
+
+        const precio = Number(opcion?.dataset.precio || 0);
+        const meses = Number(duracion.value || 1);
+
+        const total = precio * meses;
+
+        precioTotal.textContent = "S/ " + total.toFixed(2);
+      }
+
+      // Evitar fechas anteriores al día actual
+      document.addEventListener("DOMContentLoaded", function () {
+        const fecha = document.getElementById("fechaInicioDeseada");
+
+        if (fecha) {
+          const hoy = new Date();
+          const fechaLocal = [hoy.getFullYear(), String(hoy.getMonth() + 1).padStart(2, "0"), String(hoy.getDate()).padStart(2, "0")].join("-");
+
+          fecha.min = fechaLocal;
+        }
+      });
+
+      function calcularPrecioActualizacion() {
+        const selector = document.getElementById("idPlanActualizar");
+        const duracion = document.getElementById("duracionMesesActualizar");
+        const precioTotal = document.getElementById("precioTotalActualizacion");
+
+        if (!selector || !duracion || !precioTotal) return;
+
+        const opcion = selector.options[selector.selectedIndex];
+
+        const precio = Number(opcion?.dataset.precio || 0);
+        const meses = Number(duracion.value || 1);
+
+        precioTotal.textContent = "S/ " + (precio * meses).toFixed(2);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        calcularPrecioActualizacion();
+
+        const fecha = document.getElementById("fechaInicioDeseadaActualizar");
+
+        if (fecha) {
+          const hoy = new Date();
+
+          const fechaLocal = [hoy.getFullYear(), String(hoy.getMonth() + 1).padStart(2, "0"), String(hoy.getDate()).padStart(2, "0")].join("-");
+
+          fecha.min = fechaLocal;
         }
       });
     </script>
-  </body>
+    <script th:src="@{/js/components/header.js}"></script>
+</body>
 </html>

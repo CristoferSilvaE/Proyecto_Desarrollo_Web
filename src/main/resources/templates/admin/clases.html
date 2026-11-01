@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerFit | GESTIÓN DE CLASES Y HORARIOS</title>
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+  </head>
+  <body class="adm-body">
+    <div class="adm-shell">
+      <div th:replace="~{admin/fragments/sidebar :: sidebar('clases')}"></div>
+      <div class="adm-workspace">
+        <div th:replace="~{admin/fragments/topbar :: topbar('HORARIOS & CAPACIDAD', 'GESTIÓN DE CLASES Y HORARIOS', 'Programación semanal, instructores y control de cupos')}"></div>
+        <main class="adm-main">
+          <div th:if="${mensaje}" class="adm-demo-banner" style="border-color: #16a34a; color: #86efac" th:text="${mensaje}"></div>
+
+          <div th:if="${error}" class="adm-demo-banner" style="border-color: #dc2626; color: #fca5a5" th:text="${error}"></div>
+          <div class="adm-demo-banner">
+            <strong>Administración conectada:</strong>
+            catálogo de clases e instructores gestionados desde MySQL.
+          </div>
+          <div class="adm-tabs" data-panel-tabs>
+            <button class="adm-tab is-active" data-panel-target="tabHorarios">
+              <svg th:replace="~{admin/fragments/icons :: icon('calendar')}"></svg>
+              HORARIOS
+            </button>
+
+            <button class="adm-tab" data-panel-target="tabClases">
+              <svg th:replace="~{admin/fragments/icons :: icon('dumbbell')}"></svg>
+              CLASES
+            </button>
+
+            <button class="adm-tab" data-panel-target="tabInstructores">
+              <svg th:replace="~{admin/fragments/icons :: icon('user')}"></svg>
+              INSTRUCTORES
+            </button>
+          </div>
+          <div class="adm-stats">
+            <article class="adm-stat">
+              <div class="adm-stat-label">CLASES PROGRAMADAS</div>
+              <strong th:text="${clasesProgramadas}">0</strong>
+              <small>Sesiones futuras activas</small>
+            </article>
+
+            <article class="adm-stat">
+              <div class="adm-stat-label">OCUPACIÓN PROMEDIO</div>
+              <strong th:text="|${ocupacionPromedio}%|">0.0%</strong>
+              <small>Reservas sobre capacidad total</small>
+            </article>
+
+            <article class="adm-stat">
+              <div class="adm-stat-label">INSTRUCTORES ACTIVOS</div>
+              <strong th:text="${instructoresActivosTotal}">0</strong>
+              <small>Personal disponible</small>
+            </article>
+
+            <article class="adm-stat">
+              <div class="adm-stat-label">CUPOS DISPONIBLES</div>
+              <strong th:text="${cuposDisponibles}">0</strong>
+              <small>Plazas libres en sesiones futuras</small>
+            </article>
+          </div>
+          <section id="tabHorarios" class="adm-tab-panel">
+            <div class="adm-toolbar">
+              <label class="adm-search">
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+                <input type="search" placeholder="Buscar por clase, instructor o sala..." data-table-search="horariosTabla" />
+              </label>
+
+              <button type="button" class="adm-btn adm-btn-primary" data-open-modal="modalNuevoHorario">
+                <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+                PROGRAMAR NUEVA CLASE
+              </button>
+            </div>
+
+            <section class="adm-panel">
+              <div class="adm-panel-head">
+                <h2>CRONOGRAMA OPERATIVO</h2>
+              </div>
+
+              <div id="horariosTabla">
+                <div class="adm-table-scroll">
+                  <table class="adm-table">
+                    <thead>
+                      <tr>
+                        <th>CLASE</th>
+                        <th>INSTRUCTOR</th>
+                        <th>FECHA</th>
+                        <th>HORARIO Y SALA</th>
+                        <th>CAPACIDAD / RESERVAS</th>
+                        <th>ESTADO</th>
+                        <th>ACCIONES</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr th:each="horario : ${horarios}">
+                        <!-- CLASE -->
+                        <td>
+                          <strong th:text="${horario.clase.nombre}">Spinning</strong>
+
+                          <small th:text="${horario.clase.categoria}">Cardio</small>
+                        </td>
+
+                        <!-- INSTRUCTOR -->
+                        <td>
+                          <strong th:text="|${horario.instructor.nombres} ${horario.instructor.apellidos}|">Instructor</strong>
+                        </td>
+
+                        <!-- FECHA -->
+                        <td>
+                          <strong th:text="${#temporals.format(horario.fecha, 'dd/MM/yyyy')}">30/10/2026</strong>
+                        </td>
+
+                        <!-- HORARIO Y SALA -->
+                        <td>
+                          <strong th:text="${#temporals.format(horario.horaInicio, 'HH:mm') + ' - ' + #temporals.format(horario.horaFin, 'HH:mm')}">08:00 - 09:00</strong>
+
+                          <small th:text="${horario.sala != null and !horario.sala.isBlank() ? horario.sala : 'Sin sala asignada'}">Sala 1</small>
+                        </td>
+
+                        <!-- CAPACIDAD Y RESERVAS -->
+                        <td>
+                          <strong th:text="${horario.capacidad}">25</strong>
+
+                          <small th:text="${reservasPorHorario[horario.idHorario] + ' reservadas'}">0 reservadas</small>
+
+                          <details class="adm-reservas">
+                            <summary class="adm-text-btn">
+                              Ver inscritos (
+                              <span th:text="${reservasDetallePorHorario[horario.idHorario].size()}">0</span>
+                              )
+                            </summary>
+
+                            <div class="adm-reservas-panel">
+                              <p th:if="${#lists.isEmpty(reservasDetallePorHorario[horario.idHorario])}" class="adm-muted">Todavía no hay clientes inscritos.</p>
+
+                              <div th:each="reserva : ${reservasDetallePorHorario[horario.idHorario]}" class="adm-reserva-item">
+                                <strong th:text="|${reserva.cliente.nombres} ${reserva.cliente.apellidos}|">Nombre del cliente</strong>
+
+                                <small th:text="${reserva.cliente.usuario.correo}">correo@ejemplo.com</small>
+
+                                <small th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">Fecha de reserva</small>
+
+                                <span class="adm-badge" th:text="${reserva.asistencia == true ? 'ASISTENCIA REGISTRADA' : 'PENDIENTE'}">PENDIENTE</span>
+                              </div>
+                            </div>
+                          </details>
+                        </td>
+
+                        <!-- ESTADO -->
+                        <td>
+                          <span class="adm-badge" th:classappend="${horario.estado == 'ACTIVO'} ? 'green' : 'orange'" th:text="${horario.estado}">ACTIVO</span>
+                        </td>
+
+                        <!-- ACCIONES -->
+                        <td>
+                          <button
+                            type="button"
+                            class="adm-btn adm-btn-edit"
+                            data-open-modal="modalNuevoHorario"
+                            th:attr="
+                                        data-id=${horario.idHorario},
+                                        data-clase=${horario.clase.idClase},
+                                        data-instructor=${horario.instructor.idInstructor},
+                                        data-fecha=${#temporals.format(horario.fecha, 'yyyy-MM-dd')},
+                                        data-inicio=${#temporals.format(horario.horaInicio, 'HH:mm')},
+                                        data-fin=${#temporals.format(horario.horaFin, 'HH:mm')},
+                                        data-capacidad=${horario.capacidad},
+                                        data-sala=${horario.sala}"
+                            onclick="editarHorario(this)">
+                            Editar
+                          </button>
+
+                          <button
+                            type="button"
+                            th:class="${horario.estado == 'ACTIVO'}
+                                ? 'adm-btn adm-btn-danger'
+                                : 'adm-btn adm-btn-success'"
+                            data-open-modal="modalConfirmarEstadoHorario"
+                            th:attr="
+                            data-action=@{/admin/horarios/{id}/estado(id=${horario.idHorario})},
+                            data-estado=${horario.estado == 'ACTIVO' ? 'INACTIVO' : 'ACTIVO'},
+                            data-nombre=|${horario.clase.nombre} - ${#temporals.format(horario.fecha, 'dd/MM/yyyy')}|"
+                            th:text="${horario.estado == 'ACTIVO' ? 'Cancelar' : 'Activar'}"></button>
+                        </td>
+                      </tr>
+
+                      <!-- SIN HORARIOS -->
+                      <tr th:if="${#lists.isEmpty(horarios)}">
+                        <td colspan="7" style="text-align: center; padding: 30px">
+                          <strong>No hay horarios registrados</strong>
+
+                          <small>Programa una nueva clase para comenzar.</small>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          </section>
+          <section id="tabClases" class="adm-tab-panel" hidden>
+            <div class="adm-toolbar">
+              <label class="adm-search">
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+                <input type="search" placeholder="Buscar clase..." data-table-search="clasesTabla" />
+              </label>
+
+              <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevaClase">
+                <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+                NUEVA CLASE
+              </button>
+            </div>
+
+            <section class="adm-panel">
+              <div class="adm-panel-head">
+                <h2>CATÁLOGO DE CLASES</h2>
+              </div>
+
+              <div id="clasesTabla" class="adm-table-scroll">
+                <table class="adm-table">
+                  <thead>
+                    <tr>
+                      <th>CLASE</th>
+                      <th>DESCRIPCIÓN</th>
+                      <th>ESTADO</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr th:each="clase : ${clases}">
+                      <td>
+                        <strong th:text="${clase.nombre}"></strong>
+                        <small th:text="${clase.categoria}"></small>
+                      </td>
+
+                      <td th:text="${clase.descripcion}"></td>
+
+                      <td>
+                        <span class="adm-badge" th:classappend="${clase.estado == 'ACTIVO'} ? 'green' : 'orange'" th:text="${clase.estado}"></span>
+                      </td>
+
+                      <td>
+                        <button
+                          type="button"
+                          class="adm-btn adm-btn-edit"
+                          data-open-modal="modalNuevaClase"
+                          th:attr="data-id=${clase.idClase},
+                                         data-nombre=${clase.nombre},
+                                         data-categoria=${clase.categoria},
+                                         data-descripcion=${clase.descripcion}"
+                          onclick="editarClase(this)">
+                          Editar
+                        </button>
+
+                        <form th:action="@{/admin/clases/{id}/estado(id=${clase.idClase})}" method="post" style="display: inline">
+                          <button
+                            type="submit"
+                            th:class="${clase.estado == 'ACTIVO'}
+                                ? 'adm-btn adm-btn-danger'
+                                : 'adm-btn adm-btn-success'"
+                            th:text="${clase.estado == 'ACTIVO'} ? 'Desactivar' : 'Activar'"></button>
+                        </form>
+                      </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(clases)}">
+                      <td colspan="4">No hay clases registradas.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+          <!-- PESTAÑA: INSTRUCTORES -->
+          <section id="tabInstructores" class="adm-tab-panel" hidden>
+            <div class="adm-toolbar">
+              <label class="adm-search">
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+                <input type="search" placeholder="Buscar instructor..." data-table-search="instructoresTabla" />
+              </label>
+
+              <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevoInstructor">
+                <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+                NUEVO INSTRUCTOR
+              </button>
+            </div>
+
+            <section class="adm-panel">
+              <div class="adm-panel-head">
+                <h2>INSTRUCTORES</h2>
+              </div>
+
+              <div id="instructoresTabla">
+                <div class="adm-table-scroll">
+                  <table class="adm-table">
+                    <thead>
+                      <tr>
+                        <th>INSTRUCTOR</th>
+                        <th>CLASE ASIGNADA</th>
+                        <th>TELÉFONO</th>
+                        <th>CORREO</th>
+                        <th>ESTADO</th>
+                        <th>ACCIONES</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <!-- MENSAJE CUANDO NO EXISTEN INSTRUCTORES -->
+                      <tr th:if="${#lists.isEmpty(instructores)}">
+                        <td colspan="6">No hay instructores registrados.</td>
+                      </tr>
+
+                      <!-- INSTRUCTORES DESDE MYSQL -->
+                      <tr th:each="instructor : ${instructores}">
+                        <td>
+                          <strong th:text="|${instructor.nombres} ${instructor.apellidos}|"></strong>
+                        </td>
+
+                        <td th:text="${instructor.clase != null ? instructor.clase.nombre : 'Sin asignar'}"></td>
+
+                        <td th:text="${instructor.telefono}"></td>
+
+                        <td th:text="${instructor.correo}"></td>
+
+                        <td>
+                          <span class="adm-badge" th:classappend="${instructor.estado == 'ACTIVO'} ? 'green' : 'orange'" th:text="${instructor.estado}"></span>
+                        </td>
+
+                        <td>
+                          <button
+                            type="button"
+                            class="adm-btn adm-btn-edit"
+                            data-open-modal="modalNuevoInstructor"
+                            th:attr="
+                            data-id=${instructor.idInstructor},
+                            data-nombres=${instructor.nombres},
+                            data-apellidos=${instructor.apellidos},
+                            data-id-clase=${instructor.clase != null ? instructor.clase.idClase : ''},
+                            data-telefono=${instructor.telefono},
+                            data-correo=${instructor.correo}">
+                            Editar
+                          </button>
+
+                          <button
+                            type="button"
+                            th:class="${instructor.estado == 'ACTIVO'}
+                                ? 'adm-btn adm-btn-danger'
+                                : 'adm-btn adm-btn-success'"
+                            data-open-modal="modalConfirmarEstadoInstructor"
+                            th:attr="
+                            data-action=@{/admin/instructores/{id}/estado(id=${instructor.idInstructor})},
+                            data-estado=${instructor.estado == 'ACTIVO' ? 'INACTIVO' : 'ACTIVO'},
+                            data-nombre=|${instructor.nombres} ${instructor.apellidos}|"
+                            th:text="${instructor.estado == 'ACTIVO'} ? 'Desactivar' : 'Activar'"></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </div>
+    <dialog class="adm-modal" id="modalNuevaClase">
+      <form id="formClase" class="adm-modal-form" th:action="@{/admin/clases/guardar}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="claseId" />
+
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+
+            <h2 id="tituloModalClase">NUEVA CLASE</h2>
+
+            <p>Catálogo de disciplinas y actividades.</p>
+          </div>
+
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <div class="adm-form-grid">
+            <label>
+              NOMBRE DE CLASE *
+              <input type="text" name="nombre" id="claseNombre" maxlength="80" required />
+            </label>
+
+            <label>
+              CATEGORÍA *
+              <select name="categoria" id="claseCategoria" required>
+                <option value="Fuerza">Fuerza</option>
+                <option value="Cardio">Cardio</option>
+                <option value="Funcional">Funcional</option>
+                <option value="Baile">Baile</option>
+              </select>
+            </label>
+
+            <label class="adm-full">
+              DESCRIPCIÓN
+              <textarea name="descripcion" id="claseDescripcion" maxlength="200" rows="3"></textarea>
+            </label>
+
+            <label class="adm-full">
+              IMAGEN DE LA CLASE (JPG O PNG)
+              <input type="file" name="imagen" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+            </label>
+          </div>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>Cancelar</button>
+
+          <button type="submit" class="adm-btn adm-btn-primary" id="btnGuardarClase">CREAR CLASE</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog class="adm-modal adm-modal-wide" id="modalNuevoHorario">
+      <form id="formHorario" class="adm-modal-form" th:action="@{/admin/horarios/guardar}" method="post">
+        <input type="hidden" name="idHorario" id="horarioId" />
+
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+
+            <h2 id="tituloModalHorario">PROGRAMAR HORARIO</h2>
+
+            <p>Define la clase, instructor, fecha y capacidad.</p>
+          </div>
+
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <div class="adm-form-section">INFORMACIÓN DE LA CLASE</div>
+
+          <div class="adm-form-grid">
+            <!-- CLASE -->
+            <label>
+              CLASE *
+
+              <select name="idClase" id="horarioClase" required>
+                <option value="">Seleccionar clase</option>
+
+                <option th:each="clase : ${clasesActivas}" th:value="${clase.idClase}" th:text="|${clase.nombre} — ${clase.categoria}|"></option>
+              </select>
+            </label>
+
+            <!-- INSTRUCTOR -->
+            <label>
+              INSTRUCTOR *
+
+              <select name="idInstructor" id="horarioInstructor" required>
+                <option value="">Seleccionar instructor</option>
+
+                <option
+                  th:each="instructor : ${instructoresActivos}"
+                  th:value="${instructor.idInstructor}"
+                  th:attr="data-clase-id=${instructor.clase != null ? instructor.clase.idClase : ''}"
+                  th:text="|${instructor.nombres} ${instructor.apellidos} — ${instructor.clase != null ? instructor.clase.nombre : 'Sin clase'}|"></option>
+              </select>
+            </label>
+
+            <label>
+              FECHA *
+
+              <input type="date" name="fecha" id="horarioFecha" th:attr="min=${fechaHoy}" required />
+            </label>
+
+            <label>
+              CAPACIDAD *
+
+              <input type="number" name="capacidad" id="horarioCapacidad" min="1" max="500" placeholder="25" required />
+            </label>
+          </div>
+
+          <div class="adm-form-section">PROGRAMACIÓN Y UBICACIÓN</div>
+
+          <div class="adm-form-grid">
+            <label>
+              HORA DE INICIO *
+
+              <input type="time" name="horaInicio" id="horarioHoraInicio" required />
+            </label>
+
+            <label>
+              HORA DE FINALIZACIÓN *
+
+              <input type="time" name="horaFin" id="horarioHoraFin" required />
+            </label>
+
+            <label class="adm-full">
+              SALA
+
+              <input type="text" name="sala" id="horarioSala" maxlength="80" placeholder="Ej. Sala funcional 1" />
+            </label>
+          </div>
+
+          <p class="adm-note">Los horarios deben tener una fecha futura o corresponder a una sesión que todavía no haya comenzado hoy. El sistema verificará los cruces de instructores y salas.</p>
+
+          <div class="adm-note" th:if="${#lists.isEmpty(clasesActivas) or #lists.isEmpty(instructoresActivos)}">
+            Necesitas tener al menos una clase y un instructor activo para programar una sesión.
+          </div>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+          <button type="submit" class="adm-btn adm-btn-primary" id="btnGuardarHorario">PROGRAMAR CLASE</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog class="adm-modal" id="modalNuevoInstructor">
+      <form
+        id="formInstructor"
+        class="adm-modal-form"
+        th:action="@{/admin/instructores/registrar}"
+        th:attr="
+            data-create-action=@{/admin/instructores/registrar},
+            data-edit-action=@{/admin/instructores/editar}"
+        method="post">
+        <input type="hidden" name="idInstructor" id="instructorId" />
+
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+
+            <h2 id="tituloModalInstructor">NUEVO INSTRUCTOR</h2>
+
+            <p>Datos del entrenador y clase asignada.</p>
+          </div>
+
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <div class="adm-form-grid">
+            <label>
+              NOMBRES *
+              <input type="text" name="nombres" id="instructorNombres" maxlength="80" required />
+            </label>
+
+            <label>
+              APELLIDOS *
+              <input type="text" name="apellidos" id="instructorApellidos" maxlength="80" required />
+            </label>
+
+            <label class="adm-full">
+              CLASE QUE IMPARTE *
+              <select name="idClase" id="instructorClase" required>
+                <option value="">Selecciona una clase</option>
+
+                <option th:each="clase : ${clases}" th:if="${clase.estado == 'ACTIVO'}" th:value="${clase.idClase}" th:text="|${clase.nombre} - ${clase.categoria}|"></option>
+              </select>
+            </label>
+
+            <label>
+              TELÉFONO *
+              <input type="tel" name="telefono" id="instructorTelefono" minlength="9" maxlength="15" pattern="[0-9]{9,15}" required />
+            </label>
+
+            <label>
+              CORREO *
+              <input type="email" name="correo" id="instructorCorreo" maxlength="120" required />
+            </label>
+          </div>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>Cancelar</button>
+
+          <button type="submit" class="adm-btn adm-btn-primary" id="btnGuardarInstructor">REGISTRAR INSTRUCTOR</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog class="adm-modal" id="modalConfirmarEstadoInstructor">
+      <form id="formEstadoInstructor" class="adm-modal-form" method="post">
+        <input type="hidden" name="estado" id="estadoInstructorNuevo" />
+
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+
+            <h2 id="tituloModalEstadoInstructor">CONFIRMAR ACCIÓN</h2>
+
+            <p>Verifica la operación antes de continuar.</p>
+          </div>
+
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <p id="textoConfirmacionInstructor">¿Deseas continuar con esta operación?</p>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>Cancelar</button>
+
+          <button type="submit" class="adm-btn adm-btn-primary" id="btnConfirmarEstadoInstructor">CONFIRMAR</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog class="adm-modal" id="modalConfirmarEstadoHorario">
+      <form id="formEstadoHorario" class="adm-modal-form" method="post">
+        <input type="hidden" name="estado" id="estadoHorarioNuevo" />
+
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+
+            <h2 id="tituloModalEstadoHorario">CONFIRMAR ACCIÓN</h2>
+
+            <p>Verifica la operación antes de continuar.</p>
+          </div>
+
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <p id="textoConfirmacionHorario">¿Deseas continuar con esta operación?</p>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+          <button type="submit" class="adm-btn adm-btn-primary" id="btnConfirmarEstadoHorario">CONFIRMAR</button>
+        </div>
+      </form>
+    </dialog>
+    <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+    <script th:src="@{/js/admin/admin.js}"></script>
+  </body>
+</html>
