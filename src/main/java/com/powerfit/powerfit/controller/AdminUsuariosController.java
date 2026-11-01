@@ -209,12 +209,12 @@ public class AdminUsuariosController {
       return "redirect:/admin/usuarios";
     }
 
-    // Proteger todas las cuentas administrativas
-    if (usuario.getRol() != null
-        && "ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre())) {
+    // Proteger cuentas administrativas y cuentas sin rol
+    if (usuario.getRol() == null
+        || "ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre())) {
 
       redirectAttributes.addFlashAttribute(
-          "error", "No puedes modificar el estado de una cuenta administrativa.");
+          "error", "No puedes modificar el estado de esta cuenta.");
 
       return "redirect:/admin/usuarios";
     }

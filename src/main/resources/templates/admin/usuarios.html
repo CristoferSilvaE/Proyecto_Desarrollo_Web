@@ -136,37 +136,50 @@
                         ACTIVO
                       </span>
                     </td>
-                    <td>
-                      <button
-                        type="button"
-                        class="adm-btn adm-btn-ghost"
-                        th:if="${fila.cliente != null
-                            and fila.usuario.rol != null
-                            and #strings.equalsIgnoreCase(
-                                fila.usuario.rol.nombre, 'CLIENTE'
-                            )}"
-                        th:attr="data-open-modal=|modalEditarUsuario-${fila.usuario.idUsuario}|">
-                        EDITAR
-                      </button>
-                      <button
-                        type="button"
-                        class="adm-btn adm-btn-ghost"
-                        th:attr="data-open-modal=|modalEstadoUsuario-${fila.usuario.idUsuario}|"
-                        th:text="${#strings.equalsIgnoreCase(
-                            fila.usuario.estado, 'ACTIVO'
-                        )} ? 'DESACTIVAR' : 'REACTIVAR'">
-                        DESACTIVAR
-                      </button>
 
-                      <span
-                        th:unless="${fila.cliente != null
+                    <td class="adm-actions-cell">
+                      <div class="adm-user-actions">
+                        <!-- EDITAR: solamente clientes -->
+                        <button
+                          type="button"
+                          class="adm-btn adm-btn-edit"
+                          th:if="${fila.cliente != null
                             and fila.usuario.rol != null
                             and #strings.equalsIgnoreCase(
                                 fila.usuario.rol.nombre, 'CLIENTE'
                             )}"
-                        class="adm-badge">
-                        PROTEGIDO
-                      </span>
+                          th:attr="data-open-modal=|modalEditarUsuario-${fila.usuario.idUsuario}|">
+                          EDITAR
+                        </button>
+
+                        <!-- DESACTIVAR / REACTIVAR -->
+                        <button
+                          type="button"
+                          class="adm-btn"
+                          th:classappend="${#strings.equalsIgnoreCase(
+                                fila.usuario.estado, 'ACTIVO'
+                            )} ? 'adm-btn-danger' : 'adm-btn-success'"
+                                        th:if="${fila.usuario.rol != null
+                                and !#strings.equalsIgnoreCase(
+                                    fila.usuario.rol.nombre, 'ADMINISTRADOR'
+                                )}"
+                                        th:attr="data-open-modal=|modalEstadoUsuario-${fila.usuario.idUsuario}|"
+                                        th:text="${#strings.equalsIgnoreCase(
+                                fila.usuario.estado, 'ACTIVO'
+                            )} ? 'DESACTIVAR' : 'REACTIVAR'">
+                          DESACTIVAR
+                        </button>
+
+                        <!-- ADMINISTRADOR PROTEGIDO -->
+                        <span
+                          class="adm-badge"
+                          th:if="${fila.usuario.rol == null
+                            or #strings.equalsIgnoreCase(
+                                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+                            )}">
+                          PROTEGIDO
+                        </span>
+                      </div>
                     </td>
                   </tr>
 
@@ -248,7 +261,78 @@
                 <div class="adm-modal-footer">
                   <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
 
-                  <button type="submit" class="adm-btn adm-btn-primary">GUARDAR CAMBIOS</button>
+                  <button type="submit" class="adm-btn" th:classappend="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')} ? 'adm-btn-danger' : 'adm-btn-success'">GUARDAR CAMBIOS</button>
+                </div>
+              </form>
+            </dialog>
+          </div>
+
+          <!-- MODALES DE CAMBIO DE ESTADO -->
+
+          <div
+            th:each="fila : ${usuarios}"
+            th:if="${fila.usuario.rol != null
+            and !#strings.equalsIgnoreCase(
+                fila.usuario.rol.nombre, 'ADMINISTRADOR'
+            )}">
+            <dialog class="adm-modal" th:id="|modalEstadoUsuario-${fila.usuario.idUsuario}|">
+              <form method="post" th:action="@{/admin/usuarios/{id}/estado(id=${fila.usuario.idUsuario})}">
+                <!-- ENCABEZADO -->
+                <div class="adm-modal-head">
+                  <div>
+                    <span class="adm-kicker">POWERFIT / SEGURIDAD</span>
+
+                    <h2
+                      th:text="${#strings.equalsIgnoreCase(
+                            fila.usuario.estado, 'ACTIVO'
+                        )} ? 'DESACTIVAR CUENTA' : 'REACTIVAR CUENTA'">
+                      CAMBIAR ESTADO
+                    </h2>
+
+                    <p>Confirmación de cambio de estado del usuario.</p>
+                  </div>
+
+                  <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+                </div>
+
+                <!-- CONTENIDO -->
+                <div class="adm-modal-body">
+                  <input
+                    type="hidden"
+                    name="estado"
+                    th:value="${#strings.equalsIgnoreCase(
+                        fila.usuario.estado, 'ACTIVO'
+                    )} ? 'INACTIVO' : 'ACTIVO'" />
+
+                  <!-- Mensaje para desactivar -->
+                  <p th:if="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')}">
+                    ¿Estás seguro de desactivar la cuenta de
+                    <strong th:text="${fila.nombreCompleto}">Nombre del usuario</strong>
+                    ?
+                  </p>
+
+                  <!-- Mensaje para reactivar -->
+                  <p th:unless="${#strings.equalsIgnoreCase(fila.usuario.estado, 'ACTIVO')}">
+                    ¿Deseas reactivar la cuenta de
+                    <strong th:text="${fila.nombreCompleto}">Nombre del usuario</strong>
+                    ?
+                  </p>
+
+                  <p class="adm-note">Esta operación no elimina los datos del usuario. Su información e historial permanecerán guardados.</p>
+                </div>
+
+                <!-- BOTONES -->
+                <div class="adm-modal-footer">
+                  <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                  <button
+                    type="submit"
+                    class="adm-btn adm-btn-primary"
+                    th:text="${#strings.equalsIgnoreCase(
+                        fila.usuario.estado, 'ACTIVO'
+                    )} ? 'CONFIRMAR DESACTIVACIÓN' : 'CONFIRMAR REACTIVACIÓN'">
+                    CONFIRMAR
+                  </button>
                 </div>
               </form>
             </dialog>

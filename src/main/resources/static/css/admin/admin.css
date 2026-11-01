@@ -803,3 +803,84 @@ html {
   font-size: 10px;
   overflow-wrap: anywhere;
 }
+
+/* ==========================================
+   ACCIONES DE GESTIÓN DE USUARIOS
+========================================== */
+
+.adm-btn-danger {
+  background: #3b2023;
+  color: #ffaaa8;
+  border: 1px solid #85464b;
+}
+
+.adm-btn-danger:hover {
+  background: #54282c;
+  color: #ffffff;
+  border-color: #b85c64;
+}
+
+.adm-btn-success {
+  background: #12392f;
+  color: #55dfb2;
+  border: 1px solid #19785c;
+}
+
+.adm-btn-success:hover {
+  background: #19503f;
+  color: #ffffff;
+  border-color: #28a77e;
+}
+
+/* ==========================================
+   ACCIONES DE USUARIOS
+========================================== */
+
+/* Botón editar */
+.adm-btn-edit {
+  background: #202b43;
+  color: #adc5ff;
+  border: 1px solid #435c8b;
+}
+
+.adm-btn-edit:hover {
+  background: #2b3d60;
+  color: #ffffff;
+  border-color: #6c91d8;
+}
+
+/* Contenedor de botones */
+.adm-user-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Celda de acciones */
+.adm-actions-cell {
+  min-width: 210px;
+  white-space: normal;
+}
+
+/* Botones compactos */
+.adm-user-actions .adm-btn {
+  padding: 9px 12px;
+  font-size: 10px;
+  margin: 0;
+}
+
+/* ==========================================
+   TABLA RESPONSIVE
+========================================== */
+
+.adm-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.adm-table {
+  min-width: 1000px;
+}
