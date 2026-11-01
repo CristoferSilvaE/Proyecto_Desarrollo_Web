@@ -4,11 +4,18 @@ import com.powerfit.powerfit.model.Cliente;
 import com.powerfit.powerfit.model.Membresia;
 import com.powerfit.powerfit.model.PagoMembresia;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MembresiaAdminDTO {
 
   private final Membresia membresia;
   private final PagoMembresia ultimoPago;
+  private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+  private static final DateTimeFormatter FORMATO_FECHA_HORA =
+      DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
   public MembresiaAdminDTO(Membresia membresia, PagoMembresia ultimoPago) {
 
@@ -61,5 +68,35 @@ public class MembresiaAdminDTO {
   public String getEstadoPago() {
 
     return ultimoPago != null ? ultimoPago.getEstado() : "SIN PAGO";
+  }
+
+  // FORMATO DE FECHAS PARA ADMINISTRACIÓN
+
+  public String getFechaSolicitudFormateada() {
+
+    LocalDateTime fecha = membresia.getFechaSolicitud();
+
+    return fecha != null ? fecha.format(FORMATO_FECHA_HORA) : "—";
+  }
+
+  public String getFechaInicioDeseadaFormateada() {
+
+    LocalDate fecha = membresia.getFechaInicioDeseada();
+
+    return fecha != null ? fecha.format(FORMATO_FECHA) : "—";
+  }
+
+  public String getFechaInicioFormateada() {
+
+    LocalDate fecha = membresia.getFechaInicio();
+
+    return fecha != null ? fecha.format(FORMATO_FECHA) : "—";
+  }
+
+  public String getFechaFinFormateada() {
+
+    LocalDate fecha = membresia.getFechaFin();
+
+    return fecha != null ? fecha.format(FORMATO_FECHA) : "—";
   }
 }

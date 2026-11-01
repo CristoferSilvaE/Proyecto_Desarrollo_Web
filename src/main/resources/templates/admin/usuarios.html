@@ -66,7 +66,7 @@
           <!-- BUSCADOR -->
           <form class="adm-toolbar" method="get" th:action="@{/admin/usuarios}">
             <label class="adm-search">
-              ⌕
+              <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
               <input type="search" name="buscar" th:value="${buscar}" placeholder="Buscar por nombre, DNI, correo o usuario..." />
             </label>
 

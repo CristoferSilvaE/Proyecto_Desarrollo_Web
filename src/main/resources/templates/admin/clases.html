@@ -20,9 +20,20 @@
             catálogo de clases e instructores gestionados desde MySQL.
           </div>
           <div class="adm-tabs" data-panel-tabs>
-            <button class="adm-tab is-active" data-panel-target="tabHorarios">◷ HORARIOS</button>
-            <button class="adm-tab" data-panel-target="tabClases">▤ CLASES</button>
-            <button class="adm-tab" data-panel-target="tabInstructores">♧ INSTRUCTORES</button>
+            <button class="adm-tab is-active" data-panel-target="tabHorarios">
+              <svg th:replace="~{admin/fragments/icons :: icon('calendar')}"></svg>
+              HORARIOS
+            </button>
+
+            <button class="adm-tab" data-panel-target="tabClases">
+              <svg th:replace="~{admin/fragments/icons :: icon('dumbbell')}"></svg>
+              CLASES
+            </button>
+
+            <button class="adm-tab" data-panel-target="tabInstructores">
+              <svg th:replace="~{admin/fragments/icons :: icon('user')}"></svg>
+              INSTRUCTORES
+            </button>
           </div>
           <div class="adm-stats">
             <article class="adm-stat">
@@ -52,11 +63,14 @@
           <section id="tabHorarios" class="adm-tab-panel">
             <div class="adm-toolbar">
               <label class="adm-search">
-                ⌕
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
                 <input type="search" placeholder="Buscar por clase, instructor o sala..." data-table-search="horariosTabla" />
               </label>
 
-              <button type="button" class="adm-btn adm-btn-primary" data-open-modal="modalNuevoHorario">＋ PROGRAMAR NUEVA CLASE</button>
+              <button type="button" class="adm-btn adm-btn-primary" data-open-modal="modalNuevoHorario">
+                <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+                PROGRAMAR NUEVA CLASE
+              </button>
             </div>
 
             <section class="adm-panel">
@@ -187,11 +201,14 @@
           <section id="tabClases" class="adm-tab-panel" hidden>
             <div class="adm-toolbar">
               <label class="adm-search">
-                ⌕
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
                 <input type="search" placeholder="Buscar clase..." data-table-search="clasesTabla" />
               </label>
 
-              <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevaClase">＋ NUEVA CLASE</button>
+              <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevaClase">
+                <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+                NUEVA CLASE
+              </button>
             </div>
 
             <section class="adm-panel">
@@ -254,11 +271,14 @@
           <section id="tabInstructores" class="adm-tab-panel" hidden>
             <div class="adm-toolbar">
               <label class="adm-search">
-                ⌕
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
                 <input type="search" placeholder="Buscar instructor..." data-table-search="instructoresTabla" />
               </label>
 
-              <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevoInstructor">＋ NUEVO INSTRUCTOR</button>
+              <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevoInstructor">
+                <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+                NUEVO INSTRUCTOR
+              </button>
             </div>
 
             <section class="adm-panel">

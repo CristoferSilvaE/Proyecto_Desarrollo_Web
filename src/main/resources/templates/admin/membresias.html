@@ -57,7 +57,8 @@
           <!-- BÚSQUEDA Y FILTROS -->
           <form class="adm-toolbar" method="get" th:action="@{/admin/membresias}">
             <label class="adm-search">
-              ⌕
+              <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+
               <input type="search" name="buscar" placeholder="Buscar por cliente, DNI, correo o plan..." th:value="${buscar}" />
             </label>
 
@@ -75,11 +76,20 @@
               <option value="CANCELADA" th:selected="${estadoFiltro == 'CANCELADA'}">CANCELADA</option>
             </select>
 
-            <button type="submit" class="adm-btn adm-btn-primary">BUSCAR</button>
+            <button type="submit" class="adm-btn adm-btn-primary">
+              <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+              BUSCAR
+            </button>
 
-            <a th:href="@{/admin/membresias}" class="adm-btn adm-btn-ghost">LIMPIAR</a>
+            <a th:href="@{/admin/membresias}" class="adm-btn adm-btn-ghost">
+              <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+              LIMPIAR
+            </a>
 
-            <button type="button" class="adm-btn adm-btn-primary" data-open-modal="modalNuevaMembresia">+ NUEVA SOLICITUD</button>
+            <button type="button" class="adm-btn adm-btn-primary" data-open-modal="modalNuevaMembresia">
+              <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+              NUEVA SOLICITUD
+            </button>
           </form>
 
           <!-- DIRECTORIO DE MEMBRESÍAS -->
@@ -132,26 +142,22 @@
 
                     <!-- SOLICITUD -->
                     <td>
-                      <span th:text="${fila.membresia.fechaSolicitud}">Fecha solicitud</span>
+                      <strong class="adm-membership-date" th:text="${fila.fechaSolicitudFormateada}">01/11/2026 01:08</strong>
 
                       <small
                         th:text="${fila.membresia.fechaInicioDeseada != null
-                                    ? 'Inicio solicitado: ' + fila.membresia.fechaInicioDeseada
-                                    : 'Sin fecha solicitada'}"></small>
+                        ? 'Inicio solicitado: ' + fila.fechaInicioDeseadaFormateada
+                        : 'Sin fecha solicitada'}"></small>
                     </td>
 
                     <!-- VIGENCIA -->
                     <td>
-                      <strong
-                        th:text="${fila.membresia.fechaInicio != null
-                                    ? fila.membresia.fechaInicio : '—'}">
-                        Inicio
-                      </strong>
+                      <strong class="adm-membership-date" th:text="${fila.fechaInicioFormateada}">—</strong>
 
                       <small
                         th:text="${fila.membresia.fechaFin != null
-                                    ? 'Hasta: ' + fila.membresia.fechaFin
-                                    : 'Sin activar'}"></small>
+                        ? 'Hasta: ' + fila.fechaFinFormateada
+                        : 'Sin activar'}"></small>
                     </td>
 
                     <!-- ESTADO -->
@@ -183,9 +189,15 @@
                     <!-- ACCIONES -->
                     <td class="adm-membership-actions">
                       <div th:if="${fila.membresia.estado == 'PENDIENTE'}">
-                        <button type="button" class="adm-btn adm-btn-success" th:attr="data-open-modal=|modalActivar-${fila.membresia.idMembresia}|">CONFIRMAR PAGO</button>
+                        <button type="button" class="adm-btn adm-btn-success" th:attr="data-open-modal=|modalActivar-${fila.membresia.idMembresia}|">
+                          <svg th:replace="~{admin/fragments/icons :: icon('check')}"></svg>
+                          CONFIRMAR PAGO
+                        </button>
 
-                        <button type="button" class="adm-btn adm-btn-danger" th:attr="data-open-modal=|modalRechazar-${fila.membresia.idMembresia}|">RECHAZAR</button>
+                        <button type="button" class="adm-btn adm-btn-danger" th:attr="data-open-modal=|modalRechazar-${fila.membresia.idMembresia}|">
+                          <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+                          RECHAZAR
+                        </button>
                       </div>
 
                       <span th:unless="${fila.membresia.estado == 'PENDIENTE'}" class="adm-muted">Sin acciones</span>
@@ -218,7 +230,9 @@
             <p>Registrar una solicitud de membresía para un cliente.</p>
           </div>
 
-          <button type="button" class="adm-close" data-close-modal>×</button>
+          <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">
+            <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+          </button>
         </div>
 
         <div class="adm-modal-body">
@@ -313,7 +327,9 @@
               <p>Verifica el pago antes de activar la membresía.</p>
             </div>
 
-            <button type="button" class="adm-close" data-close-modal>×</button>
+            <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">
+              <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+            </button>
           </div>
 
           <div class="adm-modal-body">
@@ -382,7 +398,9 @@
               <p>Confirmación de rechazo de membresía.</p>
             </div>
 
-            <button type="button" class="adm-close" data-close-modal>×</button>
+            <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">
+              <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+            </button>
           </div>
 
           <div class="adm-modal-body">
@@ -392,11 +410,13 @@
               ?
             </p>
 
-            <label class="adm-form-label">
-              MOTIVO DEL RECHAZO
+            <div class="adm-form-grid">
+              <label class="adm-full">
+                MOTIVO DEL RECHAZO
 
-              <textarea name="motivo" maxlength="180" rows="3" placeholder="Escribe el motivo (opcional)..."></textarea>
-            </label>
+                <textarea name="motivo" maxlength="180" rows="4" placeholder="Describe el motivo del rechazo (opcional)..."></textarea>
+              </label>
+            </div>
 
             <p class="adm-note">La solicitud cambiará a RECHAZADA. Su información permanecerá guardada en el historial.</p>
           </div>

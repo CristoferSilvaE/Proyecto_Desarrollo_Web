@@ -993,3 +993,111 @@ html {
   margin: 0;
   font-size: 11px;
 }
+
+/* ==========================================
+   ICONOGRAFÍA GENERAL POWERFIT ADMIN
+========================================== */
+
+.adm-icon {
+  width: 17px;
+  height: 17px;
+  display: inline-block;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+.adm-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  color: #a9c2ff;
+}
+
+.adm-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.adm-tab .adm-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.adm-notification {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  font-size: 0;
+}
+
+.adm-notification .adm-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.adm-side-bottom a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+/* ==========================================
+   MODAL DE RECHAZO Y CAMPOS
+========================================== */
+
+.adm-modal {
+  overflow-y: auto;
+}
+
+.adm-modal .adm-form-grid textarea {
+  display: block;
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  padding: 13px;
+  background: #202022;
+  color: #e5e5e9;
+  border: 1px solid #41434c;
+  border-bottom: 2px solid #535969;
+  border-radius: 4px;
+  font:
+    13px "DM Sans",
+    sans-serif;
+  line-height: 1.5;
+}
+
+.adm-modal .adm-form-grid textarea:focus {
+  outline: none;
+  border-color: #7fa5ff;
+}
+
+.adm-modal .adm-form-grid textarea::placeholder {
+  color: #858794;
+}
+
+/* ==========================================
+   FECHAS DE MEMBRESÍAS
+========================================== */
+
+.adm-membership-date {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.2px;
+}
+
+.adm-membership-actions .adm-icon {
+  width: 15px;
+  height: 15px;
+}

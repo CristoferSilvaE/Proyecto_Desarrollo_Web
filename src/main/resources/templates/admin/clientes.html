@@ -57,7 +57,7 @@
           <!-- BÚSQUEDA Y FILTROS -->
           <form class="adm-toolbar" method="get" th:action="@{/admin/clientes}">
             <label class="adm-search">
-              ⌕
+              <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
               <input type="search" name="buscar" placeholder="Buscar por nombre, apellidos, teléfono o correo..." th:value="${buscar}" />
             </label>
 
