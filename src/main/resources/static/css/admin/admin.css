@@ -958,3 +958,38 @@ html {
   color: #ffc16e;
   user-select: all;
 }
+
+/* ==========================================
+   GESTIÓN DE MEMBRESÍAS
+========================================== */
+
+.adm-badge.red {
+  background: #3b2023;
+  color: #ffaaa8;
+  border-color: #85464b;
+}
+
+.adm-membership-actions {
+  min-width: 175px;
+  vertical-align: middle;
+}
+
+.adm-membership-actions > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 165px;
+}
+
+.adm-membership-actions .adm-btn {
+  width: 100%;
+  margin: 0;
+  padding: 9px 8px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.adm-membership-actions .adm-muted {
+  margin: 0;
+  font-size: 11px;
+}

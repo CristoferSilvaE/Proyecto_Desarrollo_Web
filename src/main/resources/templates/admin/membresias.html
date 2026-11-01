@@ -3,151 +3,415 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PowerFit | GESTIÓN DE CLIENTES Y MEMBRESÍAS</title>
+    <title>PowerFit | Gestión de Membresías</title>
     <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
   </head>
+
   <body class="adm-body">
     <div class="adm-shell">
       <div th:replace="~{admin/fragments/sidebar :: sidebar('membresias')}"></div>
+
       <div class="adm-workspace">
-        <div th:replace="~{admin/fragments/topbar :: topbar('USUARIOS & MEMBRESÍAS', 'GESTIÓN DE CLIENTES Y MEMBRESÍAS', 'Solicitudes, aprobaciones y vigencias')}"></div>
+        <div th:replace="~{admin/fragments/topbar :: topbar('MEMBRESÍAS', 'GESTIÓN DE MEMBRESÍAS', 'Solicitudes, pagos y vigencias')}"></div>
+
         <main class="adm-main">
-          <div class="adm-demo-banner">
-            <strong>Vista preliminar:</strong>
-            datos ilustrativos. Los formularios aún no guardan información en MySQL.
-          </div>
+          <!-- PESTAÑAS -->
           <div th:replace="~{admin/fragments/clientes-tabs :: tabs('membresias')}"></div>
-          <div class="adm-stats">
+
+          <!-- MENSAJES -->
+          <div class="adm-alert" th:if="${mensaje != null}">
+            <strong th:text="${mensaje}"></strong>
+          </div>
+
+          <div class="adm-alert" th:if="${error != null}">
+            <strong th:text="${error}"></strong>
+          </div>
+
+          <!-- ESTADÍSTICAS -->
+          <section class="adm-stats">
             <article class="adm-stat">
-              <div class="adm-stat-label">TOTAL CLIENTES</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
+              <div class="adm-stat-label">TOTAL MEMBRESÍAS</div>
+              <strong th:text="${totalMembresias}">0</strong>
+              <small>Solicitudes registradas</small>
             </article>
+
+            <article class="adm-stat adm-stat-warn">
+              <div class="adm-stat-label">SOLICITUDES PENDIENTES</div>
+              <strong th:text="${membresiasPendientes}">0</strong>
+              <small>Esperando confirmación</small>
+            </article>
+
             <article class="adm-stat">
               <div class="adm-stat-label">MEMBRESÍAS ACTIVAS</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
+              <strong th:text="${membresiasActivas}">0</strong>
+              <small>Clientes con acceso</small>
             </article>
+
             <article class="adm-stat adm-stat-warn">
-              <div class="adm-stat-label">VENCIMIENTOS PRÓXIMOS</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
+              <div class="adm-stat-label">PRÓXIMAS A VENCER</div>
+              <strong th:text="${membresiasPorVencer}">0</strong>
+              <small>Vencen en los próximos 7 días</small>
             </article>
-            <article class="adm-stat">
-              <div class="adm-stat-label">NUEVOS ESTE MES</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
-            </article>
-          </div>
-          <div class="adm-toolbar">
+          </section>
+
+          <!-- BÚSQUEDA Y FILTROS -->
+          <form class="adm-toolbar" method="get" th:action="@{/admin/membresias}">
             <label class="adm-search">
               ⌕
-              <input type="search" placeholder="Buscar por cliente, plan o estado..." data-table-search="membresiasTabla" />
+              <input type="search" name="buscar" placeholder="Buscar por cliente, DNI, correo o plan..." th:value="${buscar}" />
             </label>
-            <select aria-label="Plan">
-              <option>Todos los planes</option>
-              <option>Básico</option>
-              <option>Premium</option>
-              <option>Elite</option>
+
+            <select name="estado" aria-label="Filtrar por estado">
+              <option value="TODOS" th:selected="${estadoFiltro == 'TODOS'}">Todos los estados</option>
+
+              <option value="PENDIENTE" th:selected="${estadoFiltro == 'PENDIENTE'}">PENDIENTE</option>
+
+              <option value="ACTIVA" th:selected="${estadoFiltro == 'ACTIVA'}">ACTIVA</option>
+
+              <option value="VENCIDA" th:selected="${estadoFiltro == 'VENCIDA'}">VENCIDA</option>
+
+              <option value="RECHAZADA" th:selected="${estadoFiltro == 'RECHAZADA'}">RECHAZADA</option>
+
+              <option value="CANCELADA" th:selected="${estadoFiltro == 'CANCELADA'}">CANCELADA</option>
             </select>
-            <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevaMembresia">＋ NUEVA MEMBRESÍA</button>
-          </div>
+
+            <button type="submit" class="adm-btn adm-btn-primary">BUSCAR</button>
+
+            <a th:href="@{/admin/membresias}" class="adm-btn adm-btn-ghost">LIMPIAR</a>
+
+            <button type="button" class="adm-btn adm-btn-primary" data-open-modal="modalNuevaMembresia">+ NUEVA SOLICITUD</button>
+          </form>
+
+          <!-- DIRECTORIO DE MEMBRESÍAS -->
           <section class="adm-panel">
-            <div class="adm-panel-head"><h2>SOLICITUDES Y MEMBRESÍAS</h2></div>
-            <div id="membresiasTabla">
-              <div class="adm-table-scroll">
-                <table class="adm-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">CLIENTE</th>
-                      <th scope="col">PLAN</th>
-                      <th scope="col">PRECIO</th>
-                      <th scope="col">FECHA DE INICIO</th>
-                      <th scope="col">ESTADO</th>
-                      <th scope="col">ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <strong>Cliente de ejemplo</strong>
-                        <small>demo@powerfit.pe</small>
-                      </td>
-                      <td>Premium</td>
-                      <td>S/ 89.00</td>
-                      <td>—</td>
-                      <td><span class="adm-badge orange">PENDIENTE</span></td>
-                      <td><button class="adm-text-btn" data-toast="Aprobar/rechazar se implementará con validación en backend">Aprobar / Rechazar</button></td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Segundo cliente</strong>
-                        <small>ejemplo2@powerfit.pe</small>
-                      </td>
-                      <td>Elite</td>
-                      <td>S/ 129.00</td>
-                      <td>—</td>
-                      <td><span class="adm-badge green">ACTIVA</span></td>
-                      <td><button class="adm-text-btn" data-toast="La edición de membresías se conectará después">Ver</button></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            <div class="adm-panel-head">
+              <h2>SOLICITUDES Y MEMBRESÍAS</h2>
+
+              <span class="adm-badge" th:text="${#lists.size(membresias)} + ' REGISTROS'">0 REGISTROS</span>
             </div>
-            <div class="adm-table-foot">Registros de ejemplo • Los botones no modifican la base de datos</div>
+
+            <div class="adm-table-scroll">
+              <table class="adm-table">
+                <thead>
+                  <tr>
+                    <th>CLIENTE</th>
+                    <th>PLAN</th>
+                    <th>MONTO</th>
+                    <th>SOLICITUD</th>
+                    <th>VIGENCIA</th>
+                    <th>ESTADO</th>
+                    <th>PAGO</th>
+                    <th>ACCIONES</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr th:each="fila : ${membresias}">
+                    <!-- CLIENTE -->
+                    <td>
+                      <strong th:text="${fila.nombreCliente}">Nombre del cliente</strong>
+
+                      <small th:text="|DNI: ${fila.dniCliente}|">DNI</small>
+
+                      <small th:text="${fila.correoCliente}">correo@correo.com</small>
+                    </td>
+
+                    <!-- PLAN -->
+                    <td>
+                      <strong th:text="${fila.membresia.plan.nombre}">Plan</strong>
+
+                      <small th:text="|${fila.membresia.duracionMeses} mes(es)|">Duración</small>
+
+                      <small th:text="${fila.membresia.horarioPreferido}">Horario</small>
+                    </td>
+
+                    <!-- MONTO -->
+                    <td>
+                      <strong th:text="|S/ ${fila.montoTotal}|">S/ 0.00</strong>
+                    </td>
+
+                    <!-- SOLICITUD -->
+                    <td>
+                      <span th:text="${fila.membresia.fechaSolicitud}">Fecha solicitud</span>
+
+                      <small
+                        th:text="${fila.membresia.fechaInicioDeseada != null
+                                    ? 'Inicio solicitado: ' + fila.membresia.fechaInicioDeseada
+                                    : 'Sin fecha solicitada'}"></small>
+                    </td>
+
+                    <!-- VIGENCIA -->
+                    <td>
+                      <strong
+                        th:text="${fila.membresia.fechaInicio != null
+                                    ? fila.membresia.fechaInicio : '—'}">
+                        Inicio
+                      </strong>
+
+                      <small
+                        th:text="${fila.membresia.fechaFin != null
+                                    ? 'Hasta: ' + fila.membresia.fechaFin
+                                    : 'Sin activar'}"></small>
+                    </td>
+
+                    <!-- ESTADO -->
+                    <td>
+                      <span
+                        class="adm-badge"
+                        th:classappend="${fila.membresia.estado == 'ACTIVA'
+                                        ? ' green'
+                                        : (fila.membresia.estado == 'PENDIENTE'
+                                            ? ' orange' : ' red')}"
+                        th:text="${fila.membresia.estado}">
+                        PENDIENTE
+                      </span>
+                    </td>
+
+                    <!-- PAGO -->
+                    <td>
+                      <span
+                        class="adm-badge"
+                        th:classappend="${fila.estadoPago == 'PAGADO'
+                                        ? ' green' : ' orange'}"
+                        th:text="${fila.estadoPago}">
+                        SIN PAGO
+                      </span>
+
+                      <small th:text="${fila.metodoPago}">Método de pago</small>
+                    </td>
+
+                    <!-- ACCIONES -->
+                    <td class="adm-membership-actions">
+                      <div th:if="${fila.membresia.estado == 'PENDIENTE'}">
+                        <button type="button" class="adm-btn adm-btn-success" th:attr="data-open-modal=|modalActivar-${fila.membresia.idMembresia}|">CONFIRMAR PAGO</button>
+
+                        <button type="button" class="adm-btn adm-btn-danger" th:attr="data-open-modal=|modalRechazar-${fila.membresia.idMembresia}|">RECHAZAR</button>
+                      </div>
+
+                      <span th:unless="${fila.membresia.estado == 'PENDIENTE'}" class="adm-muted">Sin acciones</span>
+                    </td>
+                  </tr>
+
+                  <tr th:if="${#lists.isEmpty(membresias)}">
+                    <td colspan="8" style="text-align: center; padding: 35px">No se encontraron solicitudes o membresías.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="adm-table-foot">Información obtenida directamente de la base de datos PowerFit.</div>
           </section>
         </main>
       </div>
     </div>
-    <dialog class="adm-modal" id="modalNuevaMembresia">
-      <form class="adm-modal-form" data-demo-form>
+
+    <!-- ==========================================
+     MODAL: NUEVA SOLICITUD
+========================================== -->
+
+    <dialog class="adm-modal adm-modal-wide" id="modalNuevaMembresia">
+      <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/solicitar}">
         <div class="adm-modal-head">
           <div>
             <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
-            <h2>NUEVA MEMBRESÍA</h2>
-            <p>Asignación de plan y vigencia.</p>
+            <h2>NUEVA SOLICITUD</h2>
+            <p>Registrar una solicitud de membresía para un cliente.</p>
           </div>
-          <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+
+          <button type="button" class="adm-close" data-close-modal>×</button>
         </div>
+
         <div class="adm-modal-body">
           <div class="adm-form-grid">
-            <label>
+            <label class="adm-full">
               CLIENTE *
-              <select>
-                <option>Seleccionar cliente (MySQL próximamente)</option>
+
+              <select name="idCliente" required>
+                <option value="">Seleccionar cliente</option>
+
+                <option th:each="cliente : ${clientes}" th:value="${cliente.idCliente}" th:text="|${cliente.nombres} ${cliente.apellidos} · DNI ${cliente.dni}|"></option>
               </select>
             </label>
-            <label>
+
+            <label class="adm-full">
               PLAN *
-              <select>
-                <option>Seleccionar plan (MySQL próximamente)</option>
+
+              <select name="idPlan" required>
+                <option value="">Seleccionar plan</option>
+
+                <option th:each="plan : ${planes}" th:value="${plan.idPlan}" th:text="|${plan.nombre} · S/ ${plan.precio}|"></option>
               </select>
             </label>
+
             <label>
-              FECHA DE INICIO *
-              <input type="date" />
-            </label>
-            <label>
-              DURACIÓN (MESES)
-              <select>
-                <option>1</option>
-                <option>3</option>
-                <option>6</option>
+              DURACIÓN *
+
+              <select name="duracionMeses" required>
+                <option value="1">1 MES</option>
+                <option value="3">3 MESES</option>
+                <option value="6">6 MESES</option>
               </select>
             </label>
+
+            <label>
+              HORARIO PREFERIDO *
+
+              <select name="horarioPreferido" required>
+                <option value="">Seleccionar</option>
+                <option value="Mañana">MAÑANA</option>
+                <option value="Tarde">TARDE</option>
+                <option value="Noche">NOCHE</option>
+              </select>
+            </label>
+
+            <label>
+              FECHA DE INICIO DESEADA *
+
+              <input type="date" name="fechaInicioDeseada" th:value="${fechaHoy}" th:attr="min=${fechaHoy}" required />
+            </label>
+
+            <label>
+              MÉTODO DE PAGO PREFERIDO *
+
+              <select name="metodoPagoPreferido" required>
+                <option value="">Seleccionar</option>
+                <option value="Efectivo">EFECTIVO</option>
+                <option value="Tarjeta">TARJETA</option>
+                <option value="Yape/Plin">YAPE / PLIN</option>
+              </select>
+            </label>
+
             <label class="adm-full">
               OBSERVACIONES
-              <textarea rows="3" placeholder="Notas de la solicitud"></textarea>
+
+              <textarea name="observacion" maxlength="255" rows="3" placeholder="Información adicional de la solicitud..."></textarea>
             </label>
           </div>
+
+          <p class="adm-note">La solicitud quedará pendiente hasta que el administrador verifique el pago correspondiente.</p>
         </div>
+
         <div class="adm-modal-footer">
-          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>Cancelar</button>
-          <button type="submit" class="adm-btn adm-btn-primary">CREAR MEMBRESÍA</button>
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+          <button type="submit" class="adm-btn adm-btn-primary">REGISTRAR SOLICITUD</button>
         </div>
       </form>
     </dialog>
+
+    <!-- ==========================================
+     MODALES: CONFIRMAR PAGO
+========================================== -->
+
+    <div th:each="fila : ${membresias}" th:if="${fila.membresia.estado == 'PENDIENTE'}">
+      <dialog class="adm-modal" th:id="|modalActivar-${fila.membresia.idMembresia}|">
+        <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/{id}/activar(id=${fila.membresia.idMembresia})}">
+          <div class="adm-modal-head">
+            <div>
+              <span class="adm-kicker">POWERFIT / PAGOS</span>
+              <h2>CONFIRMAR PAGO Y ACTIVAR</h2>
+              <p>Verifica el pago antes de activar la membresía.</p>
+            </div>
+
+            <button type="button" class="adm-close" data-close-modal>×</button>
+          </div>
+
+          <div class="adm-modal-body">
+            <p>
+              Cliente:
+              <strong th:text="${fila.nombreCliente}"></strong>
+            </p>
+
+            <p>
+              Plan:
+              <strong th:text="${fila.membresia.plan.nombre}"></strong>
+            </p>
+
+            <p>
+              Monto total:
+              <strong th:text="|S/ ${fila.montoTotal}|"></strong>
+            </p>
+
+            <div class="adm-form-grid">
+              <label class="adm-full">
+                FECHA DE INICIO *
+
+                <input
+                  type="date"
+                  name="fechaInicio"
+                  th:value="${fila.membresia.fechaInicioDeseada != null
+                                ? fila.membresia.fechaInicioDeseada : fechaHoy}"
+                  th:attr="min=${fechaHoy}"
+                  required />
+              </label>
+
+              <label class="adm-full">
+                MÉTODO DE PAGO CONFIRMADO *
+
+                <select name="metodoPago" required>
+                  <option value="Efectivo" th:selected="${fila.membresia.metodoPagoPreferido == 'Efectivo'}">EFECTIVO</option>
+
+                  <option value="Tarjeta" th:selected="${fila.membresia.metodoPagoPreferido == 'Tarjeta'}">TARJETA</option>
+
+                  <option value="Yape/Plin" th:selected="${fila.membresia.metodoPagoPreferido == 'Yape/Plin'}">YAPE / PLIN</option>
+                </select>
+              </label>
+            </div>
+
+            <p class="adm-note">Esta operación registrará el pago y activará la membresía. Confirma únicamente si has verificado el pago real.</p>
+          </div>
+
+          <div class="adm-modal-footer">
+            <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+            <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR Y ACTIVAR</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- ======================================
+         MODAL: RECHAZAR SOLICITUD
+    ====================================== -->
+
+      <dialog class="adm-modal" th:id="|modalRechazar-${fila.membresia.idMembresia}|">
+        <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/{id}/rechazar(id=${fila.membresia.idMembresia})}">
+          <div class="adm-modal-head">
+            <div>
+              <span class="adm-kicker">POWERFIT / SOLICITUDES</span>
+              <h2>RECHAZAR SOLICITUD</h2>
+              <p>Confirmación de rechazo de membresía.</p>
+            </div>
+
+            <button type="button" class="adm-close" data-close-modal>×</button>
+          </div>
+
+          <div class="adm-modal-body">
+            <p>
+              ¿Estás seguro de rechazar la solicitud de
+              <strong th:text="${fila.nombreCliente}"></strong>
+              ?
+            </p>
+
+            <label class="adm-form-label">
+              MOTIVO DEL RECHAZO
+
+              <textarea name="motivo" maxlength="180" rows="3" placeholder="Escribe el motivo (opcional)..."></textarea>
+            </label>
+
+            <p class="adm-note">La solicitud cambiará a RECHAZADA. Su información permanecerá guardada en el historial.</p>
+          </div>
+
+          <div class="adm-modal-footer">
+            <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+            <button type="submit" class="adm-btn adm-btn-danger">CONFIRMAR RECHAZO</button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+
     <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+
     <script th:src="@{/js/admin/admin.js}"></script>
   </body>
 </html>

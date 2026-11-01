@@ -35,11 +35,6 @@ public class AdminController {
     return "admin/dashboard";
   }
 
-  @GetMapping("/membresias")
-  public String membresias() {
-    return "admin/membresias";
-  }
-
   @GetMapping("/clases")
   public String clases(Model model) {
 
