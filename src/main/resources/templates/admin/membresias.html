@@ -229,10 +229,19 @@
                         </button>
                       </div>
 
+                      <!-- MEMBRESÍA ACTIVA -->
+                      <div th:if="${fila.membresia.estado == 'ACTIVA'}">
+                        <button type="button" class="adm-btn adm-btn-danger" th:attr="data-open-modal=|modalCancelar-${fila.membresia.idMembresia}|">
+                          <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+                          CANCELAR MEMBRESÍA
+                        </button>
+                      </div>
+
                       <!-- RESTO DE ESTADOS -->
                       <span
                         th:if="${fila.membresia.estado != 'PENDIENTE'
-                                and fila.membresia.estado != 'PENDIENTE_PAGO'}"
+                              and fila.membresia.estado != 'PENDIENTE_PAGO'
+                              and fila.membresia.estado != 'ACTIVA'}"
                         class="adm-muted">
                         Sin acciones
                       </span>
@@ -515,6 +524,47 @@
             <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
 
             <button type="submit" class="adm-btn adm-btn-danger">CONFIRMAR RECHAZO</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- ======================================
+     MODAL: CANCELAR MEMBRESÍA ACTIVA
+====================================== -->
+
+      <dialog class="adm-modal" th:if="${fila.membresia.estado == 'ACTIVA'}" th:id="|modalCancelar-${fila.membresia.idMembresia}|">
+        <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/{id}/cancelar(id=${fila.membresia.idMembresia})}">
+          <div class="adm-modal-head">
+            <div>
+              <span class="adm-kicker">POWERFIT / MEMBRESÍAS</span>
+              <h2>CANCELAR MEMBRESÍA</h2>
+              <p>Confirmación de cancelación.</p>
+            </div>
+
+            <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">
+              <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+            </button>
+          </div>
+
+          <div class="adm-modal-body">
+            <p>
+              ¿Estás seguro de cancelar la membresía de
+              <strong th:text="${fila.nombreCliente}"></strong>
+              ?
+            </p>
+
+            <p>
+              Plan:
+              <strong th:text="${fila.membresia.plan.nombre}"></strong>
+            </p>
+
+            <p class="adm-note">La membresía cambiará a CANCELADA. El registro del pago y el historial del cliente se conservarán.</p>
+          </div>
+
+          <div class="adm-modal-footer">
+            <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>VOLVER</button>
+
+            <button type="submit" class="adm-btn adm-btn-danger">CONFIRMAR CANCELACIÓN</button>
           </div>
         </form>
       </dialog>

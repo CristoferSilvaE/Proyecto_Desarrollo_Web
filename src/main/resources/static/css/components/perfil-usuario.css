@@ -206,3 +206,36 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================
+   DESCARGA DE COMPROBANTES
+========================================== */
+
+.payment-receipt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 1px solid rgba(99, 132, 255, 0.4);
+  border-radius: 6px;
+  background: rgba(99, 132, 255, 0.12);
+  color: #a5b4fc;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.payment-receipt-btn:hover {
+  background: rgba(99, 132, 255, 0.25);
+  border-color: #819aff;
+  color: #ffffff;
+}
+
+.payment-receipt-btn span {
+  font-size: 15px;
+  font-weight: 900;
+}

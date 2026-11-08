@@ -345,6 +345,8 @@
                     <th class="data-table-head-cell">Monto</th>
 
                     <th class="data-table-head-cell">Estado</th>
+
+                    <th class="data-table-head-cell">Comprobante</th>
                   </tr>
                 </thead>
 
@@ -358,6 +360,19 @@
 
                     <td class="data-table-cell">
                       <span th:text="${pago.estado}" th:classappend="${pago.estado == 'PAGADO' ? ' text-emerald-300' : ' text-amber-300'}">Estado</span>
+                    </td>
+
+                    <td class="data-table-cell">
+                      <span th:text="${pago.estado}" th:classappend="${pago.estado == 'PAGADO' ? ' text-emerald-300' : ' text-amber-300'}">Estado</span>
+                    </td>
+
+                    <td class="data-table-cell">
+                      <a th:if="${pago.estado == 'PAGADO'}" th:href="@{/perfil/pagos/{idPago}/comprobante(idPago=${pago.idPago})}" class="payment-receipt-btn">
+                        <span>↓</span>
+                        DESCARGAR PDF
+                      </a>
+
+                      <span th:unless="${pago.estado == 'PAGADO'}" class="text-gray-500">No disponible</span>
                     </td>
                   </tr>
                 </tbody>

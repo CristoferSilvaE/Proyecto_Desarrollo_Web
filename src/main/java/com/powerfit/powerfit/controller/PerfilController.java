@@ -11,6 +11,7 @@ import com.powerfit.powerfit.repository.PagoMembresiaRepository;
 import com.powerfit.powerfit.repository.ReservaRepository;
 import com.powerfit.powerfit.repository.SeguimientoFisicoRepository;
 import com.powerfit.powerfit.repository.UsuarioRepository;
+import com.powerfit.powerfit.service.ComprobanteMembresiaPdfService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
@@ -24,6 +25,10 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +46,7 @@ public class PerfilController {
   private final UsuarioRepository usuarioRepository;
   private final MembresiaRepository membresiaRepository;
   private final PagoMembresiaRepository pagoMembresiaRepository;
+  private final ComprobanteMembresiaPdfService comprobanteMembresiaPdfService;
   private final ReservaRepository reservaRepository;
   private final SeguimientoFisicoRepository seguimientoFisicoRepository;
 
@@ -49,6 +55,7 @@ public class PerfilController {
       UsuarioRepository usuarioRepository,
       MembresiaRepository membresiaRepository,
       PagoMembresiaRepository pagoMembresiaRepository,
+      ComprobanteMembresiaPdfService comprobanteMembresiaPdfService,
       ReservaRepository reservaRepository,
       SeguimientoFisicoRepository seguimientoFisicoRepository) {
 
@@ -56,6 +63,7 @@ public class PerfilController {
     this.usuarioRepository = usuarioRepository;
     this.membresiaRepository = membresiaRepository;
     this.pagoMembresiaRepository = pagoMembresiaRepository;
+    this.comprobanteMembresiaPdfService = comprobanteMembresiaPdfService;
     this.reservaRepository = reservaRepository;
     this.seguimientoFisicoRepository = seguimientoFisicoRepository;
   }
@@ -111,6 +119,45 @@ public class PerfilController {
         pagoMembresiaRepository.findByMembresia_Cliente_IdClienteOrderByFechaPagoDesc(idCliente));
 
     return "perfil/perfilUsuario";
+  }
+
+  // ==========================================
+  // DESCARGAR COMPROBANTE DE MEMBRESÍA
+  // ==========================================
+
+  @GetMapping("/perfil/pagos/{idPago}/comprobante")
+  public ResponseEntity<byte[]> descargarComprobante(
+      @PathVariable Long idPago, HttpSession session) {
+
+    Long idCliente = (Long) session.getAttribute("idCliente");
+
+    if (idCliente == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    try {
+
+      byte[] pdf = comprobanteMembresiaPdfService.generarComprobante(idPago, idCliente);
+
+      return ResponseEntity.ok()
+          .contentType(MediaType.APPLICATION_PDF)
+          .header(
+              HttpHeaders.CONTENT_DISPOSITION,
+              "attachment; filename=\"comprobante-powerfit-" + idPago + ".pdf\"")
+          .body(pdf);
+
+    } catch (SecurityException e) {
+
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    } catch (IllegalArgumentException e) {
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    } catch (IllegalStateException e) {
+
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
   }
 
   @PostMapping("/perfil/actualizar")

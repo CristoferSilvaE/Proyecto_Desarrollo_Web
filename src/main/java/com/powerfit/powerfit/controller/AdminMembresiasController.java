@@ -308,6 +308,28 @@ public class AdminMembresiasController {
   }
 
   // ==========================================
+  // CANCELAR MEMBRESÍA ACTIVA
+  // ==========================================
+
+  @PostMapping("/{id}/cancelar")
+  public String cancelar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+
+    try {
+
+      membresiaPagoService.cancelarMembresia(id);
+
+      redirectAttributes.addFlashAttribute(
+          "mensaje", "Membresía cancelada correctamente. El historial de pagos se conservó.");
+
+    } catch (IllegalArgumentException e) {
+
+      redirectAttributes.addFlashAttribute("error", e.getMessage());
+    }
+
+    return "redirect:/admin/membresias";
+  }
+
+  // ==========================================
   // RECHAZAR SOLICITUD
   // ==========================================
 

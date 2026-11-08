@@ -177,6 +177,23 @@ public class MembresiaPagoService {
   }
 
   // ==========================================
+  // CANCELAR MEMBRESÍA ACTIVA
+  // ==========================================
+
+  @Transactional
+  public void cancelarMembresia(Long idMembresia) {
+
+    Membresia membresia = obtenerMembresia(idMembresia);
+
+    validarEstado(membresia, "ACTIVA");
+
+    // Conservar el registro del pago y su historial
+    membresia.setEstado("CANCELADA");
+
+    membresiaRepository.save(membresia);
+  }
+
+  // ==========================================
   // VALIDACIONES
   // ==========================================
 
