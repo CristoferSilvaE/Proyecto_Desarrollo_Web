@@ -67,6 +67,8 @@
 
               <option value="PENDIENTE" th:selected="${estadoFiltro == 'PENDIENTE'}">PENDIENTE</option>
 
+              <option value="PENDIENTE_PAGO" th:selected="${estadoFiltro == 'PENDIENTE_PAGO'}">PENDIENTE DE PAGO</option>
+
               <option value="ACTIVA" th:selected="${estadoFiltro == 'ACTIVA'}">ACTIVA</option>
 
               <option value="VENCIDA" th:selected="${estadoFiltro == 'VENCIDA'}">VENCIDA</option>
@@ -167,6 +169,7 @@
                         th:classappend="${fila.membresia.estado == 'ACTIVA'
                                         ? ' green'
                                         : (fila.membresia.estado == 'PENDIENTE'
+                                            or fila.membresia.estado == 'PENDIENTE_PAGO'
                                             ? ' orange' : ' red')}"
                         th:text="${fila.membresia.estado}">
                         PENDIENTE
@@ -186,12 +189,28 @@
                       <small th:text="${fila.metodoPago}">Método de pago</small>
                     </td>
 
-                    <!-- ACCIONES -->
                     <td class="adm-membership-actions">
+                      <!-- SOLICITUD PENDIENTE -->
                       <div th:if="${fila.membresia.estado == 'PENDIENTE'}">
-                        <button type="button" class="adm-btn adm-btn-success" th:attr="data-open-modal=|modalActivar-${fila.membresia.idMembresia}|">
+                        <!-- PAGO EN EFECTIVO -->
+                        <button
+                          type="button"
+                          class="adm-btn adm-btn-success"
+                          th:if="${fila.membresia.metodoPagoPreferido == 'Efectivo'}"
+                          th:attr="data-open-modal=|modalEfectivo-${fila.membresia.idMembresia}|">
                           <svg th:replace="~{admin/fragments/icons :: icon('check')}"></svg>
-                          CONFIRMAR PAGO
+                          REGISTRAR PAGO
+                        </button>
+
+                        <!-- PAGO DIGITAL -->
+                        <button
+                          type="button"
+                          class="adm-btn adm-btn-success"
+                          th:if="${fila.membresia.metodoPagoPreferido == 'Tarjeta'
+                                  or fila.membresia.metodoPagoPreferido == 'Yape/Plin'}"
+                          th:attr="data-open-modal=|modalAprobarDigital-${fila.membresia.idMembresia}|">
+                          <svg th:replace="~{admin/fragments/icons :: icon('check')}"></svg>
+                          APROBAR SOLICITUD
                         </button>
 
                         <button type="button" class="adm-btn adm-btn-danger" th:attr="data-open-modal=|modalRechazar-${fila.membresia.idMembresia}|">
@@ -200,7 +219,23 @@
                         </button>
                       </div>
 
-                      <span th:unless="${fila.membresia.estado == 'PENDIENTE'}" class="adm-muted">Sin acciones</span>
+                      <!-- ESPERANDO PAGO DIGITAL -->
+                      <div th:if="${fila.membresia.estado == 'PENDIENTE_PAGO'}">
+                        <span class="adm-muted">Esperando pago del cliente</span>
+
+                        <button type="button" class="adm-btn adm-btn-danger" th:attr="data-open-modal=|modalRechazar-${fila.membresia.idMembresia}|">
+                          <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+                          RECHAZAR
+                        </button>
+                      </div>
+
+                      <!-- RESTO DE ESTADOS -->
+                      <span
+                        th:if="${fila.membresia.estado != 'PENDIENTE'
+                                and fila.membresia.estado != 'PENDIENTE_PAGO'}"
+                        class="adm-muted">
+                        Sin acciones
+                      </span>
                     </td>
                   </tr>
 
@@ -314,17 +349,25 @@
     </dialog>
 
     <!-- ==========================================
-     MODALES: CONFIRMAR PAGO
+     MODALES DE GESTIÓN DE MEMBRESÍAS
 ========================================== -->
 
-    <div th:each="fila : ${membresias}" th:if="${fila.membresia.estado == 'PENDIENTE'}">
-      <dialog class="adm-modal" th:id="|modalActivar-${fila.membresia.idMembresia}|">
-        <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/{id}/activar(id=${fila.membresia.idMembresia})}">
+    <div th:each="fila : ${membresias}">
+      <!-- ======================================
+       MODAL: REGISTRAR PAGO PRESENCIAL
+  ====================================== -->
+
+      <dialog
+        class="adm-modal"
+        th:if="${fila.membresia.estado == 'PENDIENTE'
+            and fila.membresia.metodoPagoPreferido == 'Efectivo'}"
+        th:id="|modalEfectivo-${fila.membresia.idMembresia}|">
+        <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/{id}/pago-efectivo(id=${fila.membresia.idMembresia})}">
           <div class="adm-modal-head">
             <div>
               <span class="adm-kicker">POWERFIT / PAGOS</span>
-              <h2>CONFIRMAR PAGO Y ACTIVAR</h2>
-              <p>Verifica el pago antes de activar la membresía.</p>
+              <h2>REGISTRAR PAGO PRESENCIAL</h2>
+              <p>Confirmar el pago realizado por el cliente en sede.</p>
             </div>
 
             <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">
@@ -344,7 +387,7 @@
             </p>
 
             <p>
-              Monto total:
+              Total:
               <strong th:text="|S/ ${fila.montoTotal}|"></strong>
             </p>
 
@@ -356,40 +399,87 @@
                   type="date"
                   name="fechaInicio"
                   th:value="${fila.membresia.fechaInicioDeseada != null
-                                ? fila.membresia.fechaInicioDeseada : fechaHoy}"
+                          ? fila.membresia.fechaInicioDeseada : fechaHoy}"
                   th:attr="min=${fechaHoy}"
                   required />
               </label>
-
-              <label class="adm-full">
-                MÉTODO DE PAGO CONFIRMADO *
-
-                <select name="metodoPago" required>
-                  <option value="Efectivo" th:selected="${fila.membresia.metodoPagoPreferido == 'Efectivo'}">EFECTIVO</option>
-
-                  <option value="Tarjeta" th:selected="${fila.membresia.metodoPagoPreferido == 'Tarjeta'}">TARJETA</option>
-
-                  <option value="Yape/Plin" th:selected="${fila.membresia.metodoPagoPreferido == 'Yape/Plin'}">YAPE / PLIN</option>
-                </select>
-              </label>
             </div>
 
-            <p class="adm-note">Esta operación registrará el pago y activará la membresía. Confirma únicamente si has verificado el pago real.</p>
+            <p class="adm-note">Confirma únicamente después de recibir el pago presencial. Esta operación registrará el pago y activará la membresía.</p>
           </div>
 
           <div class="adm-modal-footer">
             <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
 
-            <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR Y ACTIVAR</button>
+            <button type="submit" class="adm-btn adm-btn-success">REGISTRAR Y ACTIVAR</button>
           </div>
         </form>
       </dialog>
 
       <!-- ======================================
-         MODAL: RECHAZAR SOLICITUD
-    ====================================== -->
+       MODAL: APROBAR PAGO DIGITAL
+  ====================================== -->
 
-      <dialog class="adm-modal" th:id="|modalRechazar-${fila.membresia.idMembresia}|">
+      <dialog
+        class="adm-modal"
+        th:if="${fila.membresia.estado == 'PENDIENTE'
+            and (fila.membresia.metodoPagoPreferido == 'Tarjeta'
+                 or fila.membresia.metodoPagoPreferido == 'Yape/Plin')}"
+        th:id="|modalAprobarDigital-${fila.membresia.idMembresia}|">
+        <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/{id}/aprobar-pago-digital(id=${fila.membresia.idMembresia})}">
+          <div class="adm-modal-head">
+            <div>
+              <span class="adm-kicker">POWERFIT / SOLICITUDES</span>
+              <h2>APROBAR SOLICITUD</h2>
+              <p>Habilitar el pago digital para el cliente.</p>
+            </div>
+
+            <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">
+              <svg th:replace="~{admin/fragments/icons :: icon('close')}"></svg>
+            </button>
+          </div>
+
+          <div class="adm-modal-body">
+            <p>
+              Cliente:
+              <strong th:text="${fila.nombreCliente}"></strong>
+            </p>
+
+            <p>
+              Plan:
+              <strong th:text="${fila.membresia.plan.nombre}"></strong>
+            </p>
+
+            <p>
+              Total:
+              <strong th:text="|S/ ${fila.montoTotal}|"></strong>
+            </p>
+
+            <p>
+              Método seleccionado:
+              <strong th:text="${fila.metodoPago}"></strong>
+            </p>
+
+            <p class="adm-note">Al aprobar la solicitud, el cliente recibirá la opción de realizar su pago digital desde su cuenta. La membresía todavía no será activada.</p>
+          </div>
+
+          <div class="adm-modal-footer">
+            <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+            <button type="submit" class="adm-btn adm-btn-success">APROBAR SOLICITUD</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- ======================================
+       MODAL: RECHAZAR SOLICITUD
+  ====================================== -->
+
+      <dialog
+        class="adm-modal"
+        th:if="${fila.membresia.estado == 'PENDIENTE'
+            or fila.membresia.estado == 'PENDIENTE_PAGO'}"
+        th:id="|modalRechazar-${fila.membresia.idMembresia}|">
         <form class="adm-modal-form" method="post" th:action="@{/admin/membresias/{id}/rechazar(id=${fila.membresia.idMembresia})}">
           <div class="adm-modal-head">
             <div>

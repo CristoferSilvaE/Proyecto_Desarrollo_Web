@@ -86,6 +86,12 @@ public class PerfilController {
             .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(idCliente, "PENDIENTE")
             .orElse(null);
 
+    Membresia membresiaPendientePago =
+        membresiaRepository
+            .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(
+                idCliente, "PENDIENTE_PAGO")
+            .orElse(null);
+
     List<Reserva> proximasReservas =
         reservaRepository.findByCliente_IdClienteOrderByFechaReservaDesc(idCliente).stream()
             .filter(reserva -> "RESERVADA".equalsIgnoreCase(reserva.getEstado()))
@@ -98,6 +104,7 @@ public class PerfilController {
 
     model.addAttribute("membresiaActiva", membresiaActiva);
     model.addAttribute("membresiaPendiente", membresiaPendiente);
+    model.addAttribute("membresiaPendientePago", membresiaPendientePago);
     model.addAttribute("proximasReservas", proximasReservas);
     model.addAttribute(
         "pagos",

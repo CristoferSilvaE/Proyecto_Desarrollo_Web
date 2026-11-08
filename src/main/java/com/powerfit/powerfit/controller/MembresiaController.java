@@ -6,6 +6,7 @@ import com.powerfit.powerfit.model.PlanMembresia;
 import com.powerfit.powerfit.repository.ClienteRepository;
 import com.powerfit.powerfit.repository.MembresiaRepository;
 import com.powerfit.powerfit.repository.PlanMembresiaRepository;
+import com.powerfit.powerfit.service.MembresiaPagoService;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -23,15 +25,18 @@ public class MembresiaController {
   private final MembresiaRepository membresiaRepository;
   private final PlanMembresiaRepository planMembresiaRepository;
   private final ClienteRepository clienteRepository;
+  private final MembresiaPagoService membresiaPagoService;
 
   public MembresiaController(
       MembresiaRepository membresiaRepository,
       PlanMembresiaRepository planMembresiaRepository,
-      ClienteRepository clienteRepository) {
+      ClienteRepository clienteRepository,
+      MembresiaPagoService membresiaPagoService) {
 
     this.membresiaRepository = membresiaRepository;
     this.planMembresiaRepository = planMembresiaRepository;
     this.clienteRepository = clienteRepository;
+    this.membresiaPagoService = membresiaPagoService;
   }
 
   @GetMapping("/membresia")
@@ -60,6 +65,12 @@ public class MembresiaController {
             .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(idCliente, "PENDIENTE")
             .orElse(null);
 
+    Membresia pendientePago =
+        membresiaRepository
+            .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(
+                idCliente, "PENDIENTE_PAGO")
+            .orElse(null);
+
     Membresia activa =
         membresiaRepository
             .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(idCliente, "ACTIVA")
@@ -67,6 +78,7 @@ public class MembresiaController {
 
     model.addAttribute("historialMembresias", historial);
     model.addAttribute("membresiaPendiente", pendiente);
+    model.addAttribute("membresiaPendientePago", pendientePago);
     model.addAttribute("membresiaActiva", activa);
     model.addAttribute("planSeleccionado", plan);
 
@@ -105,12 +117,18 @@ public class MembresiaController {
             .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(idCliente, "PENDIENTE")
             .isPresent();
 
+    boolean tienePendientePago =
+        membresiaRepository
+            .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(
+                idCliente, "PENDIENTE_PAGO")
+            .isPresent();
+
     boolean tieneActiva =
         membresiaRepository
             .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(idCliente, "ACTIVA")
             .isPresent();
 
-    if (tienePendiente || tieneActiva) {
+    if (tienePendiente || tienePendientePago || tieneActiva) {
       redirectAttributes.addFlashAttribute(
           "error", "Ya tienes una membresía activa o una solicitud pendiente.");
 
@@ -146,6 +164,38 @@ public class MembresiaController {
 
     redirectAttributes.addFlashAttribute(
         "mensaje", "Solicitud de membresía registrada correctamente.");
+
+    return "redirect:/membresia";
+  }
+
+  // ==========================================
+  // SIMULAR PAGO DIGITAL DE MEMBRESÍA
+  // ==========================================
+
+  @PostMapping("/membresia/{idMembresia}/pagar")
+  public String pagar(
+      @PathVariable Long idMembresia,
+      @RequestParam String metodoPago,
+      HttpSession session,
+      RedirectAttributes redirectAttributes) {
+
+    Long idCliente = (Long) session.getAttribute("idCliente");
+
+    if (idCliente == null) {
+      return "redirect:/login";
+    }
+
+    try {
+
+      membresiaPagoService.simularPagoDigital(idMembresia, idCliente, metodoPago);
+
+      redirectAttributes.addFlashAttribute(
+          "mensaje", "Pago simulado correctamente. Tu membresía está activa.");
+
+    } catch (IllegalArgumentException e) {
+
+      redirectAttributes.addFlashAttribute("error", e.getMessage());
+    }
 
     return "redirect:/membresia";
   }

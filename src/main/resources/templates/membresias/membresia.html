@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
     <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/membresia-pago.css}" />
   </head>
 
   <body class="app-body">
@@ -294,10 +295,145 @@
       </section>
 
       <!-- =====================================================
+   MEMBRESÍA PENDIENTE DE PAGO
+====================================================== -->
+
+      <section th:if="${membresiaActiva == null and membresiaPendientePago != null}" class="membership-shell">
+        <div class="membership-top">
+          <div class="membership-name-row">
+            <h2 class="membership-name" th:text="${'Plan ' + membresiaPendientePago.plan.nombre}">Plan</h2>
+
+            <span class="pending-badge">● PENDIENTE DE PAGO</span>
+          </div>
+
+          <div class="membership-price-box">
+            <p class="membership-price-label">Importe total</p>
+
+            <p class="membership-price" th:text="${'S/ ' + #numbers.formatDecimal(membresiaPendientePago.plan.precio * membresiaPendientePago.duracionMeses, 1, 2)}">S/ 0.00</p>
+          </div>
+        </div>
+
+        <div class="membership-body">
+          <section class="pending-info">
+            <h3 class="membership-section-title">Solicitud aprobada</h3>
+
+            <p class="membership-subtitle">Tu solicitud fue aprobada por administración. Completa el pago para activar tu membresía.</p>
+
+            <div class="pending-grid">
+              <div>
+                <p class="membership-field-label">Plan</p>
+                <p class="membership-field-value" th:text="${membresiaPendientePago.plan.nombre}">Plan</p>
+              </div>
+
+              <div>
+                <p class="membership-field-label">Duración</p>
+                <p class="membership-field-value" th:text="${membresiaPendientePago.duracionMeses + ' meses'}">1 mes</p>
+              </div>
+
+              <div>
+                <p class="membership-field-label">Fecha de inicio solicitada</p>
+                <p class="membership-field-value" th:text="${#temporals.format(membresiaPendientePago.fechaInicioDeseada, 'dd/MM/yyyy')}">Fecha</p>
+              </div>
+
+              <div>
+                <p class="membership-field-label">Método seleccionado</p>
+                <p class="membership-field-value" th:text="${membresiaPendientePago.metodoPagoPreferido}">Tarjeta</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- RESUMEN DEL PAGO -->
+
+          <div class="section-card-soft">
+            <h3 class="membership-section-title">Resumen de pago</h3>
+
+            <div class="summary-row">
+              <span class="summary-label">Precio mensual</span>
+
+              <span class="summary-value" th:text="${'S/ ' + #numbers.formatDecimal(membresiaPendientePago.plan.precio, 1, 2)}">S/ 0.00</span>
+            </div>
+
+            <div class="summary-row">
+              <span class="summary-label">Duración</span>
+
+              <span class="summary-value" th:text="${membresiaPendientePago.duracionMeses + ' meses'}">1 mes</span>
+            </div>
+
+            <div class="summary-row">
+              <span class="summary-label">Total a pagar</span>
+
+              <span class="summary-value" th:text="${'S/ ' + #numbers.formatDecimal(membresiaPendientePago.plan.precio * membresiaPendientePago.duracionMeses, 1, 2)}">S/ 0.00</span>
+            </div>
+          </div>
+
+          <!-- BOTÓN DE PAGO -->
+
+          <button type="button" class="btn-primary-block" onclick="document.getElementById('modalPagoMembresia').showModal()">PAGAR AHORA</button>
+        </div>
+      </section>
+
+      <!-- ==========================================
+     MODAL DE PAGO SIMULADO
+========================================== -->
+
+      <dialog id="modalPagoMembresia" class="membership-payment-modal" th:if="${membresiaPendientePago != null}">
+        <form method="post" class="membership-payment-form" th:action="@{/membresia/{idMembresia}/pagar(idMembresia=${membresiaPendientePago.idMembresia})}">
+          <div class="membership-payment-header">
+            <div>
+              <span class="membership-payment-kicker">POWERFIT / CHECKOUT</span>
+
+              <h2>Finalizar pago</h2>
+
+              <p>Selecciona tu método de pago.</p>
+            </div>
+
+            <button type="button" class="membership-payment-close" onclick="document.getElementById('modalPagoMembresia').close()">✕</button>
+          </div>
+
+          <div class="membership-payment-total">
+            <span>Total a pagar</span>
+
+            <strong th:text="${'S/ ' + #numbers.formatDecimal(membresiaPendientePago.plan.precio * membresiaPendientePago.duracionMeses, 1, 2)}">S/ 0.00</strong>
+          </div>
+
+          <p class="membership-payment-label">MÉTODO DE PAGO</p>
+
+          <label class="membership-payment-option">
+            <input type="radio" name="metodoPago" value="TARJETA" required />
+
+            <span>Tarjeta de crédito o débito</span>
+          </label>
+
+          <label class="membership-payment-option">
+            <input type="radio" name="metodoPago" value="YAPE" />
+
+            <span>Yape</span>
+          </label>
+
+          <label class="membership-payment-option">
+            <input type="radio" name="metodoPago" value="PLIN" />
+
+            <span>Plin</span>
+          </label>
+
+          <p class="membership-payment-notice">Esta es una operación simulada. No se realizará ningún cargo real.</p>
+
+          <div class="membership-payment-actions">
+            <button type="button" class="membership-payment-cancel" onclick="document.getElementById('modalPagoMembresia').close()">CANCELAR</button>
+
+            <button type="submit" class="membership-payment-confirm">CONFIRMAR PAGO</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- =====================================================
          SIN MEMBRESÍA
     ====================================================== -->
 
-      <section th:if="${membresiaActiva == null and membresiaPendiente == null}">
+      <section
+        th:if="${membresiaActiva == null
+                  and membresiaPendiente == null
+                  and membresiaPendientePago == null}">
         <div class="membership-empty">
           <h2 class="membership-empty-title">Aún no tienes una membresía</h2>
 
@@ -578,5 +714,5 @@
       });
     </script>
     <script th:src="@{/js/components/header.js}"></script>
-</body>
+  </body>
 </html>
