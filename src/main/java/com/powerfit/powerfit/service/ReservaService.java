@@ -101,7 +101,8 @@ public class ReservaService {
       throw new IllegalArgumentException("Ya tienes una reserva o solicitud para esta sesión.");
     }
 
-    if (anterior.isPresent() && !"CANCELADA".equals(anterior.get().getEstado())) {
+    if (anterior.isPresent()
+        && !List.of("CANCELADA", "RECHAZADA").contains(anterior.get().getEstado())) {
 
       throw new IllegalArgumentException("No puedes volver a reservar esta sesión.");
     }
@@ -274,7 +275,9 @@ public class ReservaService {
 
       PagoClase pago = ultimoPago.get();
 
-      if ("PENDIENTE".equals(pago.getEstadoPago()) || "BONIFICADO".equals(pago.getEstadoPago())) {
+      if ("PENDIENTE".equals(pago.getEstadoPago())
+          || "AUTORIZADO".equals(pago.getEstadoPago())
+          || "BONIFICADO".equals(pago.getEstadoPago())) {
 
         pago.setEstadoPago("CANCELADO");
         pago.setObservacion("Reserva cancelada por el cliente.");

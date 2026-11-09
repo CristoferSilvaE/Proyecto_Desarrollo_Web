@@ -34,6 +34,13 @@
               <svg th:replace="~{admin/fragments/icons :: icon('user')}"></svg>
               INSTRUCTORES
             </button>
+
+            <button class="adm-tab" data-panel-target="tabSolicitudes">
+              <svg th:replace="~{admin/fragments/icons :: icon('bell')}"></svg>
+              SOLICITUDES
+
+              <span class="adm-badge orange" th:if="${totalSolicitudesPendientes > 0}" th:text="${totalSolicitudesPendientes}">0</span>
+            </button>
           </div>
           <div class="adm-stats">
             <article class="adm-stat">
@@ -360,6 +367,144 @@
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </section>
+          </section>
+
+          <!-- PESTAÑA: SOLICITUDES DE CLASES -->
+          <section id="tabSolicitudes" class="adm-tab-panel" hidden>
+            <div class="adm-toolbar">
+              <label class="adm-search">
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+
+                <input type="search" placeholder="Buscar cliente, clase o método de pago..." data-table-search="solicitudesClasesTabla" />
+              </label>
+            </div>
+
+            <section class="adm-panel">
+              <div class="adm-panel-head">
+                <h2>SOLICITUDES Y PAGOS DE CLASES</h2>
+              </div>
+
+              <div class="adm-table-scroll">
+                <table class="adm-table">
+                  <thead>
+                    <tr>
+                      <th>CLIENTE</th>
+                      <th>CLASE Y FECHA</th>
+                      <th>PLAN</th>
+                      <th>MONTO</th>
+                      <th>MÉTODO DE PAGO</th>
+                      <th>ESTADO</th>
+                      <th>REGISTRO</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="solicitudesClasesTabla">
+                    <tr th:each="pago : ${solicitudesClases}">
+                      <!-- CLIENTE -->
+                      <td>
+                        <strong th:text="|${pago.reserva.cliente.nombres} ${pago.reserva.cliente.apellidos}|">Cliente</strong>
+
+                        <small th:text="${pago.reserva.cliente.usuario.correo}">correo@ejemplo.com</small>
+                      </td>
+
+                      <!-- CLASE Y FECHA -->
+                      <td>
+                        <strong th:text="${pago.reserva.horario.clase.nombre}">Spinning</strong>
+
+                        <small th:text="${#temporals.format(pago.reserva.horario.fecha, 'dd/MM/yyyy')}">08/11/2026</small>
+
+                        <small th:text="${#temporals.format(pago.reserva.horario.horaInicio, 'HH:mm')}">09:00</small>
+                      </td>
+
+                      <!-- PLAN -->
+                      <td>
+                        <span th:text="${pago.membresia != null ? pago.membresia.plan.nombre : 'No vigente para la fecha de clase'}">Básico</span>
+                      </td>
+
+                      <!-- MONTO -->
+                      <td>
+                        <strong th:text="|S/ ${pago.monto}|">S/ 15.00</strong>
+                      </td>
+
+                      <!-- MÉTODO -->
+                      <td th:text="${pago.metodoPago}">YAPE</td>
+
+                      <!-- ESTADO -->
+                      <td>
+                        <span class="adm-badge" th:classappend="${pago.estadoPago == 'PENDIENTE'} ? 'orange' : ''" th:text="${pago.estadoPago}">PENDIENTE</span>
+                        <span th:if="${pago.estadoPago == 'BONIFICADO'}" class="adm-badge green">CANJE DE MEMBRESÍA</span>
+                        <span th:unless="${pago.estadoPago == 'BONIFICADO'}" class="adm-badge" th:text="${pago.estadoPago}"></span>
+                      </td>
+
+                      <!-- FECHA DE REGISTRO -->
+                      <td th:text="${#temporals.format(pago.fechaRegistro, 'dd/MM/yyyy HH:mm')}">08/11/2026 09:00</td>
+
+                      <td>
+                        <div class="adm-class-actions">
+                          <!-- PAGO EN EFECTIVO -->
+                          <form
+                            th:if="${pago.estadoPago == 'PENDIENTE' and pago.metodoPago == 'EFECTIVO'}"
+                            th:action="@{/admin/clases/solicitudes/{idPago}/efectivo(idPago=${pago.idPagoClase})}"
+                            method="post">
+                            <button type="submit" class="adm-btn adm-btn-success">REGISTRAR PAGO</button>
+                          </form>
+
+                          <!-- PAGO DIGITAL -->
+                          <form
+                            th:if="${pago.estadoPago == 'PENDIENTE' and pago.metodoPago != 'EFECTIVO'}"
+                            th:action="@{/admin/clases/solicitudes/{idPago}/aprobar-digital(idPago=${pago.idPagoClase})}"
+                            method="post">
+                            <button type="submit" class="adm-btn adm-btn-primary">APROBAR</button>
+                          </form>
+
+                          <span th:if="${pago.estadoPago == 'AUTORIZADO'}" class="adm-badge orange">ESPERANDO PAGO</span>
+
+                          <span th:if="${pago.estadoPago == 'PAGADO'}" class="adm-badge green">CONFIRMADO</span>
+
+                          <!-- RECHAZAR -->
+
+                          <button type="button" class="adm-btn adm-btn-danger" th:attr="data-open-modal=|modalRechazarClase-${pago.idPagoClase}|">RECHAZAR</button>
+
+                          <dialog class="adm-modal" th:id="|modalRechazarClase-${pago.idPagoClase}|">
+                            <form method="post" class="adm-modal-form" th:action="@{/admin/clases/solicitudes/{idPago}/rechazar(idPago=${pago.idPagoClase})}">
+                              <div class="adm-modal-head">
+                                <div>
+                                  <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+                                  <h2>RECHAZAR SOLICITUD</h2>
+                                  <p>Confirma si deseas rechazar esta reserva.</p>
+                                </div>
+
+                                <button type="button" class="adm-close" data-close-modal>×</button>
+                              </div>
+
+                              <div class="adm-modal-body">
+                                <p>¿Estás seguro de rechazar la solicitud de esta clase?</p>
+                              </div>
+
+                              <div class="adm-modal-footer">
+                                <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                                <button type="submit" class="adm-btn adm-btn-danger">CONFIRMAR RECHAZO</button>
+                              </div>
+                            </form>
+                          </dialog>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- SIN SOLICITUDES -->
+                    <tr th:if="${#lists.isEmpty(solicitudesClases)}">
+                      <td colspan="8" style="text-align: center; padding: 30px">
+                        <strong>No hay solicitudes pendientes</strong>
+
+                        <small>Las nuevas solicitudes de reserva aparecerán aquí.</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </section>
           </section>

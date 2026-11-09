@@ -1101,3 +1101,36 @@ html {
   width: 15px;
   height: 15px;
 }
+
+/* ACCIONES DE SOLICITUDES DE CLASES */
+
+#tabSolicitudes .adm-class-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 220px;
+}
+
+#tabSolicitudes .adm-class-actions form {
+  display: inline-flex;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+
+#tabSolicitudes .adm-class-actions .adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 100px;
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+
+#tabSolicitudes .adm-table td:last-child {
+  min-width: 230px;
+  vertical-align: middle;
+}

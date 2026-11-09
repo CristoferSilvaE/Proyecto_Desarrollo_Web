@@ -36,4 +36,10 @@ public interface PagoClaseRepository extends JpaRepository<PagoClase, Long> {
       @Param("hasta") LocalDate hasta,
       @Param("tipoReserva") String tipoReserva,
       @Param("estadoPago") String estadoPago);
+
+  // Solicitudes pendientes y pagos autorizados
+  List<PagoClase> findByEstadoPagoInOrderByFechaRegistroDesc(List<String> estadosPago);
+
+  // Contar solicitudes pendientes de revisión
+  long countByEstadoPago(String estadoPago);
 }

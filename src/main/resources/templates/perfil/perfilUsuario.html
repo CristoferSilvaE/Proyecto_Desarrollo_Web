@@ -9,6 +9,7 @@
     <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
     <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
     <link rel="stylesheet" th:href="@{/css/components/perfil-usuario.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/membresia-pago.css}" />
   </head>
 
   <body class="app-body">
@@ -322,6 +323,143 @@
           </section>
 
           <!-- =====================================================
+   PAGOS Y BENEFICIOS DE CLASES
+====================================================== -->
+
+          <section class="profile-card">
+            <div class="panel-head">
+              <h2 class="panel-title">Pagos de Clases</h2>
+              <a th:href="@{/clases}" class="panel-link">Ver clases</a>
+            </div>
+
+            <div th:if="${pagosClases == null or #lists.isEmpty(pagosClases)}" class="profile-empty">
+              <p>Todavía no tienes operaciones de pago de clases.</p>
+            </div>
+
+            <div th:if="${pagosClases != null and !#lists.isEmpty(pagosClases)}" class="upcoming-list">
+              <div th:each="pagoClase : ${pagosClases}" class="upcoming-item">
+                <div>
+                  <h4 class="upcoming-title" th:text="${pagoClase.reserva.horario.clase.nombre}">Clase</h4>
+
+                  <p class="upcoming-meta">
+                    <span th:text="${#temporals.format(pagoClase.reserva.horario.fecha, 'dd/MM/yyyy')}">Fecha</span>
+
+                    ·
+
+                    <span th:text="${#temporals.format(pagoClase.reserva.horario.horaInicio, 'HH:mm')}">Hora</span>
+                  </p>
+
+                  <p class="upcoming-meta">
+                    <span th:text="${pagoClase.tipoReserva == 'GRATUITA' ? 'Beneficio de membresía' : 'Clase adicional'}">Tipo</span>
+
+                    ·
+
+                    <strong th:text="${'S/ ' + #numbers.formatDecimal(pagoClase.monto, 1, 2)}">S/ 0.00</strong>
+                  </p>
+
+                  <small class="upcoming-meta" th:text="${'Registro: ' + #temporals.format(pagoClase.fechaRegistro, 'dd/MM/yyyy HH:mm')}">Registro</small>
+                </div>
+
+                <div class="class-payment-actions-column">
+                  <span
+                    class="class-payment-status"
+                    th:classappend="${
+                        pagoClase.estadoPago == 'PAGADO' or pagoClase.estadoPago == 'BONIFICADO'
+                        ? ' is-success'
+                        : pagoClase.estadoPago == 'AUTORIZADO'
+                        ? ' is-info'
+                        : pagoClase.estadoPago == 'RECHAZADO' or pagoClase.estadoPago == 'CANCELADO'
+                        ? ' is-muted'
+                        : ' is-warning'
+                    }"
+                    th:text="${
+                        pagoClase.estadoPago == 'PENDIENTE' ? 'EN REVISIÓN'
+                        : pagoClase.estadoPago == 'AUTORIZADO' ? 'PENDIENTE DE PAGO'
+                        : pagoClase.estadoPago == 'BONIFICADO' ? 'BONIFICADO'
+                        : pagoClase.estadoPago
+                    }">
+                    ESTADO
+                  </span>
+
+                  <button
+                    th:if="${pagoClase.estadoPago == 'AUTORIZADO'}"
+                    type="button"
+                    class="class-payment-pay-btn"
+                    th:onclick="|document.getElementById('modalPagoClase-${pagoClase.idPagoClase}').showModal()|">
+                    PAGAR AHORA
+                  </button>
+                </div>
+
+                <!-- CHECKOUT DE CLASE -->
+
+                <dialog th:if="${pagoClase.estadoPago == 'AUTORIZADO'}" th:id="|modalPagoClase-${pagoClase.idPagoClase}|" class="membership-payment-modal">
+                  <form method="post" class="class-payment-form" th:action="@{/clases/pagos/{idPago}/pagar(idPago=${pagoClase.idPagoClase})}">
+                    <div class="class-payment-content">
+                      <div class="membership-payment-header">
+                        <div>
+                          <span class="membership-payment-kicker">POWERFIT / CHECKOUT</span>
+
+                          <h2>Pago de clase</h2>
+
+                          <p>Confirma tu método de pago.</p>
+                        </div>
+
+                        <button type="button" class="membership-payment-close" onclick="this.closest('dialog').close()">✕</button>
+                      </div>
+
+                      <div class="membership-payment-total">
+                        <span>Total a pagar</span>
+
+                        <strong th:text="${'S/ ' + #numbers.formatDecimal(pagoClase.monto, 1, 2)}">S/ 0.00</strong>
+                      </div>
+
+                      <p class="membership-payment-label">MÉTODO DE PAGO</p>
+
+                      <label class="membership-payment-option">
+                        <input type="radio" name="metodoPago" value="TARJETA" th:checked="${pagoClase.metodoPago == 'TARJETA'}" required />
+
+                        <span>Tarjeta de crédito o débito</span>
+                      </label>
+
+                      <label class="membership-payment-option">
+                        <input type="radio" name="metodoPago" value="YAPE" th:checked="${pagoClase.metodoPago == 'YAPE'}" />
+
+                        <span>Yape</span>
+                      </label>
+
+                      <label class="membership-payment-option">
+                        <input type="radio" name="metodoPago" value="PLIN" th:checked="${pagoClase.metodoPago == 'PLIN'}" />
+
+                        <span>Plin</span>
+                      </label>
+
+                      <p class="membership-payment-notice">Esta operación es simulada. No se realizará ningún cargo real.</p>
+
+                      <div class="membership-payment-actions">
+                        <button type="button" class="membership-payment-cancel" onclick="this.closest('dialog').close()">CANCELAR</button>
+
+                        <button type="submit" class="membership-payment-confirm">CONFIRMAR PAGO</button>
+                      </div>
+                    </div>
+
+                    <!-- PROCESAMIENTO -->
+
+                    <div class="membership-payment-processing" hidden aria-live="polite">
+                      <div class="membership-payment-spinner"></div>
+
+                      <h3>Procesando tu pago</h3>
+
+                      <p>Estamos verificando tu transacción.</p>
+
+                      <span>Por favor, espera un momento.</span>
+                    </div>
+                  </form>
+                </dialog>
+              </div>
+            </div>
+          </section>
+
+          <!-- =====================================================
              HISTORIAL DE PAGOS REAL
         ====================================================== -->
 
@@ -570,7 +708,30 @@
           cerrarModalNombreUsuario();
         }
       });
+
+      document.querySelectorAll(".class-payment-form").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          const contenido = form.querySelector(".class-payment-content");
+          const procesando = form.querySelector(".membership-payment-processing");
+          const boton = form.querySelector(".membership-payment-confirm");
+
+          if (boton) {
+            boton.disabled = true;
+            boton.textContent = "PROCESANDO...";
+          }
+
+          contenido.hidden = true;
+          procesando.hidden = false;
+
+          window.setTimeout(() => {
+            HTMLFormElement.prototype.submit.call(form);
+          }, 800);
+        });
+      });
     </script>
+
     <script th:src="@{/js/components/header.js}"></script>
   </body>
 </html>

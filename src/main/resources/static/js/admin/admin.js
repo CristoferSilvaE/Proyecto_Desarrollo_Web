@@ -141,6 +141,7 @@
     instructores: "tabInstructores",
     clases: "tabClases",
     horarios: "tabHorarios",
+    solicitudes: "tabSolicitudes",
   };
 
   const pestaña = pestañas[params.get("tab")];

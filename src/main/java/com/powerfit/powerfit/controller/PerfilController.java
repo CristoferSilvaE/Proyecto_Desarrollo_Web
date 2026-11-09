@@ -2,11 +2,13 @@ package com.powerfit.powerfit.controller;
 
 import com.powerfit.powerfit.model.Cliente;
 import com.powerfit.powerfit.model.Membresia;
+import com.powerfit.powerfit.model.PagoClase;
 import com.powerfit.powerfit.model.Reserva;
 import com.powerfit.powerfit.model.SeguimientoFisico;
 import com.powerfit.powerfit.model.Usuario;
 import com.powerfit.powerfit.repository.ClienteRepository;
 import com.powerfit.powerfit.repository.MembresiaRepository;
+import com.powerfit.powerfit.repository.PagoClaseRepository;
 import com.powerfit.powerfit.repository.PagoMembresiaRepository;
 import com.powerfit.powerfit.repository.ReservaRepository;
 import com.powerfit.powerfit.repository.SeguimientoFisicoRepository;
@@ -46,6 +48,7 @@ public class PerfilController {
   private final UsuarioRepository usuarioRepository;
   private final MembresiaRepository membresiaRepository;
   private final PagoMembresiaRepository pagoMembresiaRepository;
+  private final PagoClaseRepository pagoClaseRepository;
   private final ComprobanteMembresiaPdfService comprobanteMembresiaPdfService;
   private final ReservaRepository reservaRepository;
   private final SeguimientoFisicoRepository seguimientoFisicoRepository;
@@ -55,6 +58,7 @@ public class PerfilController {
       UsuarioRepository usuarioRepository,
       MembresiaRepository membresiaRepository,
       PagoMembresiaRepository pagoMembresiaRepository,
+      PagoClaseRepository pagoClaseRepository,
       ComprobanteMembresiaPdfService comprobanteMembresiaPdfService,
       ReservaRepository reservaRepository,
       SeguimientoFisicoRepository seguimientoFisicoRepository) {
@@ -63,6 +67,7 @@ public class PerfilController {
     this.usuarioRepository = usuarioRepository;
     this.membresiaRepository = membresiaRepository;
     this.pagoMembresiaRepository = pagoMembresiaRepository;
+    this.pagoClaseRepository = pagoClaseRepository;
     this.comprobanteMembresiaPdfService = comprobanteMembresiaPdfService;
     this.reservaRepository = reservaRepository;
     this.seguimientoFisicoRepository = seguimientoFisicoRepository;
@@ -117,6 +122,11 @@ public class PerfilController {
     model.addAttribute(
         "pagos",
         pagoMembresiaRepository.findByMembresia_Cliente_IdClienteOrderByFechaPagoDesc(idCliente));
+    // Historial de pagos y beneficios de clases
+    List<PagoClase> pagosClases =
+        pagoClaseRepository.findByReserva_Cliente_IdClienteOrderByFechaRegistroDesc(idCliente);
+
+    model.addAttribute("pagosClases", pagosClases);
 
     return "perfil/perfilUsuario";
   }
