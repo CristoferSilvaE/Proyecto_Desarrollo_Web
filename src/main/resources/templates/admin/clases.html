@@ -523,35 +523,40 @@
                           </button>
 
                           <!-- MODAL DE CONFIRMACIÓN DE DEVOLUCIÓN -->
-                          <dialog th:if="${pago.estadoPago == 'REEMBOLSO_PENDIENTE'}" class="adm-modal" th:id="|modalReembolsoClase-${pago.idPagoClase}|">
-                            <form method="post" class="adm-modal-form" th:action="@{/admin/clases/reembolsos/{idPago}/procesar(idPago=${pago.idPagoClase})}">
+                          <dialog th:if="${pago.estadoPago == 'REEMBOLSO_PENDIENTE'}" class="adm-modal adm-refund-modal" th:id="|modalReembolsoClase-${pago.idPagoClase}|">
+                            <form method="post" class="adm-refund-form" th:action="@{/admin/clases/reembolsos/{idPago}/procesar(idPago=${pago.idPagoClase})}">
                               <div class="adm-modal-head">
                                 <div>
                                   <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
-
                                   <h2>PROCESAR DEVOLUCIÓN</h2>
-
                                   <p>Confirma la devolución del pago de esta clase.</p>
                                 </div>
 
                                 <button type="button" class="adm-close" data-close-modal>×</button>
                               </div>
 
-                              <div class="adm-modal-body">
-                                <p>
-                                  Cliente:
-                                  <strong th:text="|${pago.reserva.cliente.nombres} ${pago.reserva.cliente.apellidos}|">Cliente</strong>
-                                </p>
+                              <div class="adm-modal-body adm-refund-body">
+                                <div class="adm-refund-summary">
+                                  <div class="adm-refund-row">
+                                    <span class="adm-refund-label">Cliente</span>
+                                    <strong class="adm-refund-value" th:text="|${pago.reserva.cliente.nombres} ${pago.reserva.cliente.apellidos}|">Diego Veras</strong>
+                                  </div>
 
-                                <p>
-                                  Importe:
-                                  <strong th:text="|S/ ${pago.monto}|">S/ 15.00</strong>
-                                </p>
+                                  <div class="adm-refund-row">
+                                    <span class="adm-refund-label">Importe</span>
+                                    <strong class="adm-refund-value" th:text="|S/ ${#numbers.formatDecimal(pago.monto, 1, 2)}|">S/ 15.00</strong>
+                                  </div>
 
-                                <p>Se registrará la devolución como una operación simulada. No se realizará una transferencia bancaria real.</p>
+                                  <div class="adm-refund-row">
+                                    <span class="adm-refund-label">Operación</span>
+                                    <strong class="adm-refund-value">Simulada</strong>
+                                  </div>
+                                </div>
+
+                                <div class="adm-refund-note">La operación actualizará el estado de la devolución. No se realizará una transferencia bancaria real.</div>
                               </div>
 
-                              <div class="adm-modal-footer">
+                              <div class="adm-modal-footer adm-refund-footer">
                                 <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
 
                                 <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR DEVOLUCIÓN</button>
