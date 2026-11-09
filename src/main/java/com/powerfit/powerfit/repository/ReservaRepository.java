@@ -23,6 +23,9 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
   // Contar reservas activas por horario
   long countByHorario_IdHorarioAndEstado(Long idHorario, String estado);
 
+  // Contar reservas confirmadas y solicitudes pendientes
+  long countByHorario_IdHorarioAndEstadoIn(Long idHorario, List<String> estados);
+
   // LISTAR CLIENTES RESERVADOS POR HORARIO
   List<Reserva> findByHorario_IdHorarioAndEstadoOrderByFechaReservaAsc(
       Long idHorario, String estado);

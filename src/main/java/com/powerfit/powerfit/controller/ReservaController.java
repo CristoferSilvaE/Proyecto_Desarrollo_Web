@@ -1,5 +1,6 @@
 package com.powerfit.powerfit.controller;
 
+import com.powerfit.powerfit.model.Reserva;
 import com.powerfit.powerfit.service.ReservaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,10 @@ public class ReservaController {
 
   @PostMapping("/reservar")
   public String reservar(
-      @RequestParam Long idHorario, HttpSession session, RedirectAttributes redirect) {
+      @RequestParam Long idHorario,
+      @RequestParam(defaultValue = "TARJETA") String metodoPago,
+      HttpSession session,
+      RedirectAttributes redirect) {
 
     Long idCliente = (Long) session.getAttribute("idCliente");
 
@@ -32,9 +36,17 @@ public class ReservaController {
 
     try {
 
-      reservaService.reservar(idCliente, idHorario);
+      Reserva reserva = reservaService.reservar(idCliente, idHorario, metodoPago);
 
-      redirect.addFlashAttribute("mensaje", "¡Tu reserva se realizó correctamente!");
+      if ("RESERVADA".equals(reserva.getEstado())) {
+
+        redirect.addFlashAttribute("mensaje", "¡Tu clase gratuita fue reservada correctamente!");
+
+      } else {
+
+        redirect.addFlashAttribute(
+            "mensaje", "Tu solicitud fue enviada. Está pendiente de revisión administrativa.");
+      }
 
     } catch (IllegalArgumentException e) {
 
