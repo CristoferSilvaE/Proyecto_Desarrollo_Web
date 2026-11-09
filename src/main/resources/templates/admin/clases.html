@@ -34,6 +34,13 @@
               <svg th:replace="~{admin/fragments/icons :: icon('user')}"></svg>
               INSTRUCTORES
             </button>
+
+            <button class="adm-tab" data-panel-target="tabSolicitudes">
+              <svg th:replace="~{admin/fragments/icons :: icon('bell')}"></svg>
+              SOLICITUDES
+
+              <span class="adm-badge orange" th:if="${totalSolicitudesPendientes > 0}" th:text="${totalSolicitudesPendientes}">0</span>
+            </button>
           </div>
           <div class="adm-stats">
             <article class="adm-stat">
@@ -125,27 +132,68 @@
 
                           <small th:text="${reservasPorHorario[horario.idHorario] + ' reservadas'}">0 reservadas</small>
 
-                          <details class="adm-reservas">
-                            <summary class="adm-text-btn">
-                              Ver inscritos (
-                              <span th:text="${reservasDetallePorHorario[horario.idHorario].size()}">0</span>
-                              )
-                            </summary>
+                          <button type="button" class="adm-text-btn" th:attr="data-open-modal=|modalInscritos-${horario.idHorario}|">
+                            Ver inscritos (
+                            <span th:text="${reservasDetallePorHorario[horario.idHorario].size()}">0</span>
+                            )
+                          </button>
 
-                            <div class="adm-reservas-panel">
-                              <p th:if="${#lists.isEmpty(reservasDetallePorHorario[horario.idHorario])}" class="adm-muted">Todavía no hay clientes inscritos.</p>
+                          <!-- MODAL DE INSCRITOS -->
+                          <dialog class="adm-modal adm-modal-wide" th:id="|modalInscritos-${horario.idHorario}|">
+                            <div class="adm-modal-head">
+                              <div>
+                                <span class="adm-kicker">POWERFIT / CONTROL DE CLASES</span>
+                                <h2>ALUMNOS INSCRITOS</h2>
 
-                              <div th:each="reserva : ${reservasDetallePorHorario[horario.idHorario]}" class="adm-reserva-item">
-                                <strong th:text="|${reserva.cliente.nombres} ${reserva.cliente.apellidos}|">Nombre del cliente</strong>
+                                <p>
+                                  <strong th:text="${horario.clase.nombre}">Clase</strong>
+                                  ·
+                                  <span th:text="${#temporals.format(horario.fecha, 'dd/MM/yyyy')}"></span>
+                                  ·
+                                  <span th:text="${#temporals.format(horario.horaInicio, 'HH:mm')}"></span>
+                                </p>
+                              </div>
 
-                                <small th:text="${reserva.cliente.usuario.correo}">correo@ejemplo.com</small>
+                              <button type="button" class="adm-close" data-close-modal>×</button>
+                            </div>
 
-                                <small th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">Fecha de reserva</small>
+                            <div class="adm-modal-body adm-inscritos-body">
+                              <div class="adm-inscritos-resumen">
+                                <span>INSCRITOS</span>
+                                <strong th:text="${reservasDetallePorHorario[horario.idHorario].size()}">0</strong>
 
-                                <span class="adm-badge" th:text="${reserva.asistencia == true ? 'ASISTENCIA REGISTRADA' : 'PENDIENTE'}">PENDIENTE</span>
+                                <span>CAPACIDAD</span>
+                                <strong th:text="${horario.capacidad}">20</strong>
+                              </div>
+
+                              <p th:if="${#lists.isEmpty(reservasDetallePorHorario[horario.idHorario])}" class="adm-inscritos-empty">Todavía no hay clientes inscritos en esta sesión.</p>
+
+                              <div class="adm-inscritos-list" th:unless="${#lists.isEmpty(reservasDetallePorHorario[horario.idHorario])}">
+                                <div th:each="reserva : ${reservasDetallePorHorario[horario.idHorario]}" class="adm-inscrito-item">
+                                  <div class="adm-inscrito-info">
+                                    <strong th:text="|${reserva.cliente.nombres} ${reserva.cliente.apellidos}|">Nombre del cliente</strong>
+
+                                    <small th:text="${reserva.cliente.usuario.correo}">correo@ejemplo.com</small>
+                                  </div>
+
+                                  <div class="adm-inscrito-meta">
+                                    <small th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">Fecha de reserva</small>
+
+                                    <span
+                                      class="adm-badge"
+                                      th:classappend="${reserva.asistencia == true} ? 'green' : 'orange'"
+                                      th:text="${reserva.asistencia == true ? 'ASISTENCIA REGISTRADA' : 'PENDIENTE'}">
+                                      PENDIENTE
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </details>
+
+                            <div class="adm-modal-footer">
+                              <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CERRAR</button>
+                            </div>
+                          </dialog>
                         </td>
 
                         <!-- ESTADO -->
@@ -360,6 +408,209 @@
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </section>
+          </section>
+
+          <!-- PESTAÑA: SOLICITUDES DE CLASES -->
+          <section id="tabSolicitudes" class="adm-tab-panel" hidden>
+            <div class="adm-toolbar">
+              <label class="adm-search">
+                <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+
+                <input type="search" placeholder="Buscar cliente, clase o método de pago..." data-table-search="solicitudesClasesTabla" />
+              </label>
+            </div>
+
+            <section class="adm-panel">
+              <div class="adm-panel-head">
+                <h2>SOLICITUDES Y PAGOS DE CLASES</h2>
+              </div>
+
+              <div class="adm-table-scroll">
+                <table class="adm-table">
+                  <thead>
+                    <tr>
+                      <th>CLIENTE</th>
+                      <th>CLASE Y FECHA</th>
+                      <th>PLAN</th>
+                      <th>MONTO</th>
+                      <th>MÉTODO DE PAGO</th>
+                      <th>ESTADO</th>
+                      <th>REGISTRO</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="solicitudesClasesTabla">
+                    <tr th:each="pago : ${solicitudesClases}">
+                      <!-- CLIENTE -->
+                      <td>
+                        <strong th:text="|${pago.reserva.cliente.nombres} ${pago.reserva.cliente.apellidos}|">Cliente</strong>
+
+                        <small th:text="${pago.reserva.cliente.usuario.correo}">correo@ejemplo.com</small>
+                      </td>
+
+                      <!-- CLASE Y FECHA -->
+                      <td>
+                        <strong th:text="${pago.reserva.horario.clase.nombre}">Spinning</strong>
+
+                        <small th:text="${#temporals.format(pago.reserva.horario.fecha, 'dd/MM/yyyy')}">08/11/2026</small>
+
+                        <small th:text="${#temporals.format(pago.reserva.horario.horaInicio, 'HH:mm')}">09:00</small>
+                      </td>
+
+                      <!-- PLAN -->
+                      <td>
+                        <span th:text="${pago.membresia != null ? pago.membresia.plan.nombre : 'No vigente para la fecha de clase'}">Básico</span>
+                      </td>
+
+                      <!-- MONTO -->
+                      <td>
+                        <strong th:text="|S/ ${pago.monto}|">S/ 15.00</strong>
+                      </td>
+
+                      <!-- MÉTODO -->
+                      <td th:text="${pago.metodoPago}">YAPE</td>
+
+                      <!-- ESTADO -->
+                      <td>
+                        <span
+                          class="adm-badge"
+                          th:classappend="${pago.estadoPago == 'PAGADO'
+                              or pago.estadoPago == 'BONIFICADO'
+                              or pago.estadoPago == 'REINTEGRADO'
+                              or pago.estadoPago == 'REEMBOLSADO'} ? 'green' : 'orange'"
+                          th:text="${
+                              pago.estadoPago == 'BONIFICADO'
+                                  ? 'CANJE DE MEMBRESÍA'
+                              : pago.estadoPago == 'REINTEGRADO'
+                                  ? 'BENEFICIO REINTEGRADO'
+                              : pago.estadoPago == 'REEMBOLSO_PENDIENTE'
+                                  ? 'REEMBOLSO PENDIENTE'
+                              : pago.estadoPago == 'REEMBOLSADO'
+                                  ? 'REEMBOLSADO'
+                              : pago.estadoPago
+                          }">
+                          PENDIENTE
+                        </span>
+                      </td>
+
+                      <!-- FECHA DE REGISTRO -->
+                      <td th:text="${#temporals.format(pago.fechaRegistro, 'dd/MM/yyyy HH:mm')}">08/11/2026 09:00</td>
+
+                      <td>
+                        <div class="adm-class-actions">
+                          <!-- PAGO EN EFECTIVO -->
+                          <form
+                            th:if="${pago.estadoPago == 'PENDIENTE' and pago.metodoPago == 'EFECTIVO'}"
+                            th:action="@{/admin/clases/solicitudes/{idPago}/efectivo(idPago=${pago.idPagoClase})}"
+                            method="post">
+                            <button type="submit" class="adm-btn adm-btn-success">REGISTRAR PAGO</button>
+                          </form>
+
+                          <!-- PAGO DIGITAL -->
+                          <form
+                            th:if="${pago.estadoPago == 'PENDIENTE' and pago.metodoPago != 'EFECTIVO'}"
+                            th:action="@{/admin/clases/solicitudes/{idPago}/aprobar-digital(idPago=${pago.idPagoClase})}"
+                            method="post">
+                            <button type="submit" class="adm-btn adm-btn-primary">APROBAR</button>
+                          </form>
+
+                          <!-- PROCESAR DEVOLUCIÓN -->
+                          <button th:if="${pago.estadoPago == 'REEMBOLSO_PENDIENTE'}" type="button" class="adm-btn adm-btn-success" th:attr="data-open-modal=|modalReembolsoClase-${pago.idPagoClase}|">
+                            PROCESAR DEVOLUCIÓN
+                          </button>
+
+                          <!-- MODAL DE CONFIRMACIÓN DE DEVOLUCIÓN -->
+                          <dialog th:if="${pago.estadoPago == 'REEMBOLSO_PENDIENTE'}" class="adm-modal adm-refund-modal" th:id="|modalReembolsoClase-${pago.idPagoClase}|">
+                            <form method="post" class="adm-refund-form" th:action="@{/admin/clases/reembolsos/{idPago}/procesar(idPago=${pago.idPagoClase})}">
+                              <div class="adm-modal-head">
+                                <div>
+                                  <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+                                  <h2>PROCESAR DEVOLUCIÓN</h2>
+                                  <p>Confirma la devolución del pago de esta clase.</p>
+                                </div>
+
+                                <button type="button" class="adm-close" data-close-modal>×</button>
+                              </div>
+
+                              <div class="adm-modal-body adm-refund-body">
+                                <div class="adm-refund-summary">
+                                  <div class="adm-refund-row">
+                                    <span class="adm-refund-label">Cliente</span>
+                                    <strong class="adm-refund-value" th:text="|${pago.reserva.cliente.nombres} ${pago.reserva.cliente.apellidos}|">Diego Veras</strong>
+                                  </div>
+
+                                  <div class="adm-refund-row">
+                                    <span class="adm-refund-label">Importe</span>
+                                    <strong class="adm-refund-value" th:text="|S/ ${#numbers.formatDecimal(pago.monto, 1, 2)}|">S/ 15.00</strong>
+                                  </div>
+
+                                  <div class="adm-refund-row">
+                                    <span class="adm-refund-label">Operación</span>
+                                    <strong class="adm-refund-value">Simulada</strong>
+                                  </div>
+                                </div>
+
+                                <div class="adm-refund-note">La operación actualizará el estado de la devolución. No se realizará una transferencia bancaria real.</div>
+                              </div>
+
+                              <div class="adm-modal-footer adm-refund-footer">
+                                <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                                <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR DEVOLUCIÓN</button>
+                              </div>
+                            </form>
+                          </dialog>
+
+                          <!-- RECHAZAR SOLAMENTE SOLICITUDES PENDIENTES O AUTORIZADAS -->
+                          <button
+                            th:if="${pago.estadoPago == 'PENDIENTE' or pago.estadoPago == 'AUTORIZADO'}"
+                            type="button"
+                            class="adm-btn adm-btn-danger"
+                            th:attr="data-open-modal=|modalRechazarClase-${pago.idPagoClase}|">
+                            RECHAZAR
+                          </button>
+
+                          <!-- MODAL DE RECHAZO -->
+                          <dialog th:if="${pago.estadoPago == 'PENDIENTE' or pago.estadoPago == 'AUTORIZADO'}" class="adm-modal" th:id="|modalRechazarClase-${pago.idPagoClase}|">
+                            <form method="post" class="adm-modal-form" th:action="@{/admin/clases/solicitudes/{idPago}/rechazar(idPago=${pago.idPagoClase})}">
+                              <div class="adm-modal-head">
+                                <div>
+                                  <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+                                  <h2>RECHAZAR SOLICITUD</h2>
+                                  <p>Confirma si deseas rechazar esta reserva.</p>
+                                </div>
+
+                                <button type="button" class="adm-close" data-close-modal>×</button>
+                              </div>
+
+                              <div class="adm-modal-body">
+                                <p>¿Estás seguro de rechazar la solicitud de esta clase?</p>
+                              </div>
+
+                              <div class="adm-modal-footer">
+                                <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                                <button type="submit" class="adm-btn adm-btn-danger">CONFIRMAR RECHAZO</button>
+                              </div>
+                            </form>
+                          </dialog>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- SIN SOLICITUDES -->
+                    <tr th:if="${#lists.isEmpty(solicitudesClases)}">
+                      <td colspan="8" style="text-align: center; padding: 30px">
+                        <strong>No hay solicitudes pendientes</strong>
+
+                        <small>Las nuevas solicitudes de reserva aparecerán aquí.</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </section>
           </section>

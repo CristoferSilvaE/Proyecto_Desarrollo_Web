@@ -2,15 +2,19 @@ package com.powerfit.powerfit.controller;
 
 import com.powerfit.powerfit.model.Cliente;
 import com.powerfit.powerfit.model.Membresia;
+import com.powerfit.powerfit.model.PagoClase;
 import com.powerfit.powerfit.model.Reserva;
 import com.powerfit.powerfit.model.SeguimientoFisico;
 import com.powerfit.powerfit.model.Usuario;
 import com.powerfit.powerfit.repository.ClienteRepository;
 import com.powerfit.powerfit.repository.MembresiaRepository;
+import com.powerfit.powerfit.repository.PagoClaseRepository;
 import com.powerfit.powerfit.repository.PagoMembresiaRepository;
 import com.powerfit.powerfit.repository.ReservaRepository;
 import com.powerfit.powerfit.repository.SeguimientoFisicoRepository;
 import com.powerfit.powerfit.repository.UsuarioRepository;
+import com.powerfit.powerfit.service.ComprobanteClasePdfService;
+import com.powerfit.powerfit.service.ComprobanteMembresiaPdfService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
@@ -24,6 +28,10 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +49,9 @@ public class PerfilController {
   private final UsuarioRepository usuarioRepository;
   private final MembresiaRepository membresiaRepository;
   private final PagoMembresiaRepository pagoMembresiaRepository;
+  private final PagoClaseRepository pagoClaseRepository;
+  private final ComprobanteMembresiaPdfService comprobanteMembresiaPdfService;
+  private final ComprobanteClasePdfService comprobanteClasePdfService;
   private final ReservaRepository reservaRepository;
   private final SeguimientoFisicoRepository seguimientoFisicoRepository;
 
@@ -49,6 +60,9 @@ public class PerfilController {
       UsuarioRepository usuarioRepository,
       MembresiaRepository membresiaRepository,
       PagoMembresiaRepository pagoMembresiaRepository,
+      PagoClaseRepository pagoClaseRepository,
+      ComprobanteMembresiaPdfService comprobanteMembresiaPdfService,
+      ComprobanteClasePdfService comprobanteClasePdfService,
       ReservaRepository reservaRepository,
       SeguimientoFisicoRepository seguimientoFisicoRepository) {
 
@@ -56,6 +70,9 @@ public class PerfilController {
     this.usuarioRepository = usuarioRepository;
     this.membresiaRepository = membresiaRepository;
     this.pagoMembresiaRepository = pagoMembresiaRepository;
+    this.pagoClaseRepository = pagoClaseRepository;
+    this.comprobanteMembresiaPdfService = comprobanteMembresiaPdfService;
+    this.comprobanteClasePdfService = comprobanteClasePdfService;
     this.reservaRepository = reservaRepository;
     this.seguimientoFisicoRepository = seguimientoFisicoRepository;
   }
@@ -86,6 +103,12 @@ public class PerfilController {
             .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(idCliente, "PENDIENTE")
             .orElse(null);
 
+    Membresia membresiaPendientePago =
+        membresiaRepository
+            .findFirstByCliente_IdClienteAndEstadoOrderByFechaSolicitudDesc(
+                idCliente, "PENDIENTE_PAGO")
+            .orElse(null);
+
     List<Reserva> proximasReservas =
         reservaRepository.findByCliente_IdClienteOrderByFechaReservaDesc(idCliente).stream()
             .filter(reserva -> "RESERVADA".equalsIgnoreCase(reserva.getEstado()))
@@ -98,12 +121,92 @@ public class PerfilController {
 
     model.addAttribute("membresiaActiva", membresiaActiva);
     model.addAttribute("membresiaPendiente", membresiaPendiente);
+    model.addAttribute("membresiaPendientePago", membresiaPendientePago);
     model.addAttribute("proximasReservas", proximasReservas);
     model.addAttribute(
         "pagos",
         pagoMembresiaRepository.findByMembresia_Cliente_IdClienteOrderByFechaPagoDesc(idCliente));
+    // Historial de pagos y beneficios de clases
+    List<PagoClase> pagosClases =
+        pagoClaseRepository.findByReserva_Cliente_IdClienteOrderByFechaRegistroDesc(idCliente);
+
+    model.addAttribute("pagosClases", pagosClases);
 
     return "perfil/perfilUsuario";
+  }
+
+  // ==========================================
+  // DESCARGAR COMPROBANTE DE MEMBRESÍA
+  // ==========================================
+
+  @GetMapping("/perfil/pagos/{idPago}/comprobante")
+  public ResponseEntity<byte[]> descargarComprobante(
+      @PathVariable Long idPago, HttpSession session) {
+
+    Long idCliente = (Long) session.getAttribute("idCliente");
+
+    if (idCliente == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    try {
+
+      byte[] pdf = comprobanteMembresiaPdfService.generarComprobante(idPago, idCliente);
+
+      return ResponseEntity.ok()
+          .contentType(MediaType.APPLICATION_PDF)
+          .header(
+              HttpHeaders.CONTENT_DISPOSITION,
+              "attachment; filename=\"comprobante-powerfit-" + idPago + ".pdf\"")
+          .body(pdf);
+
+    } catch (SecurityException e) {
+
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    } catch (IllegalArgumentException e) {
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    } catch (IllegalStateException e) {
+
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+  }
+
+  @GetMapping("/perfil/clases/pagos/{idPago}/comprobante")
+  public ResponseEntity<byte[]> descargarComprobanteClase(
+      @PathVariable Long idPago, HttpSession session) {
+
+    Long idCliente = (Long) session.getAttribute("idCliente");
+
+    if (idCliente == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    try {
+
+      byte[] pdf = comprobanteClasePdfService.generarComprobante(idPago, idCliente);
+
+      return ResponseEntity.ok()
+          .contentType(MediaType.APPLICATION_PDF)
+          .header(
+              HttpHeaders.CONTENT_DISPOSITION,
+              "attachment; filename=\"comprobante-clase-powerfit-" + idPago + ".pdf\"")
+          .body(pdf);
+
+    } catch (SecurityException e) {
+
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    } catch (IllegalArgumentException e) {
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    } catch (IllegalStateException e) {
+
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
   }
 
   @PostMapping("/perfil/actualizar")

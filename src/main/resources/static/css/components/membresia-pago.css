@@ -1,0 +1,218 @@
+.membership-payment-modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(480px, calc(100% - 30px));
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+  border: 1px solid #34343f;
+  border-radius: 16px;
+  background: #17181f;
+  color: #fff;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
+}
+
+.membership-payment-modal::backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.membership-payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 24px;
+}
+
+.membership-payment-kicker {
+  color: #a5b4fc;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.membership-payment-header h2 {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.membership-payment-header p {
+  margin-top: 6px;
+  color: #a1a1aa;
+  font-size: 13px;
+}
+
+.membership-payment-close {
+  color: #a1a1aa;
+  font-size: 20px;
+}
+
+.membership-payment-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.membership-payment-total span {
+  color: #a1a1aa;
+  font-size: 13px;
+}
+
+.membership-payment-total strong {
+  color: #c7d2fe;
+  font-size: 23px;
+  font-weight: 900;
+}
+
+.membership-payment-label {
+  margin-bottom: 12px;
+  color: #a1a1aa;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.membership-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #34343f;
+  border-radius: 9px;
+  background: #20212a;
+  color: #e4e4e7;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.membership-payment-option:hover {
+  border-color: #818cf8;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.membership-payment-option input {
+  accent-color: #a5b4fc;
+  width: 17px;
+  height: 17px;
+}
+
+.membership-payment-notice {
+  margin-top: 18px;
+  padding: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.06);
+  color: #fcd34d;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.membership-payment-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.membership-payment-actions button {
+  padding: 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.membership-payment-cancel {
+  border: 1px solid #3f3f46;
+  background: #27272a;
+  color: #e4e4e7;
+}
+
+.membership-payment-confirm {
+  background: #a5b4fc;
+  color: #09090b;
+  transition: background 0.2s;
+}
+
+.membership-payment-confirm:hover {
+  background: #818cf8;
+}
+
+@media (max-width: 420px) {
+  .membership-payment-modal {
+    padding: 20px;
+  }
+
+  .membership-payment-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================
+   PROCESAMIENTO DE PAGO
+========================================== */
+
+.membership-payment-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  min-height: 290px;
+  padding: 30px 20px;
+}
+
+.membership-payment-processing[hidden] {
+  display: none !important;
+}
+
+.membership-payment-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #34343f;
+  border-top-color: #a5b4fc;
+  border-radius: 50%;
+  animation: membership-spin 0.8s linear infinite;
+}
+
+.membership-payment-processing h3 {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.membership-payment-processing p {
+  max-width: 300px;
+  color: #a1a1aa;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.membership-payment-processing span {
+  color: #818cf8;
+  font-size: 11px;
+}
+
+@keyframes membership-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.membership-payment-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1101,3 +1101,241 @@ html {
   width: 15px;
   height: 15px;
 }
+
+/* ACCIONES DE SOLICITUDES DE CLASES */
+
+#tabSolicitudes .adm-class-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 220px;
+}
+
+#tabSolicitudes .adm-class-actions > form {
+  display: inline-flex;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+
+#tabSolicitudes .adm-class-actions .adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 100px;
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+
+#tabSolicitudes .adm-table td:last-child {
+  min-width: 230px;
+  vertical-align: middle;
+}
+
+/* ==========================================
+   MODAL DE ALUMNOS INSCRITOS
+========================================== */
+
+.adm-inscritos-body {
+  max-height: min(65vh, 620px);
+  overflow-y: auto;
+}
+
+.adm-inscritos-resumen {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 18px;
+  background: #171719;
+  border: 1px solid var(--adm-border);
+  border-radius: 4px;
+}
+
+.adm-inscritos-resumen span {
+  color: var(--adm-muted);
+  font:
+    500 10px "IBM Plex Mono",
+    monospace;
+}
+
+.adm-inscritos-resumen strong {
+  color: #b6caff;
+  font-size: 18px;
+  margin-right: 15px;
+}
+
+.adm-inscritos-list {
+  display: grid;
+  gap: 10px;
+}
+
+.adm-inscrito-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 15px 17px;
+  background: #171719;
+  border: 1px solid var(--adm-border);
+  border-radius: 4px;
+}
+
+.adm-inscrito-info strong {
+  display: block;
+  color: #f1f1f5;
+  font-size: 13px;
+}
+
+.adm-inscrito-info small {
+  display: block;
+  margin-top: 5px;
+  color: var(--adm-muted);
+  font-size: 11px;
+}
+
+.adm-inscrito-meta {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.adm-inscrito-meta small {
+  color: var(--adm-muted);
+  font-size: 10px;
+}
+
+.adm-inscritos-empty {
+  margin: 0;
+  padding: 30px 18px;
+  text-align: center;
+  color: var(--adm-muted);
+  border: 1px dashed var(--adm-border);
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .adm-inscrito-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adm-inscrito-meta {
+    justify-items: start;
+  }
+}
+
+/* ==========================================
+   MODAL DE DEVOLUCIÓN
+========================================== */
+
+.adm-refund-modal {
+  width: min(640px, calc(100vw - 32px));
+  max-width: 640px;
+  padding: 0;
+  border: 1px solid #2f3441;
+  border-radius: 16px;
+  background: #171a22;
+  color: #f4f4f5;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+.adm-refund-modal::backdrop {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.adm-refund-form {
+  display: block;
+  width: 100%;
+  margin: 0;
+}
+
+.adm-refund-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.adm-refund-summary {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #2d3340;
+  border-radius: 12px;
+  background: #10131a;
+}
+
+.adm-refund-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #232834;
+}
+
+.adm-refund-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.adm-refund-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.adm-refund-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f9fafb;
+  text-align: right;
+}
+
+.adm-refund-note {
+  padding: 14px 16px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.08);
+  color: #d1fae5;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.adm-refund-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.adm-refund-footer .adm-btn {
+  min-width: 190px;
+}
+
+@media (max-width: 640px) {
+  .adm-refund-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adm-refund-value {
+    text-align: left;
+  }
+
+  .adm-refund-footer {
+    flex-direction: column;
+  }
+
+  .adm-refund-footer .adm-btn {
+    width: 100%;
+    min-width: 100%;
+  }
+}

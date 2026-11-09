@@ -9,9 +9,8 @@ import com.powerfit.powerfit.repository.ClienteRepository;
 import com.powerfit.powerfit.repository.MembresiaRepository;
 import com.powerfit.powerfit.repository.PagoMembresiaRepository;
 import com.powerfit.powerfit.repository.PlanMembresiaRepository;
-import java.math.BigDecimal;
+import com.powerfit.powerfit.service.MembresiaPagoService;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,17 +45,20 @@ public class AdminMembresiasController {
   private final PlanMembresiaRepository planRepository;
   private final ClienteRepository clienteRepository;
   private final PagoMembresiaRepository pagoRepository;
+  private final MembresiaPagoService membresiaPagoService;
 
   public AdminMembresiasController(
       MembresiaRepository membresiaRepository,
       PlanMembresiaRepository planRepository,
       ClienteRepository clienteRepository,
-      PagoMembresiaRepository pagoRepository) {
+      PagoMembresiaRepository pagoRepository,
+      MembresiaPagoService membresiaPagoService) {
 
     this.membresiaRepository = membresiaRepository;
     this.planRepository = planRepository;
     this.clienteRepository = clienteRepository;
     this.pagoRepository = pagoRepository;
+    this.membresiaPagoService = membresiaPagoService;
   }
 
   // ==========================================
@@ -110,7 +112,8 @@ public class AdminMembresiasController {
     String filtroIngresado = estado.trim().toUpperCase(Locale.ROOT);
 
     Set<String> estadosValidos =
-        Set.of("TODOS", "PENDIENTE", "ACTIVA", "VENCIDA", "RECHAZADA", "CANCELADA");
+        Set.of(
+            "TODOS", "PENDIENTE", "PENDIENTE_PAGO", "ACTIVA", "VENCIDA", "RECHAZADA", "CANCELADA");
 
     final String filtro = estadosValidos.contains(filtroIngresado) ? filtroIngresado : "TODOS";
 
@@ -132,7 +135,11 @@ public class AdminMembresiasController {
     List<PlanMembresia> planes = planRepository.findByEstadoOrderByPrecioAsc("ACTIVO");
 
     long pendientes =
-        todas.stream().filter(m -> "PENDIENTE".equalsIgnoreCase(m.getEstado())).count();
+        todas.stream()
+            .filter(m ->
+                "PENDIENTE".equalsIgnoreCase(m.getEstado())
+                    || "PENDIENTE_PAGO".equalsIgnoreCase(m.getEstado()))
+            .count();
 
     long activas = todas.stream().filter(m -> "ACTIVA".equalsIgnoreCase(m.getEstado())).count();
 
@@ -224,6 +231,7 @@ public class AdminMembresiasController {
         historial.stream()
             .anyMatch(m ->
                 "PENDIENTE".equalsIgnoreCase(m.getEstado())
+                    || "PENDIENTE_PAGO".equalsIgnoreCase(m.getEstado())
                     || "ACTIVA".equalsIgnoreCase(m.getEstado()));
 
     if (tieneEnCurso) {
@@ -253,90 +261,70 @@ public class AdminMembresiasController {
   }
 
   // ==========================================
-  // CONFIRMAR PAGO Y ACTIVAR
+  // APROBAR SOLICITUD PARA PAGO DIGITAL
   // ==========================================
 
-  @PostMapping("/{id}/activar")
-  @Transactional
-  public String activar(
-      @PathVariable Long id,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-      @RequestParam String metodoPago,
-      RedirectAttributes redirectAttributes) {
+  @PostMapping("/{id}/aprobar-pago-digital")
+  public String aprobarPagoDigital(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
-    Membresia membresia = membresiaRepository.findById(id).orElse(null);
+    try {
 
-    LocalDate hoy = LocalDate.now(ZONA);
-
-    if (membresia == null || !"PENDIENTE".equalsIgnoreCase(membresia.getEstado())) {
-
-      redirectAttributes.addFlashAttribute("error", "La solicitud ya no está pendiente.");
-
-      return "redirect:/admin/membresias";
-    }
-
-    if (!clienteHabilitado(membresia.getCliente())) {
-
-      redirectAttributes.addFlashAttribute("error", "El cliente no tiene una cuenta habilitada.");
-
-      return "redirect:/admin/membresias";
-    }
-
-    if (fechaInicio == null
-        || fechaInicio.isBefore(hoy)
-        || !METODOS_PAGO.contains(metodoPago)
-        || membresia.getDuracionMeses() == null
-        || !DURACIONES.contains(membresia.getDuracionMeses())) {
+      membresiaPagoService.aprobarPagoDigital(id);
 
       redirectAttributes.addFlashAttribute(
-          "error", "Verifica la fecha, duración y método de pago.");
+          "mensaje", "Solicitud aprobada. El cliente ya puede realizar el pago digital.");
 
-      return "redirect:/admin/membresias";
+    } catch (IllegalArgumentException e) {
+
+      redirectAttributes.addFlashAttribute("error", e.getMessage());
     }
 
-    List<Membresia> historial =
-        membresiaRepository.findByCliente_IdClienteOrderByFechaSolicitudDesc(
-            membresia.getCliente().getIdCliente());
+    return "redirect:/admin/membresias";
+  }
 
-    if (actualizarVencidas(historial, hoy)) {
-      membresiaRepository.saveAll(historial);
+  // ==========================================
+  // REGISTRAR PAGO PRESENCIAL EN EFECTIVO
+  // ==========================================
+
+  @PostMapping("/{id}/pago-efectivo")
+  public String registrarPagoEfectivo(
+      @PathVariable Long id,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+      RedirectAttributes redirectAttributes) {
+
+    try {
+
+      membresiaPagoService.registrarPagoEfectivo(id, fechaInicio);
+
+      redirectAttributes.addFlashAttribute(
+          "mensaje", "Pago presencial registrado y membresía activada correctamente.");
+
+    } catch (IllegalArgumentException e) {
+
+      redirectAttributes.addFlashAttribute("error", e.getMessage());
     }
 
-    boolean otraActiva =
-        historial.stream()
-            .filter(m -> !m.getIdMembresia().equals(id))
-            .anyMatch(m -> "ACTIVA".equalsIgnoreCase(m.getEstado()));
+    return "redirect:/admin/membresias";
+  }
 
-    if (otraActiva) {
-      redirectAttributes.addFlashAttribute("error", "El cliente ya tiene otra membresía activa.");
+  // ==========================================
+  // CANCELAR MEMBRESÍA ACTIVA
+  // ==========================================
 
-      return "redirect:/admin/membresias";
+  @PostMapping("/{id}/cancelar")
+  public String cancelar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+
+    try {
+
+      membresiaPagoService.cancelarMembresia(id);
+
+      redirectAttributes.addFlashAttribute(
+          "mensaje", "Membresía cancelada correctamente. El historial de pagos se conservó.");
+
+    } catch (IllegalArgumentException e) {
+
+      redirectAttributes.addFlashAttribute("error", e.getMessage());
     }
-
-    int meses = membresia.getDuracionMeses();
-
-    BigDecimal monto = membresia.getPlan().getPrecio().multiply(BigDecimal.valueOf(meses));
-
-    // Activar membresía
-    membresia.setFechaInicio(fechaInicio);
-    membresia.setFechaFin(fechaInicio.plusMonths(meses).minusDays(1));
-    membresia.setEstado("ACTIVA");
-
-    membresiaRepository.save(membresia);
-
-    // Registrar pago confirmado
-    PagoMembresia pago = new PagoMembresia();
-
-    pago.setMembresia(membresia);
-    pago.setFechaPago(LocalDateTime.now(ZONA));
-    pago.setMonto(monto);
-    pago.setMetodoPago(metodoPago);
-    pago.setEstado("PAGADO");
-
-    pagoRepository.save(pago);
-
-    redirectAttributes.addFlashAttribute(
-        "mensaje", "Pago registrado y membresía activada correctamente.");
 
     return "redirect:/admin/membresias";
   }
@@ -354,7 +342,9 @@ public class AdminMembresiasController {
 
     Membresia membresia = membresiaRepository.findById(id).orElse(null);
 
-    if (membresia == null || !"PENDIENTE".equalsIgnoreCase(membresia.getEstado())) {
+    if (membresia == null
+        || (!"PENDIENTE".equalsIgnoreCase(membresia.getEstado())
+            && !"PENDIENTE_PAGO".equalsIgnoreCase(membresia.getEstado()))) {
 
       redirectAttributes.addFlashAttribute("error", "La solicitud ya no está pendiente.");
 
