@@ -477,8 +477,21 @@
                       <td>
                         <span
                           class="adm-badge"
-                          th:classappend="${pago.estadoPago == 'PAGADO' or pago.estadoPago == 'BONIFICADO'} ? 'green' : 'orange'"
-                          th:text="${pago.estadoPago == 'AUTORIZADO' ? 'AUTORIZADO' : pago.estadoPago == 'BONIFICADO' ? 'BONIFICADO · CANJE DE MEMBRESÍA' : pago.estadoPago}">
+                          th:classappend="${pago.estadoPago == 'PAGADO'
+                              or pago.estadoPago == 'BONIFICADO'
+                              or pago.estadoPago == 'REINTEGRADO'
+                              or pago.estadoPago == 'REEMBOLSADO'} ? 'green' : 'orange'"
+                          th:text="${
+                              pago.estadoPago == 'BONIFICADO'
+                                  ? 'CANJE DE MEMBRESÍA'
+                              : pago.estadoPago == 'REINTEGRADO'
+                                  ? 'BENEFICIO REINTEGRADO'
+                              : pago.estadoPago == 'REEMBOLSO_PENDIENTE'
+                                  ? 'REEMBOLSO PENDIENTE'
+                              : pago.estadoPago == 'REEMBOLSADO'
+                                  ? 'REEMBOLSADO'
+                              : pago.estadoPago
+                          }">
                           PENDIENTE
                         </span>
                       </td>
@@ -503,6 +516,48 @@
                             method="post">
                             <button type="submit" class="adm-btn adm-btn-primary">APROBAR</button>
                           </form>
+
+                          <!-- PROCESAR DEVOLUCIÓN -->
+                          <button th:if="${pago.estadoPago == 'REEMBOLSO_PENDIENTE'}" type="button" class="adm-btn adm-btn-success" th:attr="data-open-modal=|modalReembolsoClase-${pago.idPagoClase}|">
+                            PROCESAR DEVOLUCIÓN
+                          </button>
+
+                          <!-- MODAL DE CONFIRMACIÓN DE DEVOLUCIÓN -->
+                          <dialog th:if="${pago.estadoPago == 'REEMBOLSO_PENDIENTE'}" class="adm-modal" th:id="|modalReembolsoClase-${pago.idPagoClase}|">
+                            <form method="post" class="adm-modal-form" th:action="@{/admin/clases/reembolsos/{idPago}/procesar(idPago=${pago.idPagoClase})}">
+                              <div class="adm-modal-head">
+                                <div>
+                                  <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+
+                                  <h2>PROCESAR DEVOLUCIÓN</h2>
+
+                                  <p>Confirma la devolución del pago de esta clase.</p>
+                                </div>
+
+                                <button type="button" class="adm-close" data-close-modal>×</button>
+                              </div>
+
+                              <div class="adm-modal-body">
+                                <p>
+                                  Cliente:
+                                  <strong th:text="|${pago.reserva.cliente.nombres} ${pago.reserva.cliente.apellidos}|">Cliente</strong>
+                                </p>
+
+                                <p>
+                                  Importe:
+                                  <strong th:text="|S/ ${pago.monto}|">S/ 15.00</strong>
+                                </p>
+
+                                <p>Se registrará la devolución como una operación simulada. No se realizará una transferencia bancaria real.</p>
+                              </div>
+
+                              <div class="adm-modal-footer">
+                                <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+
+                                <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR DEVOLUCIÓN</button>
+                              </div>
+                            </form>
+                          </dialog>
 
                           <!-- RECHAZAR SOLAMENTE SOLICITUDES PENDIENTES O AUTORIZADAS -->
                           <button

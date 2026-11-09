@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import org.openpdf.text.Document;
@@ -57,7 +58,10 @@ public class ComprobanteClasePdfService {
       throw new SecurityException("No tienes permiso para consultar este comprobante.");
     }
 
-    if (!"PAGADO".equalsIgnoreCase(pago.getEstadoPago())
+    String estadoPago =
+        pago.getEstadoPago() == null ? "" : pago.getEstadoPago().toUpperCase(Locale.ROOT);
+
+    if (!List.of("PAGADO", "REEMBOLSO_PENDIENTE", "REEMBOLSADO").contains(estadoPago)
         || !"PAGO".equalsIgnoreCase(pago.getTipoReserva())) {
 
       throw new IllegalStateException("Solo se pueden generar comprobantes de pagos realizados.");
@@ -104,6 +108,16 @@ public class ComprobanteClasePdfService {
               ? pago.getMonto().setScale(2, RoundingMode.HALF_UP)
               : BigDecimal.ZERO;
 
+      String estadoPago =
+          pago.getEstadoPago() == null ? "" : pago.getEstadoPago().toUpperCase(Locale.ROOT);
+
+      String estadoComprobante =
+          switch (estadoPago) {
+            case "REEMBOLSO_PENDIENTE" -> "REEMBOLSO PENDIENTE";
+            case "REEMBOLSADO" -> "REEMBOLSADO";
+            default -> "PAGADO";
+          };
+
       Font marca = new Font(Font.HELVETICA, 23, Font.BOLD, Color.WHITE);
 
       Font subtitulo = new Font(Font.HELVETICA, 9, Font.NORMAL, Color.WHITE);
@@ -138,9 +152,11 @@ public class ComprobanteClasePdfService {
 
       encabezado.addCell(marcaCelda);
 
-      PdfPCell estado = new PdfPCell(new Phrase("PAGADO", blanca));
+      PdfPCell estado = new PdfPCell(new Phrase(estadoComprobante, blanca));
 
-      estado.setBackgroundColor(VERDE);
+      estado.setBackgroundColor(
+          "REEMBOLSO_PENDIENTE".equals(estadoPago) ? new Color(190, 120, 25) : VERDE);
+
       estado.setHorizontalAlignment(Element.ALIGN_CENTER);
       estado.setVerticalAlignment(Element.ALIGN_MIDDLE);
       estado.setBorder(Rectangle.NO_BORDER);
@@ -223,7 +239,14 @@ public class ComprobanteClasePdfService {
       total.setWidthPercentage(100);
       total.setSpacingAfter(20);
 
-      PdfPCell totalEtiqueta = new PdfPCell(new Phrase("TOTAL PAGADO", negrita));
+      String etiquetaTotal =
+          switch (estadoPago) {
+            case "REEMBOLSADO" -> "IMPORTE ORIGINAL (REEMBOLSADO)";
+            case "REEMBOLSO_PENDIENTE" -> "IMPORTE ORIGINAL";
+            default -> "TOTAL PAGADO";
+          };
+
+      PdfPCell totalEtiqueta = new PdfPCell(new Phrase(etiquetaTotal, negrita));
 
       totalEtiqueta.setBackgroundColor(FONDO);
       totalEtiqueta.setBorder(Rectangle.NO_BORDER);
@@ -253,7 +276,7 @@ public class ComprobanteClasePdfService {
           crearCeldaDato(
               "MÉTODO DE PAGO", formatearMetodo(pago.getMetodoPago()), etiqueta, negrita));
 
-      metodo.addCell(crearCeldaDato("ESTADO DE TRANSACCIÓN", "PAGADO", etiqueta, negrita));
+      metodo.addCell(crearCeldaDato("ESTADO DE TRANSACCIÓN", estadoComprobante, etiqueta, negrita));
 
       documento.add(metodo);
 

@@ -150,6 +150,40 @@ public class PagoClaseService {
   }
 
   // ==========================================
+  // PROCESAR REEMBOLSO SIMULADO
+  // ==========================================
+
+  @Transactional
+  public void procesarReembolso(Long idPago) {
+
+    PagoClase pago = obtenerPago(idPago);
+
+    if (!"REEMBOLSO_PENDIENTE".equals(pago.getEstadoPago())) {
+      throw new IllegalArgumentException("Este pago no tiene un reembolso pendiente.");
+    }
+
+    if (!"PAGO".equals(pago.getTipoReserva())
+        || !"CANCELADA".equals(pago.getReserva().getEstado())) {
+
+      throw new IllegalArgumentException(
+          "La operación no cumple las condiciones para el reembolso.");
+    }
+
+    if (pago.getFechaPago() == null) {
+      throw new IllegalArgumentException("No se encontró la fecha del pago original.");
+    }
+
+    pago.setEstadoPago("REEMBOLSADO");
+
+    pago.setObservacion(
+        "Reembolso simulado procesado por administración el "
+            + LocalDateTime.now(ZONA)
+            + ". No se realizó transferencia real.");
+
+    pagoRepository.save(pago);
+  }
+
+  // ==========================================
   // CONFIRMAR PAGO
   // ==========================================
 

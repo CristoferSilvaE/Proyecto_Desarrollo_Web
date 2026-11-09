@@ -28,7 +28,6 @@ public interface PagoClaseRepository extends JpaRepository<PagoClase, Long> {
         AND p.reserva.horario.fecha BETWEEN :desde AND :hasta
         AND p.tipoReserva = :tipoReserva
         AND p.estadoPago = :estadoPago
-        AND p.reserva.estado = 'RESERVADA'
       """)
   long contarBeneficiosMensuales(
       @Param("idCliente") Long idCliente,

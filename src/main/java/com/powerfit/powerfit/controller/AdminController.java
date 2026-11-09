@@ -80,7 +80,16 @@ public class AdminController {
     // SOLICITUDES Y PAGOS DE CLASES
     List<PagoClase> solicitudesClases =
         pagoClaseRepository.findByEstadoPagoInOrderByFechaRegistroDesc(
-            List.of("PENDIENTE", "AUTORIZADO", "PAGADO", "BONIFICADO"));
+            List.of(
+                "PENDIENTE",
+                "AUTORIZADO",
+                "PAGADO",
+                "BONIFICADO",
+                "REINTEGRADO",
+                "REEMBOLSO_PENDIENTE",
+                "REEMBOLSADO",
+                "CANCELADO",
+                "RECHAZADO"));
 
     model.addAttribute("solicitudesClases", solicitudesClases);
 
@@ -146,6 +155,27 @@ public class AdminController {
       redirect.addFlashAttribute("mensaje", "Solicitud rechazada y cupo liberado.");
 
     } catch (IllegalArgumentException e) {
+      redirect.addFlashAttribute("error", e.getMessage());
+    }
+
+    return "redirect:/admin/clases?tab=solicitudes";
+  }
+
+  // ==========================================
+  // PROCESAR REEMBOLSO DE CLASE
+  // ==========================================
+
+  @PostMapping("/clases/reembolsos/{idPago}/procesar")
+  public String procesarReembolsoClase(@PathVariable Long idPago, RedirectAttributes redirect) {
+
+    try {
+
+      pagoClaseService.procesarReembolso(idPago);
+
+      redirect.addFlashAttribute("mensaje", "Reembolso simulado procesado correctamente.");
+
+    } catch (IllegalArgumentException e) {
+
       redirect.addFlashAttribute("error", e.getMessage());
     }
 

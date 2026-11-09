@@ -244,6 +244,10 @@ public class ReservaService {
   // CANCELAR RESERVA
   // ==========================================
 
+  // ==========================================
+  // CANCELAR RESERVA
+  // ==========================================
+
   @Transactional
   public void cancelar(Long idCliente, Long idReserva) {
 
@@ -258,16 +262,20 @@ public class ReservaService {
 
     HorarioClase horario = reserva.getHorario();
 
-    LocalDate hoy = LocalDate.now(ZONA_LIMA);
-    LocalTime ahora = LocalTime.now(ZONA_LIMA);
+    LocalDateTime ahora = LocalDateTime.now(ZONA_LIMA);
 
-    if (horario.getFecha().isBefore(hoy)
-        || (horario.getFecha().equals(hoy) && !horario.getHoraInicio().isAfter(ahora))) {
+    LocalDateTime inicioClase = LocalDateTime.of(horario.getFecha(), horario.getHoraInicio());
 
+    // VALIDAR QUE LA CLASE NO HAYA COMENZADO
+    if (!inicioClase.isAfter(ahora)) {
       throw new IllegalArgumentException("Ya no puedes cancelar una sesión que comenzó.");
     }
 
-    // Cancelar operación pendiente o beneficio gratuito
+    // VALIDAR ANTICIPACIÓN DE 24 HORAS
+    boolean anticipacionValida =
+        !inicioClase.isBefore(ahora.plusHours(ReglasClases.HORAS_ANTICIPACION_CANCELACION));
+
+    // OBTENER ÚLTIMO PAGO DE LA RESERVA
     Optional<PagoClase> ultimoPago =
         pagoClaseRepository.findFirstByReserva_IdReservaOrderByFechaRegistroDesc(idReserva);
 
@@ -275,17 +283,60 @@ public class ReservaService {
 
       PagoClase pago = ultimoPago.get();
 
-      if ("PENDIENTE".equals(pago.getEstadoPago())
-          || "AUTORIZADO".equals(pago.getEstadoPago())
-          || "BONIFICADO".equals(pago.getEstadoPago())) {
+      switch (pago.getEstadoPago()) {
 
-        pago.setEstadoPago("CANCELADO");
-        pago.setObservacion("Reserva cancelada por el cliente.");
+        // SOLICITUDES SIN PAGO REALIZADO
+        case "PENDIENTE", "AUTORIZADO" -> {
+          pago.setEstadoPago("CANCELADO");
 
-        pagoClaseRepository.save(pago);
+          pago.setObservacion("Reserva cancelada por el cliente. No se realizó ningún cobro.");
+        }
+
+        // BENEFICIO GRATUITO DE MEMBRESÍA
+        case "BONIFICADO" -> {
+          if (anticipacionValida) {
+
+            pago.setEstadoPago("REINTEGRADO");
+
+            pago.setObservacion(
+                "Reserva cancelada con al menos 24 horas de anticipación. "
+                    + "Beneficio mensual reintegrado.");
+
+          } else {
+
+            pago.setObservacion(
+                "Reserva cancelada con menos de 24 horas de anticipación. "
+                    + "El beneficio mensual se considera utilizado.");
+          }
+        }
+
+        // PAGO REALIZADO
+        case "PAGADO" -> {
+          if (anticipacionValida) {
+
+            pago.setEstadoPago("REEMBOLSO_PENDIENTE");
+
+            pago.setObservacion(
+                "Reserva cancelada con al menos 24 horas de anticipación. "
+                    + "Reembolso simulado pendiente de aprobación administrativa.");
+
+          } else {
+
+            pago.setObservacion(
+                "Reserva cancelada con menos de 24 horas de anticipación. "
+                    + "No corresponde devolución.");
+          }
+        }
+
+        default ->
+            throw new IllegalArgumentException(
+                "El estado del pago no permite cancelar esta reserva.");
       }
+
+      pagoClaseRepository.save(pago);
     }
 
+    // LIBERAR CUPO
     reserva.setEstado("CANCELADA");
 
     reservaRepository.save(reserva);

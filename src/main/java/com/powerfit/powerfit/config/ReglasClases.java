@@ -19,6 +19,9 @@ public final class ReglasClases {
   // PRECIO FIJO DE CLASES ADICIONALES
   public static final BigDecimal PRECIO_CLASE_ADICIONAL = new BigDecimal("15.00");
 
+  // ANTICIPACIÓN MÍNIMA PARA DEVOLUCIONES Y RECUPERACIÓN DE BENEFICIOS
+  public static final long HORAS_ANTICIPACION_CANCELACION = 24L;
+
   private ReglasClases() {
     // Evitar instancias de esta clase.
   }

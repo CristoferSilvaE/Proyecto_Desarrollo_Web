@@ -315,9 +315,41 @@
                   </p>
                 </div>
 
-                <form th:action="@{/clases/cancelar/{idReserva}(idReserva=${reserva.idReserva})}" method="post" onsubmit="return confirm('¿Estás seguro de cancelar esta reserva?');">
-                  <button type="submit" class="cancel-class-btn">Cancelar</button>
-                </form>
+                <button type="button" class="cancel-class-btn" th:onclick="|document.getElementById('modalCancelarReserva-${reserva.idReserva}').showModal()|">Cancelar</button>
+
+                <dialog class="cancel-reservation-modal" th:id="|modalCancelarReserva-${reserva.idReserva}|">
+                  <div class="cancel-reservation-card">
+                    <div class="cancel-reservation-header">
+                      <span>POWERFIT / MIS CLASES</span>
+                      <button type="button" onclick="this.closest('dialog').close()">×</button>
+                    </div>
+
+                    <div class="cancel-reservation-icon">!</div>
+
+                    <h2>¿CANCELAR RESERVA?</h2>
+
+                    <p class="cancel-reservation-description">Estás por cancelar tu reserva de:</p>
+
+                    <div class="cancel-reservation-details">
+                      <span>CLASE</span>
+                      <strong th:text="${reserva.horario.clase.nombre}">Zumba</strong>
+
+                      <span>FECHA</span>
+                      <strong th:text="${#temporals.format(reserva.horario.fecha, 'dd/MM/yyyy')}">20/11/2026</strong>
+
+                      <span>HORARIO</span>
+                      <strong th:text="${#temporals.format(reserva.horario.horaInicio, 'HH:mm')}">20:00</strong>
+                    </div>
+
+                    <div class="cancel-reservation-notice">Si cancelas con al menos 24 horas de anticipación, podrás recuperar tu beneficio o solicitar la devolución del pago, según corresponda.</div>
+
+                    <form th:action="@{/clases/cancelar/{idReserva}(idReserva=${reserva.idReserva})}" method="post" class="cancel-reservation-actions">
+                      <button type="button" class="cancel-reservation-back" onclick="this.closest('dialog').close()">VOLVER</button>
+
+                      <button type="submit" class="cancel-reservation-confirm">CONFIRMAR CANCELACIÓN</button>
+                    </form>
+                  </div>
+                </dialog>
               </div>
             </div>
           </section>
@@ -358,26 +390,25 @@
                   </p>
 
                   <small class="upcoming-meta" th:text="${'Registro: ' + #temporals.format(pagoClase.fechaRegistro, 'dd/MM/yyyy HH:mm')}">Registro</small>
+                  <small class="class-payment-observation" th:if="${pagoClase.observacion != null and !pagoClase.observacion.isBlank()}" th:text="${pagoClase.observacion}"></small>
                 </div>
 
                 <div class="class-payment-actions-column">
                   <span
                     class="class-payment-status"
-                    th:classappend="${
-                        pagoClase.estadoPago == 'PAGADO' or pagoClase.estadoPago == 'BONIFICADO'
-                        ? ' is-success'
-                        : pagoClase.estadoPago == 'AUTORIZADO'
-                        ? ' is-info'
-                        : pagoClase.estadoPago == 'RECHAZADO' or pagoClase.estadoPago == 'CANCELADO'
-                        ? ' is-muted'
-                        : ' is-warning'
-                    }"
-                    th:text="${
-                        pagoClase.estadoPago == 'PENDIENTE' ? 'EN REVISIÓN'
-                        : pagoClase.estadoPago == 'AUTORIZADO' ? 'PENDIENTE DE PAGO'
-                        : pagoClase.estadoPago == 'BONIFICADO' ? 'BONIFICADO'
-                        : pagoClase.estadoPago
-                    }">
+                    th:classappend="${(pagoClase.reserva.estado == 'CANCELADA' and (pagoClase.estadoPago == 'PAGADO' or pagoClase.estadoPago == 'BONIFICADO')) ? ' is-muted' :
+                        (pagoClase.estadoPago == 'REEMBOLSO_PENDIENTE' or pagoClase.estadoPago == 'AUTORIZADO') ? ' is-info' :
+                        (pagoClase.estadoPago == 'PAGADO' or pagoClase.estadoPago == 'BONIFICADO' or pagoClase.estadoPago == 'REINTEGRADO' or pagoClase.estadoPago == 'REEMBOLSADO') ? ' is-success' :
+                        (pagoClase.estadoPago == 'RECHAZADO' or pagoClase.estadoPago == 'CANCELADO') ? ' is-muted' : ' is-warning'}"
+                    th:text="${pagoClase.estadoPago == 'REEMBOLSO_PENDIENTE' ? 'REEMBOLSO PENDIENTE' :
+                        pagoClase.estadoPago == 'REEMBOLSADO' ? 'REEMBOLSADO' :
+                        pagoClase.estadoPago == 'REINTEGRADO' ? 'BENEFICIO REINTEGRADO' :
+                        (pagoClase.estadoPago == 'BONIFICADO' and pagoClase.reserva.estado == 'CANCELADA') ? 'CANCELADA · BENEFICIO CONSUMIDO' :
+                        (pagoClase.estadoPago == 'PAGADO' and pagoClase.reserva.estado == 'CANCELADA') ? 'CANCELADA · SIN DEVOLUCIÓN' :
+                        pagoClase.estadoPago == 'CANCELADO' ? 'SOLICITUD CANCELADA' :
+                        pagoClase.estadoPago == 'PENDIENTE' ? 'EN REVISIÓN' :
+                        pagoClase.estadoPago == 'AUTORIZADO' ? 'PENDIENTE DE PAGO' :
+                        pagoClase.estadoPago == 'BONIFICADO' ? 'BONIFICADO' : pagoClase.estadoPago}">
                     ESTADO
                   </span>
 
@@ -390,7 +421,7 @@
                   </button>
 
                   <a
-                    th:if="${pagoClase.estadoPago == 'PAGADO' and pagoClase.tipoReserva == 'PAGO'}"
+                    th:if="${pagoClase.tipoReserva == 'PAGO' and (pagoClase.estadoPago == 'PAGADO' or pagoClase.estadoPago == 'REEMBOLSO_PENDIENTE' or pagoClase.estadoPago == 'REEMBOLSADO')}"
                     th:href="@{/perfil/clases/pagos/{idPago}/comprobante(idPago=${pagoClase.idPagoClase})}"
                     class="payment-receipt-btn">
                     <span>↓</span>
@@ -736,6 +767,14 @@
           window.setTimeout(() => {
             HTMLFormElement.prototype.submit.call(form);
           }, 800);
+        });
+      });
+
+      document.querySelectorAll(".cancel-reservation-modal").forEach((dialog) => {
+        dialog.addEventListener("click", (event) => {
+          if (event.target === dialog) {
+            dialog.close();
+          }
         });
       });
     </script>
