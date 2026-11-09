@@ -1134,3 +1134,96 @@ html {
   min-width: 230px;
   vertical-align: middle;
 }
+
+/* ==========================================
+   MODAL DE ALUMNOS INSCRITOS
+========================================== */
+
+.adm-inscritos-body {
+  max-height: min(65vh, 620px);
+  overflow-y: auto;
+}
+
+.adm-inscritos-resumen {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 18px;
+  background: #171719;
+  border: 1px solid var(--adm-border);
+  border-radius: 4px;
+}
+
+.adm-inscritos-resumen span {
+  color: var(--adm-muted);
+  font:
+    500 10px "IBM Plex Mono",
+    monospace;
+}
+
+.adm-inscritos-resumen strong {
+  color: #b6caff;
+  font-size: 18px;
+  margin-right: 15px;
+}
+
+.adm-inscritos-list {
+  display: grid;
+  gap: 10px;
+}
+
+.adm-inscrito-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 15px 17px;
+  background: #171719;
+  border: 1px solid var(--adm-border);
+  border-radius: 4px;
+}
+
+.adm-inscrito-info strong {
+  display: block;
+  color: #f1f1f5;
+  font-size: 13px;
+}
+
+.adm-inscrito-info small {
+  display: block;
+  margin-top: 5px;
+  color: var(--adm-muted);
+  font-size: 11px;
+}
+
+.adm-inscrito-meta {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.adm-inscrito-meta small {
+  color: var(--adm-muted);
+  font-size: 10px;
+}
+
+.adm-inscritos-empty {
+  margin: 0;
+  padding: 30px 18px;
+  text-align: center;
+  color: var(--adm-muted);
+  border: 1px dashed var(--adm-border);
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .adm-inscrito-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adm-inscrito-meta {
+    justify-items: start;
+  }
+}

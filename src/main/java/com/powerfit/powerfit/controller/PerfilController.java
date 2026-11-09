@@ -13,6 +13,7 @@ import com.powerfit.powerfit.repository.PagoMembresiaRepository;
 import com.powerfit.powerfit.repository.ReservaRepository;
 import com.powerfit.powerfit.repository.SeguimientoFisicoRepository;
 import com.powerfit.powerfit.repository.UsuarioRepository;
+import com.powerfit.powerfit.service.ComprobanteClasePdfService;
 import com.powerfit.powerfit.service.ComprobanteMembresiaPdfService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -50,6 +51,7 @@ public class PerfilController {
   private final PagoMembresiaRepository pagoMembresiaRepository;
   private final PagoClaseRepository pagoClaseRepository;
   private final ComprobanteMembresiaPdfService comprobanteMembresiaPdfService;
+  private final ComprobanteClasePdfService comprobanteClasePdfService;
   private final ReservaRepository reservaRepository;
   private final SeguimientoFisicoRepository seguimientoFisicoRepository;
 
@@ -60,6 +62,7 @@ public class PerfilController {
       PagoMembresiaRepository pagoMembresiaRepository,
       PagoClaseRepository pagoClaseRepository,
       ComprobanteMembresiaPdfService comprobanteMembresiaPdfService,
+      ComprobanteClasePdfService comprobanteClasePdfService,
       ReservaRepository reservaRepository,
       SeguimientoFisicoRepository seguimientoFisicoRepository) {
 
@@ -69,6 +72,7 @@ public class PerfilController {
     this.pagoMembresiaRepository = pagoMembresiaRepository;
     this.pagoClaseRepository = pagoClaseRepository;
     this.comprobanteMembresiaPdfService = comprobanteMembresiaPdfService;
+    this.comprobanteClasePdfService = comprobanteClasePdfService;
     this.reservaRepository = reservaRepository;
     this.seguimientoFisicoRepository = seguimientoFisicoRepository;
   }
@@ -154,6 +158,41 @@ public class PerfilController {
           .header(
               HttpHeaders.CONTENT_DISPOSITION,
               "attachment; filename=\"comprobante-powerfit-" + idPago + ".pdf\"")
+          .body(pdf);
+
+    } catch (SecurityException e) {
+
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    } catch (IllegalArgumentException e) {
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    } catch (IllegalStateException e) {
+
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+  }
+
+  @GetMapping("/perfil/clases/pagos/{idPago}/comprobante")
+  public ResponseEntity<byte[]> descargarComprobanteClase(
+      @PathVariable Long idPago, HttpSession session) {
+
+    Long idCliente = (Long) session.getAttribute("idCliente");
+
+    if (idCliente == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    try {
+
+      byte[] pdf = comprobanteClasePdfService.generarComprobante(idPago, idCliente);
+
+      return ResponseEntity.ok()
+          .contentType(MediaType.APPLICATION_PDF)
+          .header(
+              HttpHeaders.CONTENT_DISPOSITION,
+              "attachment; filename=\"comprobante-clase-powerfit-" + idPago + ".pdf\"")
           .body(pdf);
 
     } catch (SecurityException e) {

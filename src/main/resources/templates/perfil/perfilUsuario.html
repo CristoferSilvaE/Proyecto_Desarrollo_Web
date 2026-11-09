@@ -388,6 +388,14 @@
                     th:onclick="|document.getElementById('modalPagoClase-${pagoClase.idPagoClase}').showModal()|">
                     PAGAR AHORA
                   </button>
+
+                  <a
+                    th:if="${pagoClase.estadoPago == 'PAGADO' and pagoClase.tipoReserva == 'PAGO'}"
+                    th:href="@{/perfil/clases/pagos/{idPago}/comprobante(idPago=${pagoClase.idPagoClase})}"
+                    class="payment-receipt-btn">
+                    <span>↓</span>
+                    DESCARGAR PDF
+                  </a>
                 </div>
 
                 <!-- CHECKOUT DE CLASE -->
