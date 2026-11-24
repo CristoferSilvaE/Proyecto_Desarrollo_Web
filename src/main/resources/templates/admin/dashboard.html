@@ -1,24 +1,182 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PowerFit | PANEL DE ADMINISTRACIÓN</title>
   <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
 </head>
-<body class="adm-body">
-<div class="adm-shell">
-  <div th:replace="~{admin/fragments/sidebar :: sidebar('panel')}"></div>
-  <div class="adm-workspace">
-    <div th:replace="~{admin/fragments/topbar :: topbar('PANEL DE CONTROL', 'PANEL DE ADMINISTRACIÓN', 'Visión general y rendimiento del sistema')}"></div>
-    <main class="adm-main">
-      <div class="adm-demo-banner"><strong>Vista preliminar:</strong> datos ilustrativos. Los formularios aún no guardan información en MySQL.</div>
-      <div class="adm-stats"><article class="adm-stat "><div class="adm-stat-label">CLIENTES ACTIVOS</div><strong>—</strong><small>Se conectará a clientes</small></article><article class="adm-stat "><div class="adm-stat-label">MEMBRESÍAS VENDIDAS</div><strong>—</strong><small>Se conectará a membresías</small></article><article class="adm-stat "><div class="adm-stat-label">INGRESOS MENSUALES</div><strong>—</strong><small>Se conectará a pagos</small></article><article class="adm-stat "><div class="adm-stat-label">CLASES HOY</div><strong>—</strong><small>Se conectará a horarios</small></article></div><div class="adm-two-columns"><section class="adm-panel"><div class="adm-panel-head"><h2>HORARIO DE HOY</h2><a class="adm-link" th:href="@{/admin/clases}">VER TODO →</a></div><div class="adm-table-scroll"><table class="adm-table"><thead><tr><th scope="col">HORA</th><th scope="col">CLASE</th><th scope="col">INSTRUCTOR</th><th scope="col">ESTADO</th></tr></thead><tbody><tr><td>06:00</td><td>Musculación</td><td>Por asignar</td><td><span class="adm-badge blue">Pendiente de datos</span></td></tr><tr><td>08:30</td><td>Spinning</td><td>Por asignar</td><td><span class="adm-badge blue">Pendiente de datos</span></td></tr><tr><td>17:30</td><td>Funcional</td><td>Por asignar</td><td><span class="adm-badge blue">Pendiente de datos</span></td></tr></tbody></table></div></section><div class="adm-stack"><section class="adm-panel"><div class="adm-panel-head"><h2>ALERTAS DEL SISTEMA</h2></div><div class="adm-alert">▴ &nbsp; Productos con stock crítico <span>Próximamente</span></div><div class="adm-alert">◷ &nbsp; Membresías por vencer <span>Próximamente</span></div><div class="adm-alert">▤ &nbsp; Pedidos pendientes <span>Próximamente</span></div></section><section class="adm-panel"><div class="adm-panel-head"><h2>ACCESOS RÁPIDOS</h2></div><div class="adm-quick"><a th:href="@{/admin/clientes}">Clientes →</a><a th:href="@{/admin/clases}">Horarios →</a><a th:href="@{/admin/productos}">Productos →</a></div></section></div></div>
-    </main>
-  </div>
-</div>
 
-<div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
-<script th:src="@{/js/admin/admin.js}"></script>
+<body class="adm-body">
+  <div class="adm-shell">
+    <div th:replace="~{admin/fragments/sidebar :: sidebar('panel')}"></div>
+
+    <div class="adm-workspace">
+      <div
+        th:replace="~{admin/fragments/topbar :: topbar('PANEL DE CONTROL', 'PANEL DE ADMINISTRACIÓN', 'Visión general y rendimiento del sistema')}">
+      </div>
+
+      <main class="adm-main">
+        <!-- INDICADORES PRINCIPALES -->
+        <div class="adm-stats">
+          <article class="adm-stat">
+            <div class="adm-stat-label">CLIENTES ACTIVOS</div>
+            <strong th:text="${resumen.clientesActivos}">0</strong>
+            <small th:text="${resumen.clientesTotales + ' registrado(s) en total'}">0 registrados</small>
+          </article>
+
+          <article class="adm-stat">
+            <div class="adm-stat-label">MEMBRESÍAS VENDIDAS</div>
+            <strong th:text="${resumen.membresiasVendidas}">0</strong>
+            <small th:text="${resumen.membresiasActivas + ' activas · ' + resumen.membresiasVencidas + ' vencidas'}">
+              0 activas · 0 vencidas
+            </small>
+          </article>
+
+          <article class="adm-stat">
+            <div class="adm-stat-label">INGRESOS MENSUALES</div>
+            <strong th:text="${'S/ ' + #numbers.formatDecimal(resumen.ingresosMensuales, 1, 2)}">S/ 0.00</strong>
+            <small
+              th:text="${'Memb. S/ ' + #numbers.formatDecimal(resumen.ingresosMembresiasMes, 1, 2) + ' · Clases S/ ' + #numbers.formatDecimal(resumen.ingresosClasesMes, 1, 2) + ' · Tienda S/ ' + #numbers.formatDecimal(resumen.ingresosTiendaMes, 1, 2)}">
+              Desglose mensual
+            </small>
+          </article>
+
+          <article class="adm-stat">
+            <div class="adm-stat-label">CLASES HOY</div>
+            <strong th:text="${resumen.clasesHoyTotal}">0</strong>
+            <small th:text="${resumen.reservasHoyTotal + ' reserva(s) de ' + resumen.capacidadHoyTotal + ' cupos'}">
+              0 reservas
+            </small>
+          </article>
+        </div>
+
+        <div class="adm-two-columns">
+          <!-- HORARIO DE HOY -->
+          <section class="adm-panel">
+            <div class="adm-panel-head">
+              <h2>HORARIO DE HOY</h2>
+              <a class="adm-link" th:href="@{/admin/clases}">VER TODO →</a>
+            </div>
+
+            <div class="adm-table-scroll">
+              <table class="adm-table adm-table-compact">
+                <thead>
+                  <tr>
+                    <th scope="col">HORA</th>
+                    <th scope="col">CLASE</th>
+                    <th scope="col">INSTRUCTOR</th>
+                    <th scope="col">CUPOS</th>
+                    <th scope="col">ESTADO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:if="${#lists.isEmpty(resumen.horariosHoy)}">
+                    <td colspan="5" style="text-align: center; padding: 30px; color: #9a9ca9">
+                      No hay clases programadas para hoy.
+                    </td>
+                  </tr>
+
+                  <tr th:each="h : ${resumen.horariosHoy}">
+                    <td class="adm-membership-date">
+                      <strong th:text="${h.horaRango}">06:00 - 07:00</strong>
+                    </td>
+
+                    <td>
+                      <strong th:text="${h.nombreClase}">Clase</strong>
+                      <small th:if="${h.sala != null and !#strings.isEmpty(h.sala)}" th:text="${h.sala}">Sala</small>
+                    </td>
+
+                    <td th:text="${h.instructor}">Instructor</td>
+
+                    <td>
+                      <strong th:text="${h.reservadas + ' / ' + h.capacidad}">0 / 0</strong>
+                    </td>
+
+                    <td>
+                      <span class="adm-badge"
+                        th:classappend="${!#strings.isEmpty(h.badgeClase)} ? ' ' + ${h.badgeClase} : ''"
+                        th:text="${h.estadoTexto}">
+                        PROGRAMADA
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ALERTAS Y ACCESOS RÁPIDOS -->
+          <div class="adm-stack">
+            <section class="adm-panel">
+              <div class="adm-panel-head">
+                <h2>ALERTAS DEL SISTEMA</h2>
+              </div>
+
+              <a th:href="@{/admin/productos}" class="adm-alert"
+                th:classappend="${resumen.productosStockCritico == 0} ? ' is-ok' : ''">
+                <span>▴   Productos con stock crítico</span>
+                <strong
+                  th:text="${resumen.productosStockCritico == 0 ? 'Todo en orden' : resumen.productosStockCritico + ' producto(s)'}">
+                  0
+                </strong>
+              </a>
+
+              <a th:href="@{/admin/membresias}" class="adm-alert"
+                th:classappend="${resumen.membresiasPorVencer == 0} ? ' is-ok' : ''">
+                <span>◷   Membresías por vencer (7 días)</span>
+                <strong
+                  th:text="${resumen.membresiasPorVencer == 0 ? 'Ninguna' : resumen.membresiasPorVencer + ' por vencer'}">
+                  0
+                </strong>
+              </a>
+
+              <a th:href="@{/admin/pedidos}" class="adm-alert"
+                th:classappend="${resumen.pedidosPendientes == 0} ? ' is-ok' : ''">
+                <span>▤   Pedidos por atender</span>
+                <strong
+                  th:text="${resumen.pedidosPendientes == 0 ? 'Al día' : resumen.pedidosPendientes + ' pendiente(s)'}">
+                  0
+                </strong>
+              </a>
+
+              <a th:href="@{/admin/clases(tab='solicitudes')}" class="adm-alert"
+                th:classappend="${resumen.solicitudesClasesPendientes == 0} ? ' is-ok' : ''">
+                <span>✦   Solicitudes de clases</span>
+                <strong
+                  th:text="${resumen.solicitudesClasesPendientes == 0 ? 'Sin pendientes' : resumen.solicitudesClasesPendientes + ' por revisar'}">
+                  0
+                </strong>
+              </a>
+
+              <a th:if="${resumen.reembolsosPendientes > 0}"
+                th:href="@{/admin/pedidos(estadoPago='REEMBOLSO_PENDIENTE')}" class="adm-alert">
+                <span>↺   Reembolsos pendientes</span>
+                <strong th:text="${resumen.reembolsosPendientes + ' pendiente(s)'}">0</strong>
+              </a>
+            </section>
+
+            <section class="adm-panel">
+              <div class="adm-panel-head">
+                <h2>ACCESOS RÁPIDOS</h2>
+              </div>
+              <div class="adm-quick">
+                <a th:href="@{/admin/clientes}">Clientes →</a>
+                <a th:href="@{/admin/membresias}">Membresías →</a>
+                <a th:href="@{/admin/clases}">Horarios →</a>
+                <a th:href="@{/admin/productos}">Productos →</a>
+                <a th:href="@{/admin/pedidos}">Pedidos →</a>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+  <script th:src="@{/js/admin/admin.js}"></script>
 </body>
+
 </html>

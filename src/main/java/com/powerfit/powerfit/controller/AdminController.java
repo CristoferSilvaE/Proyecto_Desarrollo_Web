@@ -3,6 +3,7 @@ package com.powerfit.powerfit.controller;
 import com.powerfit.powerfit.model.HorarioClase;
 import com.powerfit.powerfit.model.PagoClase;
 import com.powerfit.powerfit.repository.PagoClaseRepository;
+import com.powerfit.powerfit.service.AdminDashboardService;
 import com.powerfit.powerfit.service.ClaseService;
 import com.powerfit.powerfit.service.HorarioClaseService;
 import com.powerfit.powerfit.service.InstructorService;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin")
 public class AdminController {
 
+  private final AdminDashboardService dashboardService;
   private final InstructorService instructorService;
   private final ClaseService claseService;
   private final HorarioClaseService horarioService;
@@ -30,12 +32,14 @@ public class AdminController {
   private final PagoClaseService pagoClaseService;
 
   public AdminController(
+      AdminDashboardService dashboardService,
       InstructorService instructorService,
       ClaseService claseService,
       HorarioClaseService horarioService,
       PagoClaseRepository pagoClaseRepository,
       PagoClaseService pagoClaseService) {
 
+    this.dashboardService = dashboardService;
     this.instructorService = instructorService;
     this.claseService = claseService;
     this.horarioService = horarioService;
@@ -43,8 +47,9 @@ public class AdminController {
     this.pagoClaseService = pagoClaseService;
   }
 
-  @GetMapping({"", "/"})
-  public String dashboard() {
+  @GetMapping({ "", "/" })
+  public String dashboard(Model model) {
+    model.addAttribute("resumen", dashboardService.obtenerResumen());
     return "admin/dashboard";
   }
 
@@ -55,135 +60,84 @@ public class AdminController {
 
     model.addAttribute("instructores", instructorService.listarTodos());
     model.addAttribute("clases", claseService.listar());
-
     model.addAttribute("horarios", horarios);
-
     model.addAttribute("clasesActivas", horarioService.listarClasesActivas());
-
     model.addAttribute("instructoresActivos", horarioService.listarInstructoresActivos());
-
     model.addAttribute("reservasPorHorario", horarioService.obtenerReservasPorHorario(horarios));
-
     model.addAttribute(
         "reservasDetallePorHorario", horarioService.obtenerDetalleReservasPorHorario(horarios));
-
     model.addAttribute("fechaHoy", LocalDate.now(ZoneId.of("America/Lima")));
-
     model.addAttribute("clasesProgramadas", horarioService.contarClasesProgramadas());
-
     model.addAttribute("ocupacionPromedio", horarioService.calcularOcupacionPromedio());
-
     model.addAttribute("instructoresActivosTotal", horarioService.contarInstructoresActivos());
-
     model.addAttribute("cuposDisponibles", horarioService.contarCuposDisponibles());
 
     // SOLICITUDES Y PAGOS DE CLASES
-    List<PagoClase> solicitudesClases =
-        pagoClaseRepository.findByEstadoPagoInOrderByFechaRegistroDesc(
-            List.of(
-                "PENDIENTE",
-                "AUTORIZADO",
-                "PAGADO",
-                "BONIFICADO",
-                "REINTEGRADO",
-                "REEMBOLSO_PENDIENTE",
-                "REEMBOLSADO",
-                "CANCELADO",
-                "RECHAZADO"));
+    List<PagoClase> solicitudesClases = pagoClaseRepository.findByEstadoPagoInOrderByFechaRegistroDesc(
+        List.of(
+            "PENDIENTE",
+            "AUTORIZADO",
+            "PAGADO",
+            "BONIFICADO",
+            "REINTEGRADO",
+            "REEMBOLSO_PENDIENTE",
+            "REEMBOLSADO",
+            "CANCELADO",
+            "RECHAZADO"));
 
     model.addAttribute("solicitudesClases", solicitudesClases);
-
     model.addAttribute(
         "totalSolicitudesPendientes", pagoClaseRepository.countByEstadoPago("PENDIENTE"));
 
     return "admin/clases";
   }
 
-  // ==========================================
-  // APROBAR PAGO DIGITAL DE CLASE
-  // ==========================================
-
   @PostMapping("/clases/solicitudes/{idPago}/aprobar-digital")
   public String aprobarPagoClase(@PathVariable Long idPago, RedirectAttributes redirect) {
-
     try {
       pagoClaseService.aprobarPagoDigital(idPago);
-
       redirect.addFlashAttribute(
           "mensaje", "Solicitud aprobada. El cliente ya puede realizar el pago.");
-
     } catch (IllegalArgumentException e) {
       redirect.addFlashAttribute("error", e.getMessage());
     }
-
     return "redirect:/admin/clases?tab=solicitudes";
   }
-
-  // ==========================================
-  // REGISTRAR PAGO EN EFECTIVO
-  // ==========================================
 
   @PostMapping("/clases/solicitudes/{idPago}/efectivo")
   public String registrarPagoClaseEfectivo(@PathVariable Long idPago, RedirectAttributes redirect) {
-
     try {
       pagoClaseService.registrarPagoEfectivo(idPago);
-
       redirect.addFlashAttribute(
           "mensaje", "Pago presencial registrado. La reserva quedó confirmada.");
-
     } catch (IllegalArgumentException e) {
       redirect.addFlashAttribute("error", e.getMessage());
     }
-
     return "redirect:/admin/clases?tab=solicitudes";
   }
-
-  // ==========================================
-  // RECHAZAR SOLICITUD
-  // ==========================================
 
   @PostMapping("/clases/solicitudes/{idPago}/rechazar")
   public String rechazarSolicitudClase(
       @PathVariable Long idPago,
       @RequestParam(required = false) String motivo,
       RedirectAttributes redirect) {
-
     try {
       pagoClaseService.rechazarSolicitud(idPago, motivo);
-
       redirect.addFlashAttribute("mensaje", "Solicitud rechazada y cupo liberado.");
-
     } catch (IllegalArgumentException e) {
       redirect.addFlashAttribute("error", e.getMessage());
     }
-
     return "redirect:/admin/clases?tab=solicitudes";
   }
-
-  // ==========================================
-  // PROCESAR REEMBOLSO DE CLASE
-  // ==========================================
 
   @PostMapping("/clases/reembolsos/{idPago}/procesar")
   public String procesarReembolsoClase(@PathVariable Long idPago, RedirectAttributes redirect) {
-
     try {
-
       pagoClaseService.procesarReembolso(idPago);
-
       redirect.addFlashAttribute("mensaje", "Reembolso simulado procesado correctamente.");
-
     } catch (IllegalArgumentException e) {
-
       redirect.addFlashAttribute("error", e.getMessage());
     }
-
     return "redirect:/admin/clases?tab=solicitudes";
-  }
-
-  @GetMapping("/productos")
-  public String productos() {
-    return "admin/productos";
   }
 }
