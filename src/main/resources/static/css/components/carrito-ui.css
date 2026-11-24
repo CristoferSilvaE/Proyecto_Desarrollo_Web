@@ -378,3 +378,90 @@ dialog.pedido-modal::backdrop {
 .hidden {
   display: none !important;
 }
+
+/* ==========================================
+   ACCIONES, BADGES Y REEMBOLSOS EN MIS PEDIDOS
+========================================== */
+
+.order-action-primary {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid #818cf8;
+  background: #a5b4fc;
+  color: #09090b;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.order-action-primary:hover {
+  background: #818cf8;
+}
+
+.order-statuses .badge-exito {
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.45);
+  color: #4ade80;
+}
+
+.order-statuses .badge-info {
+  background: rgba(99, 102, 241, 0.16);
+  border-color: rgba(129, 140, 248, 0.45);
+  color: #c7d2fe;
+}
+
+.order-statuses .badge-pendiente {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.45);
+  color: #fcd34d;
+}
+
+.order-statuses .badge-peligro {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #f87171;
+}
+
+.order-statuses .badge-neutro {
+  background: rgba(161, 161, 170, 0.14);
+  border-color: rgba(161, 161, 170, 0.35);
+  color: #d4d4d8;
+}
+
+.pedido-nota-reembolso {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.08);
+  color: #fcd34d;
+  font-size: 12px;
+}
+
+.pedido-nota-reembolso.pedido-nota-ok {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.08);
+  color: #86efac;
+}
+
+.pedido-detalle-obs {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #20212a;
+  border: 1px solid #34343f;
+  color: #d4d4d8;
+  font-size: 12px;
+}
+
+.pedido-modal-actions a.pedido-btn-principal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}

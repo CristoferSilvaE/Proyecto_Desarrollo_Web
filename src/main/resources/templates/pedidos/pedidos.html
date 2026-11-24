@@ -6,6 +6,7 @@
     <title>PowerFit - Mis Pedidos</title>
     <link rel="stylesheet" th:href="@{/css/base/powerfit.css}" />
     <link rel="stylesheet" th:href="@{/css/components/carrito-ui.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/membresia-pago.css}" />
   </head>
   <body class="app-body">
     <div th:replace="~{fragments/header :: header('tienda')}"></div>
@@ -29,22 +30,21 @@
 
     <main th:if="${cliente != null}" class="page-container">
       <div th:if="${mensaje}" class="pedido-alerta pedido-alerta-exito" th:text="${mensaje}"></div>
-
       <div th:if="${error}" class="pedido-alerta pedido-alerta-error" th:text="${error}"></div>
-      <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
       <div class="page-head-actions">
         <div>
           <p class="eyebrow">Mi cuenta</p>
           <h1 class="page-title">Mis Pedidos</h1>
-          <p class="text-zinc-400 text-sm mt-2">Consulta el estado y detalle de tus compras.</p>
+          <p class="text-zinc-400 text-sm mt-2">Consulta el estado, realiza tus pagos y descarga tus comprobantes.</p>
         </div>
 
-        <div class="order-filters">
-          <button class="order-filter-active">Todos</button>
-          <button class="order-filter">Pendientes</button>
-          <button class="order-filter">En proceso</button>
-          <button class="order-filter">Entregados</button>
-          <button class="order-filter">Cancelados</button>
+        <div class="order-filters" role="tablist" aria-label="Filtrar pedidos">
+          <button type="button" class="order-filter-active" data-filter="TODOS" onclick="filtrarPedidos('TODOS', this)">Todos</button>
+          <button type="button" class="order-filter" data-filter="PENDIENTE" onclick="filtrarPedidos('PENDIENTE', this)">Pendientes</button>
+          <button type="button" class="order-filter" data-filter="EN_PROCESO" onclick="filtrarPedidos('EN_PROCESO', this)">En proceso</button>
+          <button type="button" class="order-filter" data-filter="ENTREGADO" onclick="filtrarPedidos('ENTREGADO', this)">Entregados</button>
+          <button type="button" class="order-filter" data-filter="CANCELADO" onclick="filtrarPedidos('CANCELADO', this)">Cancelados</button>
         </div>
       </div>
 
@@ -54,8 +54,8 @@
         <a th:href="@{/tienda}" class="btn-primary">Ir a la tienda</a>
       </section>
 
-      <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}" class="orders-list">
-        <article th:each="pedido : ${pedidos}" class="order-card">
+      <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}" id="listaPedidos" class="orders-list">
+        <article th:each="pedido : ${pedidos}" class="order-card" th:attr="data-estado=${pedido.estado}">
           <div class="order-main">
             <div class="order-grid">
               <div>
@@ -68,7 +68,7 @@
               </div>
               <div>
                 <p class="order-label">Entrega</p>
-                <p class="order-value" th:text="${pedido.metodoEntrega}">--</p>
+                <p class="order-value" th:text="${pedido.metodoEntrega == 'RECOJO' ? 'Recojo en sede' : 'Delivery'}">--</p>
               </div>
               <div>
                 <p class="order-label">Total</p>
@@ -77,41 +77,97 @@
             </div>
 
             <div class="order-statuses">
-              <span class="order-status" th:text="${pedido.estado}">PENDIENTE</span>
-              <span class="payment-status" th:text="${pedido.estadoPago}">PENDIENTE</span>
+              <span
+                class="order-status"
+                th:classappend="${pedido.estado == 'ENTREGADO' ? ' badge-exito' : (pedido.estado == 'EN_PROCESO' ? ' badge-info' : (pedido.estado == 'CANCELADO' ? ' badge-peligro' : ' badge-pendiente'))}"
+                th:text="${pedido.estado == 'EN_PROCESO' ? 'EN PROCESO' : pedido.estado}">
+                PENDIENTE
+              </span>
+
+              <span
+                class="payment-status"
+                th:classappend="${pedido.estadoPago == 'PAGADO' ? ' badge-exito' : (pedido.estadoPago == 'REEMBOLSO_PENDIENTE' ? ' badge-pendiente' : (pedido.estadoPago == 'REEMBOLSADO' ? ' badge-info' : (pedido.estadoPago == 'CANCELADO' ? ' badge-peligro' : ' badge-neutro')))}"
+                th:text="${pedido.estadoPago == 'REEMBOLSO_PENDIENTE' ? 'REEMBOLSO PENDIENTE' : (pedido.estadoPago == 'CANCELADO' ? 'SIN PAGO' : pedido.estadoPago)}">
+                PENDIENTE
+              </span>
             </div>
           </div>
 
+          <p th:if="${pedido.estadoPago == 'REEMBOLSO_PENDIENTE'}" class="pedido-nota-reembolso">
+            Tu solicitud de reembolso está registrada y será procesada por administración.
+          </p>
+
+          <p th:if="${pedido.estadoPago == 'REEMBOLSADO'}" class="pedido-nota-reembolso pedido-nota-ok">
+            Reembolso simulado procesado por administración.
+          </p>
+
           <div class="order-actions">
+            <!-- PAGAR ONLINE (OPCIÓN A) -->
+            <button
+              th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}"
+              type="button"
+              class="order-action-primary"
+              th:attr="data-id=${pedido.idPedido}, data-total=${#numbers.formatDecimal(pedido.total, 1, 2)}, data-metodo=${pedido.metodoPago}"
+              onclick="abrirPago(this)">
+              Pagar ahora
+            </button>
+
             <!-- VER DETALLE -->
             <button type="button" class="order-action" th:attr="onclick=|abrirDetalle(${pedido.idPedido})|">Ver detalle</button>
 
-            <!-- EDITAR -->
-            <button th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}" type="button" class="order-action" th:attr="onclick=|abrirEditar(${pedido.idPedido})|">Editar</button>
+            <!-- COMPROBANTE PDF -->
+            <a
+              th:if="${pedido.estadoPago == 'PAGADO' or pedido.estadoPago == 'REEMBOLSO_PENDIENTE' or pedido.estadoPago == 'REEMBOLSADO'}"
+              th:href="@{/pedidos/{id}/comprobante(id=${pedido.idPedido})}"
+              target="_blank"
+              class="order-action">
+              Comprobante PDF
+            </a>
 
-            <!-- CANCELAR -->
-            <button th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}" type="button" class="btn-danger" th:attr="onclick=|abrirCancelar(${pedido.idPedido})|">
+            <!-- EDITAR (SOLO SI PENDIENTE SIN PAGO) -->
+            <button
+              th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}"
+              type="button"
+              class="order-action"
+              th:attr="onclick=|abrirEditar(${pedido.idPedido})|">
+              Editar
+            </button>
+
+            <!-- CANCELAR SIN PAGO -->
+            <button
+              th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}"
+              type="button"
+              class="btn-danger"
+              th:attr="onclick=|abrirCancelar(${pedido.idPedido}, false)|">
               Cancelar pedido
+            </button>
+
+            <!-- CANCELAR PEDIDO PAGADO EN PROCESO (SOLICITA REEMBOLSO) -->
+            <button
+              th:if="${pedido.estado == 'EN_PROCESO' and pedido.estadoPago == 'PAGADO'}"
+              type="button"
+              class="btn-danger"
+              th:attr="onclick=|abrirCancelar(${pedido.idPedido}, true)|">
+              Cancelar y solicitar reembolso
             </button>
           </div>
         </article>
       </div>
+
+      <section id="filtroVacio" class="empty-state hidden">
+        <h2 class="empty-title">Sin pedidos en esta categoría</h2>
+        <p class="empty-text">No se encontraron pedidos con el estado seleccionado.</p>
+      </section>
     </main>
 
     <div th:replace="~{fragments/footer :: footer}"></div>
-    
+
     <!-- MODAL COMPRA EXITOSA -->
     <dialog id="modalPedidoExitoso" class="cart-modal" th:if="${pedidoExitoso != null}">
       <div class="cart-modal-icon" style="color: #4ade80; background: rgba(34, 197, 94, 0.12)">✓</div>
-
       <h2 class="cart-modal-title">¡Pedido registrado!</h2>
-
-      <p class="cart-modal-text">Tu compra se registró correctamente.</p>
-
+      <p class="cart-modal-text">Tu compra se registró correctamente y ya puedes completar el pago online desde Mis Pedidos.</p>
       <p style="text-align: center; margin-top: 15px; font-weight: 800; color: #c7d2fe" th:text="${'Pedido #PF-' + pedidoExitoso}"></p>
-
-      <p class="cart-modal-text" style="margin-top: 12px">Puedes consultar su estado en Mis pedidos.</p>
-
       <div class="cart-modal-actions">
         <button type="button" class="cart-modal-confirm" style="background: #818cf8; color: #111118" onclick="document.getElementById('modalPedidoExitoso').close()">Ver mis pedidos</button>
       </div>
@@ -122,18 +178,21 @@
         document.getElementById("modalPedidoExitoso").showModal();
       });
     </script>
+
+    <!-- MODAL VER DETALLE -->
     <dialog id="modalDetalle" class="pedido-modal">
       <div class="pedido-modal-header">
         <h2 id="tituloDetalle">Detalle del pedido</h2>
         <button type="button" onclick="cerrarModal('modalDetalle')">✕</button>
       </div>
-
       <div id="contenidoDetalle"></div>
-
       <div class="pedido-modal-actions">
+        <a id="btnPdfDesdeDetalle" href="#" target="_blank" class="pedido-btn-principal hidden">Descargar comprobante PDF</a>
         <button type="button" class="pedido-btn-secundario" onclick="cerrarModal('modalDetalle')">Cerrar</button>
       </div>
     </dialog>
+
+    <!-- MODAL EDITAR PEDIDO -->
     <dialog id="modalEditar" class="pedido-modal">
       <div class="pedido-modal-header">
         <h2>Editar pedido</h2>
@@ -141,14 +200,12 @@
       </div>
 
       <form id="formEditarPedido" method="post">
-        <p class="pedido-modal-subtitulo">Puedes modificar las cantidades y los datos de entrega.</p>
+        <p class="pedido-modal-subtitulo">Puedes modificar las cantidades y los datos de entrega mientras el pedido esté pendiente de pago.</p>
 
         <h3 class="pedido-modal-seccion">Productos</h3>
-
         <div id="productosEditar"></div>
 
         <h3 class="pedido-modal-seccion">Método de entrega</h3>
-
         <select id="editarMetodoEntrega" name="metodoEntrega" class="field-input" onchange="actualizarEntregaEdicion()">
           <option value="RECOJO">Recojo en sede</option>
           <option value="DELIVERY">Delivery</option>
@@ -156,25 +213,20 @@
 
         <div id="editarDatosSede" class="pedido-campo">
           <label class="field-label">Sede de recojo</label>
-
           <select id="editarSede" name="idSede" class="field-input">
             <option value="">Selecciona una sede</option>
-
             <option th:each="sede : ${sedes}" th:value="${sede.idSede}" th:text="${sede.nombre + ' - ' + sede.distrito}"></option>
           </select>
         </div>
 
         <div id="editarDatosDelivery" class="pedido-campo hidden">
           <label class="field-label">Dirección</label>
-
           <input id="editarDireccion" name="direccionEntrega" maxlength="200" class="field-input" />
 
           <label class="field-label pedido-campo">Distrito</label>
-
           <input id="editarDistrito" name="distrito" maxlength="80" class="field-input" />
 
           <label class="field-label pedido-campo">Referencia</label>
-
           <input id="editarReferencia" name="referencia" maxlength="200" class="field-input" />
         </div>
 
@@ -182,32 +234,91 @@
 
         <div class="pedido-modal-actions">
           <button type="button" class="pedido-btn-secundario" onclick="cerrarModal('modalEditar')">Cancelar</button>
-
           <button type="submit" class="pedido-btn-principal">Guardar cambios</button>
         </div>
       </form>
     </dialog>
+
+    <!-- MODAL PAGO ONLINE SIMULADO -->
+    <dialog id="modalPagoPedido" class="membership-payment-modal">
+      <div id="vistaFormularioPagoPedido">
+        <div class="membership-payment-header">
+          <div>
+            <p class="membership-payment-kicker">PAGO DIGITAL SIMULADO</p>
+            <h2 id="pagoPedidoTitulo">Pagar pedido</h2>
+            <p>Confirma tu método de pago para procesar tu compra al instante.</p>
+          </div>
+          <button type="button" class="membership-payment-close" onclick="cerrarModal('modalPagoPedido')">✕</button>
+        </div>
+
+        <div class="membership-payment-total">
+          <span>Total a pagar</span>
+          <strong id="pagoPedidoTotal">S/ 0.00</strong>
+        </div>
+
+        <form id="formPagarPedido" method="post">
+          <p class="membership-payment-label">SELECCIONA EL MÉTODO DE PAGO</p>
+
+          <label class="membership-payment-option">
+            <input type="radio" name="metodoPago" value="TARJETA" checked />
+            <span>Tarjeta de crédito o débito</span>
+          </label>
+
+          <label class="membership-payment-option">
+            <input type="radio" name="metodoPago" value="YAPE_PLIN" />
+            <span>Yape / Plin</span>
+          </label>
+
+          <label class="membership-payment-option">
+            <input type="radio" name="metodoPago" value="TRANSFERENCIA" />
+            <span>Transferencia bancaria</span>
+          </label>
+
+          <p class="membership-payment-notice">
+            Simulación académica: no se realizará ningún cobro real ni se almacenarán datos bancarios. Al confirmar, podrás descargar tu comprobante PDF.
+          </p>
+
+          <div class="membership-payment-actions">
+            <button type="button" class="membership-payment-cancel" onclick="cerrarModal('modalPagoPedido')">Cancelar</button>
+            <button id="btnConfirmarPagoPedido" type="submit" class="membership-payment-confirm">CONFIRMAR PAGO</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="vistaProcesandoPagoPedido" class="membership-payment-processing" hidden>
+        <div class="membership-payment-spinner"></div>
+        <h3>Procesando pago...</h3>
+        <p>Estamos validando tu operación simulada y generando tu comprobante PowerFit.</p>
+        <span>Por favor no cierres esta ventana</span>
+      </div>
+    </dialog>
+
+    <!-- MODAL CANCELAR PEDIDO -->
     <dialog id="modalCancelar" class="pedido-modal">
       <div class="pedido-modal-header">
-        <h2>Cancelar pedido</h2>
+        <h2 id="tituloCancelar">Cancelar pedido</h2>
         <button type="button" onclick="cerrarModal('modalCancelar')">✕</button>
       </div>
 
       <div class="pedido-icono-peligro">!</div>
 
-      <p class="pedido-modal-subtitulo pedido-texto-centrado">¿Estás seguro de cancelar este pedido?</p>
+      <p id="textoCancelarPrincipal" class="pedido-modal-subtitulo pedido-texto-centrado">
+        ¿Estás seguro de cancelar este pedido?
+      </p>
 
-      <p class="pedido-modal-subtitulo pedido-texto-centrado">El pedido quedará registrado como cancelado y los productos regresarán al inventario.</p>
+      <p id="textoCancelarDetalle" class="pedido-modal-subtitulo pedido-texto-centrado">
+        El pedido quedará registrado como cancelado y los productos regresarán al inventario.
+      </p>
 
       <form id="formCancelarPedido" method="post">
         <div class="pedido-modal-actions">
           <button type="button" class="pedido-btn-secundario" onclick="cerrarModal('modalCancelar')">Volver</button>
-
-          <button type="submit" class="pedido-btn-peligro">Sí, cancelar pedido</button>
+          <button id="btnConfirmarCancelar" type="submit" class="pedido-btn-peligro">Sí, cancelar pedido</button>
         </div>
       </form>
     </dialog>
+
     <script th:src="@{/js/pages/pedidos.js}"></script>
     <script th:src="@{/js/components/header.js}"></script>
-</body>
+  </body>
 </html>
