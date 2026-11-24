@@ -186,9 +186,4 @@ public class AdminController {
   public String productos() {
     return "admin/productos";
   }
-
-  @GetMapping("/pedidos")
-  public String pedidos() {
-    return "admin/pedidos";
-  }
 }

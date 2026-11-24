@@ -1,5 +1,6 @@
 /* PowerFit Admin UI - aislado del CSS del portal cliente. */
 @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
 :root {
   --adm-bg: #101011;
   --adm-surface: #1d1d1f;
@@ -14,12 +15,15 @@
   --adm-orange: #f5a58f;
   --adm-yellow: #f6b72e;
 }
+
 * {
   box-sizing: border-box;
 }
+
 html {
   scroll-behavior: smooth;
 }
+
 .adm-body {
   margin: 0;
   background: var(--adm-bg);
@@ -29,20 +33,24 @@ html {
     Arial,
     sans-serif;
 }
+
 .adm-body button,
 .adm-body input,
 .adm-body select,
 .adm-body textarea {
   font: inherit;
 }
+
 .adm-body a {
   color: inherit;
   text-decoration: none;
 }
+
 .adm-shell {
   display: flex;
   min-height: 100vh;
 }
+
 .adm-sidebar {
   width: 245px;
   min-width: 245px;
@@ -56,12 +64,14 @@ html {
   padding: 25px 14px 20px;
   z-index: 2;
 }
+
 .adm-brand {
   display: flex;
   align-items: center;
   gap: 13px;
   margin: 0 8px 43px;
 }
+
 .adm-brand-mark {
   display: grid;
   place-items: center;
@@ -73,6 +83,7 @@ html {
   color: #b0c6ff;
   font-size: 27px;
 }
+
 .adm-brand strong {
   font:
     800 30px "Barlow Condensed",
@@ -80,6 +91,7 @@ html {
   color: #b6caff;
   letter-spacing: 0.5px;
 }
+
 .adm-brand small {
   display: block;
   font:
@@ -88,10 +100,12 @@ html {
   letter-spacing: 1.4px;
   color: #a7a8b4;
 }
+
 .adm-side-nav {
   display: grid;
   gap: 6px;
 }
+
 .adm-side-nav a {
   padding: 13px 15px;
   display: flex;
@@ -103,32 +117,39 @@ html {
   font-weight: 600;
   line-height: 1.4;
 }
+
 .adm-side-nav a:hover {
   background: #1c1e22;
 }
+
 .adm-side-nav a.is-active {
   background: #292a2d;
   color: #b5cbff;
   border-left-color: #83a8ff;
 }
+
 .adm-nav-icon {
   font-size: 19px;
   min-width: 20px;
   text-align: center;
 }
+
 .adm-side-bottom {
   margin-top: auto;
   border-top: 1px solid #282a2d;
   padding: 20px 14px 0;
   color: #c1c3ce;
 }
+
 .adm-side-bottom a:hover {
   color: white;
 }
+
 .adm-workspace {
   min-width: 0;
   flex: 1;
 }
+
 .adm-topbar {
   padding: 24px 32px 23px;
   border-bottom: 1px solid var(--adm-border);
@@ -138,6 +159,7 @@ html {
   align-items: center;
   min-height: 118px;
 }
+
 .adm-breadcrumb {
   font:
     500 11px "IBM Plex Mono",
@@ -145,9 +167,11 @@ html {
   letter-spacing: 1.3px;
   color: #a0a2b0;
 }
+
 .adm-breadcrumb span {
   color: #a9c2ff;
 }
+
 .adm-topbar h1 {
   font:
     800 clamp(25px, 3vw, 35px) "Barlow Condensed",
@@ -155,21 +179,25 @@ html {
   margin: 5px 0 2px;
   letter-spacing: 0.3px;
 }
+
 .adm-topbar p {
   margin: 0;
   color: #a9abb8;
   font-size: 12px;
 }
+
 .adm-top-actions {
   display: flex;
   align-items: center;
   gap: 23px;
 }
+
 .adm-notification {
   position: relative;
   font-size: 21px;
   color: #bfc5d5;
 }
+
 .adm-notification i {
   position: absolute;
   width: 6px;
@@ -179,6 +207,7 @@ html {
   right: 0;
   top: 0;
 }
+
 .adm-profile {
   display: flex;
   align-items: center;
@@ -186,6 +215,7 @@ html {
   border-left: 1px solid #373940;
   padding-left: 20px;
 }
+
 .adm-profile-avatar {
   display: grid;
   place-items: center;
@@ -197,6 +227,7 @@ html {
   color: #bed1ff;
   font-weight: 800;
 }
+
 .adm-profile strong {
   display: block;
   font-size: 12px;
@@ -205,6 +236,7 @@ html {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .adm-profile small {
   display: block;
   font:
@@ -214,11 +246,13 @@ html {
   letter-spacing: 0.5px;
   margin-top: 3px;
 }
+
 .adm-main {
   padding: 25px 32px 60px;
   max-width: 1600px;
   margin: 0 auto;
 }
+
 .adm-demo-banner {
   border: 1px solid #364d73;
   background: #142035;
@@ -228,12 +262,14 @@ html {
   margin-bottom: 24px;
   font-size: 12px;
 }
+
 .adm-stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 15px;
   margin: 18px 0 26px;
 }
+
 .adm-stat {
   min-height: 133px;
   border: 1px solid var(--adm-border);
@@ -243,6 +279,7 @@ html {
   display: flex;
   flex-direction: column;
 }
+
 .adm-stat-label {
   font:
     500 11px "IBM Plex Mono",
@@ -251,12 +288,14 @@ html {
   letter-spacing: 1px;
   min-height: 33px;
 }
+
 .adm-stat strong {
   font:
     800 40px "Barlow Condensed",
     sans-serif;
   line-height: 1.2;
 }
+
 .adm-stat small {
   color: #a6bfff;
   margin-top: 6px;
@@ -264,23 +303,28 @@ html {
     500 11px "IBM Plex Mono",
     monospace;
 }
+
 .adm-stat-warn {
   border-bottom: 2px solid #ff824e;
 }
+
 .adm-stat-warn strong,
 .adm-stat-warn small {
   color: #ffad93;
 }
+
 .adm-two-columns {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
   gap: 18px;
   align-items: start;
 }
+
 .adm-stack {
   display: grid;
   gap: 18px;
 }
+
 .adm-panel {
   background: var(--adm-surface);
   border: 1px solid var(--adm-border);
@@ -288,6 +332,7 @@ html {
   overflow: hidden;
   margin-bottom: 20px;
 }
+
 .adm-panel-head {
   min-height: 52px;
   display: flex;
@@ -297,6 +342,7 @@ html {
   border-bottom: 1px solid var(--adm-border);
   gap: 12px;
 }
+
 .adm-panel-head h2 {
   margin: 0;
   font:
@@ -304,21 +350,25 @@ html {
     sans-serif;
   letter-spacing: 0.4px;
 }
+
 .adm-link {
   font:
     600 11px "IBM Plex Mono",
     monospace;
   color: #abc4ff !important;
 }
+
 .adm-table-scroll {
   overflow: auto;
 }
+
 .adm-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   min-width: 640px;
 }
+
 .adm-table th {
   padding: 15px 16px;
   border-bottom: 1px solid #3a3c42;
@@ -328,6 +378,7 @@ html {
     monospace;
   letter-spacing: 0.65px;
 }
+
 .adm-table td {
   padding: 16px;
   border-bottom: 1px solid #303136;
@@ -335,24 +386,30 @@ html {
   vertical-align: middle;
   font-size: 12px;
 }
+
 .adm-table tr:last-child td {
   border-bottom: 0;
 }
+
 .adm-table tr:hover td {
   background: #232427;
 }
+
 .adm-table td strong {
   display: block;
   font-weight: 700;
 }
+
 .adm-table td small {
   display: block;
   color: #9a9ca8;
   margin-top: 4px;
 }
+
 .adm-table tr[hidden] {
   display: none;
 }
+
 .adm-badge {
   display: inline-block;
   padding: 6px 9px;
@@ -365,22 +422,26 @@ html {
     monospace;
   white-space: nowrap;
 }
+
 .adm-badge.green {
   border-color: #136c54;
   background: #0e3129;
   color: #3edcb0;
 }
+
 .adm-badge.orange {
   border-color: #794c24;
   background: #392b18;
   color: #ffc16e;
 }
+
 .adm-tabs {
   display: flex;
   gap: 6px;
   border-bottom: 1px solid var(--adm-border);
   margin: 0 0 23px;
 }
+
 .adm-tab {
   appearance: none;
   border: 1px solid transparent;
@@ -393,15 +454,18 @@ html {
     sans-serif;
   cursor: pointer;
 }
+
 .adm-tab:hover {
   color: white;
 }
+
 .adm-tab.is-active {
   background: #293955;
   color: #b8ccff;
   border-color: #4f79c9;
   border-bottom-color: #82aaff;
 }
+
 .adm-toolbar {
   background: var(--adm-surface);
   border: 1px solid var(--adm-border);
@@ -413,6 +477,7 @@ html {
   margin-bottom: 19px;
   flex-wrap: wrap;
 }
+
 .adm-search {
   display: flex;
   align-items: center;
@@ -424,6 +489,7 @@ html {
   min-height: 39px;
   color: #9caccf;
 }
+
 .adm-search input {
   background: transparent;
   border: 0;
@@ -433,6 +499,7 @@ html {
   width: 100%;
   font-size: 12px;
 }
+
 .adm-toolbar select {
   background: #2b2b2e;
   border: 1px solid #44464e;
@@ -442,6 +509,7 @@ html {
   max-width: 220px;
   cursor: pointer;
 }
+
 .adm-btn {
   border: 1px solid #454957;
   border-radius: 3px;
@@ -452,22 +520,27 @@ html {
   cursor: pointer;
   white-space: nowrap;
 }
+
 .adm-btn-primary {
   background: var(--adm-blue);
   color: #08172d;
   border-color: #6c9aff;
   box-shadow: 0 3px 15px #4d83ff25;
 }
+
 .adm-btn-primary:hover {
   background: #79a3ff;
 }
+
 .adm-btn-ghost {
   background: transparent;
   color: #c7c8d0;
 }
+
 .adm-btn-ghost:hover {
   background: #303136;
 }
+
 .adm-text-btn {
   border: 0;
   background: transparent;
@@ -478,9 +551,11 @@ html {
   cursor: pointer;
   padding: 7px 3px;
 }
+
 .adm-text-btn:hover {
   text-decoration: underline;
 }
+
 .adm-table-foot {
   padding: 13px 16px;
   border-top: 1px solid var(--adm-border);
@@ -489,6 +564,7 @@ html {
     monospace;
   color: #9a9ba7;
 }
+
 .adm-alert {
   margin: 12px 14px;
   padding: 12px 10px;
@@ -500,16 +576,19 @@ html {
   gap: 10px;
   font-size: 12px;
 }
+
 .adm-alert span {
   font-size: 10px;
   color: #f4ac94;
   font-weight: 500;
 }
+
 .adm-quick {
   padding: 15px;
   display: grid;
   gap: 10px;
 }
+
 .adm-quick a {
   border: 1px solid #566e9e;
   color: #abc4ff;
@@ -519,19 +598,24 @@ html {
     600 11px "IBM Plex Mono",
     monospace;
 }
+
 .adm-quick a:hover {
   background: #263858;
 }
+
 .adm-muted {
   color: #a7a9b5;
   margin: 18px;
 }
+
 .adm-panel .adm-btn {
   margin: 0 18px 18px;
 }
+
 .adm-tab-panel[hidden] {
   display: none;
 }
+
 .adm-modal {
   background: #1e1e20;
   border: 1px solid #42444b;
@@ -542,16 +626,20 @@ html {
   max-height: calc(100vh - 40px);
   box-shadow: 0 22px 90px #000a;
 }
+
 .adm-modal-wide {
   width: min(770px, calc(100vw - 30px));
 }
+
 .adm-modal::backdrop {
   background: #000b;
   backdrop-filter: blur(3px);
 }
+
 .adm-modal-form {
   margin: 0;
 }
+
 .adm-modal-head {
   display: flex;
   align-items: start;
@@ -559,6 +647,7 @@ html {
   padding: 22px 24px;
   border-bottom: 1px solid var(--adm-border);
 }
+
 .adm-kicker {
   font:
     500 11px "IBM Plex Mono",
@@ -566,17 +655,20 @@ html {
   color: #a7c2ff;
   letter-spacing: 1px;
 }
+
 .adm-modal-head h2 {
   font:
     800 27px "Barlow Condensed",
     sans-serif;
   margin: 7px 0 2px;
 }
+
 .adm-modal-head p {
   margin: 0;
   color: #b0b1bf;
   font-size: 12px;
 }
+
 .adm-close {
   font-size: 24px;
   border: 0;
@@ -584,9 +676,11 @@ html {
   color: #bcc4da;
   cursor: pointer;
 }
+
 .adm-modal-body {
   padding: 24px;
 }
+
 .adm-form-section {
   font:
     600 12px "IBM Plex Mono",
@@ -597,11 +691,13 @@ html {
   padding-bottom: 9px;
   margin: 24px 0 16px;
 }
+
 .adm-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 17px;
 }
+
 .adm-form-grid label {
   display: flex;
   flex-direction: column;
@@ -612,9 +708,11 @@ html {
     monospace;
   letter-spacing: 0.45px;
 }
+
 .adm-form-grid .adm-full {
   grid-column: 1/-1;
 }
+
 .adm-form-grid input,
 .adm-form-grid select,
 .adm-form-grid textarea {
@@ -630,15 +728,18 @@ html {
     sans-serif;
   letter-spacing: normal;
 }
+
 .adm-form-grid input:focus,
 .adm-form-grid select:focus,
 .adm-form-grid textarea:focus {
   border-bottom-color: #7fa5ff;
 }
+
 .adm-form-grid input::placeholder,
 .adm-form-grid textarea::placeholder {
   color: #787986;
 }
+
 .adm-note {
   margin: 20px 0 0;
   background: #292a2e;
@@ -647,6 +748,7 @@ html {
   color: #bec1d1;
   font-size: 12px;
 }
+
 .adm-modal-footer {
   border-top: 1px solid var(--adm-border);
   padding: 17px 24px;
@@ -654,6 +756,7 @@ html {
   justify-content: flex-end;
   gap: 12px;
 }
+
 .adm-toast {
   position: fixed;
   bottom: 25px;
@@ -673,32 +776,40 @@ html {
     transform 0.2s;
   z-index: 20;
 }
+
 .adm-toast.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
+
 @media (max-width: 1180px) {
   .adm-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
   .adm-two-columns {
     grid-template-columns: 1fr;
   }
+
   .adm-sidebar {
     width: 210px;
     min-width: 210px;
   }
+
   .adm-main {
     padding: 22px;
   }
+
   .adm-topbar {
     padding: 22px;
   }
 }
+
 @media (max-width: 760px) {
   .adm-shell {
     display: block;
   }
+
   .adm-sidebar {
     position: relative;
     width: 100%;
@@ -706,49 +817,62 @@ html {
     min-width: 0;
     padding: 13px;
   }
+
   .adm-brand {
     margin: 0 0 13px;
   }
+
   .adm-side-nav {
     display: flex;
     overflow-x: auto;
   }
+
   .adm-side-nav a {
     flex: 0 0 auto;
     padding: 10px 12px;
     font-size: 11px;
   }
+
   .adm-side-bottom {
     display: none;
   }
+
   .adm-topbar {
     min-height: 0;
     align-items: flex-start;
   }
+
   .adm-top-actions {
     display: none;
   }
+
   .adm-main {
     padding: 15px;
   }
+
   .adm-stats {
     gap: 10px;
   }
+
   .adm-stat {
     padding: 14px;
     min-height: 110px;
   }
+
   .adm-stat strong {
     font-size: 33px;
   }
+
   .adm-toolbar {
     align-items: stretch;
   }
+
   .adm-toolbar select,
   .adm-toolbar .adm-btn {
     max-width: none;
     flex: 1;
   }
+
   .adm-form-grid {
     grid-template-columns: 1fr;
   }
@@ -974,7 +1098,7 @@ html {
   vertical-align: middle;
 }
 
-.adm-membership-actions > div {
+.adm-membership-actions>div {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1114,7 +1238,7 @@ html {
   min-width: 220px;
 }
 
-#tabSolicitudes .adm-class-actions > form {
+#tabSolicitudes .adm-class-actions>form {
   display: inline-flex;
   margin: 0 !important;
   flex: 0 0 auto;
@@ -1337,5 +1461,114 @@ html {
   .adm-refund-footer .adm-btn {
     width: 100%;
     min-width: 100%;
+  }
+
+}
+
+/* ==========================================
+   GESTIÓN DE PEDIDOS (ADMIN)
+========================================== */
+
+.adm-flash {
+  padding: 13px 16px;
+  border-radius: 5px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  border: 1px solid var(--adm-border);
+}
+
+.adm-flash-success {
+  background: #0e3129;
+  border-color: #19785c;
+  color: #55dfb2;
+}
+
+.adm-flash-error {
+  background: #3b2023;
+  border-color: #85464b;
+  color: #ffaaa8;
+}
+
+.adm-flash-warn {
+  background: #392b18;
+  border-color: #794c24;
+  color: #ffc16e;
+}
+
+.adm-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 210px;
+}
+
+.adm-order-actions .adm-btn {
+  padding: 8px 10px;
+  font-size: 10px;
+  margin: 0;
+}
+
+.adm-order-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.adm-order-detail-item {
+  padding: 12px 14px;
+  background: #171719;
+  border: 1px solid var(--adm-border);
+  border-radius: 4px;
+}
+
+.adm-order-detail-item small {
+  display: block;
+  font: 500 10px "IBM Plex Mono", monospace;
+  color: var(--adm-muted);
+  margin-bottom: 5px;
+}
+
+.adm-order-detail-item strong {
+  display: block;
+  color: var(--adm-text);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.adm-order-totals {
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: #171719;
+  border: 1px solid var(--adm-border);
+  border-radius: 4px;
+  display: grid;
+  gap: 8px;
+}
+
+.adm-order-totals>div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--adm-muted);
+}
+
+.adm-order-totals>div strong {
+  color: var(--adm-text);
+}
+
+.adm-order-totals-final {
+  padding-top: 10px;
+  border-top: 1px solid var(--adm-border);
+  font-size: 15px !important;
+  color: #b6caff !important;
+}
+
+.adm-order-totals-final strong {
+  color: #b6caff !important;
+}
+
+@media (max-width: 640px) {
+  .adm-order-detail-grid {
+    grid-template-columns: 1fr;
   }
 }

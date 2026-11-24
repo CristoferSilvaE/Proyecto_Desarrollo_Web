@@ -9,13 +9,20 @@
   <body class="adm-body">
     <div class="adm-shell">
       <div th:replace="~{admin/fragments/sidebar :: sidebar('pedidos')}"></div>
+
       <div class="adm-workspace">
-        <div th:replace="~{admin/fragments/topbar :: topbar('INVENTARIO & TIENDA', 'GESTIÓN DE PRODUCTOS Y PEDIDOS', 'Seguimiento y estados de las compras')}"></div>
+        <div th:replace="~{admin/fragments/topbar :: topbar('INVENTARIO & TIENDA', 'GESTIÓN DE PRODUCTOS Y PEDIDOS', 'Seguimiento, pagos, entregas y reembolsos de compras')}"></div>
+
         <main class="adm-main">
-          <div class="adm-demo-banner">
-            <strong>Vista preliminar:</strong>
-            datos ilustrativos. Los formularios aún no guardan información en MySQL.
+          <!-- ALERTAS -->
+          <div th:if="${mensaje}" class="adm-flash adm-flash-success" th:text="${mensaje}"></div>
+          <div th:if="${error}" class="adm-flash adm-flash-error" th:text="${error}"></div>
+
+          <div th:if="${reembolsosPendientes > 0}" class="adm-flash adm-flash-warn">
+            <strong>Atención:</strong>
+            Hay <span th:text="${reembolsosPendientes}">0</span> reembolso(s) pendiente(s) de procesar.
           </div>
+
           <div class="adm-tabs">
             <a th:href="@{/admin/productos}" class="adm-tab">
               <svg th:replace="~{admin/fragments/icons :: icon('package')}"></svg>
@@ -26,46 +33,81 @@
               PEDIDOS
             </a>
           </div>
+
+          <!-- INDICADORES REALES -->
           <div class="adm-stats">
             <article class="adm-stat">
               <div class="adm-stat-label">PEDIDOS TOTALES</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
+              <strong th:text="${pedidosTotales}">0</strong>
+              <small>Historial registrado</small>
             </article>
+
             <article class="adm-stat adm-stat-warn">
-              <div class="adm-stat-label">PEDIDOS PENDIENTES</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
+              <div class="adm-stat-label">POR ATENDER</div>
+              <strong th:text="${pedidosPendientes}">0</strong>
+              <small th:text="${reembolsosPendientes + ' reembolso(s) pendiente(s)'}">0 reembolsos</small>
             </article>
+
             <article class="adm-stat">
               <div class="adm-stat-label">PAGOS CONFIRMADOS</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
+              <strong th:text="${pagosConfirmados}">0</strong>
+              <small>Operaciones pagadas</small>
             </article>
+
             <article class="adm-stat">
               <div class="adm-stat-label">VENTAS DEL MES</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
+              <strong th:text="${'S/ ' + #numbers.formatDecimal(ventasMes, 1, 2)}">S/ 0.00</strong>
+              <small>Ingresos vigentes del mes</small>
             </article>
           </div>
-          <div class="adm-toolbar">
+
+          <!-- BARRA DE FILTROS -->
+          <form class="adm-toolbar" th:action="@{/admin/pedidos}" method="get">
             <label class="adm-search">
               <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
-              <input type="search" placeholder="Buscar pedido o cliente..." data-table-search="pedidosTabla" />
+              <input
+                type="search"
+                name="buscar"
+                th:value="${buscar}"
+                placeholder="Buscar por #PF, cliente, DNI o correo..." />
             </label>
-            <select>
-              <option>Todos los estados</option>
-              <option>PENDIENTE</option>
-              <option>ENTREGADO</option>
-              <option>CANCELADO</option>
+
+            <select name="estado" onchange="this.form.submit()">
+              <option value="TODOS" th:selected="${estadoFiltro == 'TODOS'}">Todos los estados</option>
+              <option value="PENDIENTE" th:selected="${estadoFiltro == 'PENDIENTE'}">PENDIENTE</option>
+              <option value="EN_PROCESO" th:selected="${estadoFiltro == 'EN_PROCESO'}">EN PROCESO</option>
+              <option value="ENTREGADO" th:selected="${estadoFiltro == 'ENTREGADO'}">ENTREGADO</option>
+              <option value="CANCELADO" th:selected="${estadoFiltro == 'CANCELADO'}">CANCELADO</option>
             </select>
-            <button class="adm-btn adm-btn-ghost" data-toast="La exportación se implementará después">
+
+            <select name="estadoPago" onchange="this.form.submit()">
+              <option value="TODOS" th:selected="${estadoPagoFiltro == 'TODOS'}">Todos los pagos</option>
+              <option value="PENDIENTE" th:selected="${estadoPagoFiltro == 'PENDIENTE'}">PAGO PENDIENTE</option>
+              <option value="PAGADO" th:selected="${estadoPagoFiltro == 'PAGADO'}">PAGADO</option>
+              <option value="REEMBOLSO_PENDIENTE" th:selected="${estadoPagoFiltro == 'REEMBOLSO_PENDIENTE'}">REEMBOLSO PENDIENTE</option>
+              <option value="REEMBOLSADO" th:selected="${estadoPagoFiltro == 'REEMBOLSADO'}">REEMBOLSADO</option>
+              <option value="CANCELADO" th:selected="${estadoPagoFiltro == 'CANCELADO'}">SIN PAGO / CANCELADO</option>
+            </select>
+
+            <button type="submit" class="adm-btn adm-btn-primary">FILTRAR</button>
+
+            <a th:href="@{/admin/pedidos}" class="adm-btn adm-btn-ghost">LIMPIAR</a>
+
+            <a
+              th:href="@{/admin/pedidos/exportar(buscar=${buscar}, estado=${estadoFiltro}, estadoPago=${estadoPagoFiltro})}"
+              class="adm-btn adm-btn-ghost">
               <svg th:replace="~{admin/fragments/icons :: icon('download')}"></svg>
-              EXPORTAR REPORTE
-            </button>
-          </div>
+              EXPORTAR CSV
+            </a>
+          </form>
+
+          <!-- TABLA DE PEDIDOS -->
           <section class="adm-panel">
-            <div class="adm-panel-head"><h2>SEGUIMIENTO DE PEDIDOS</h2></div>
+            <div class="adm-panel-head">
+              <h2>SEGUIMIENTO DE PEDIDOS</h2>
+              <span class="adm-link" th:text="${#lists.size(pedidos) + ' resultado(s)'}">0 resultados</span>
+            </div>
+
             <div id="pedidosTabla">
               <div class="adm-table-scroll">
                 <table class="adm-table">
@@ -77,27 +119,129 @@
                       <th scope="col">TOTAL</th>
                       <th scope="col">ENTREGA</th>
                       <th scope="col">ESTADO</th>
+                      <th scope="col">PAGO</th>
                       <th scope="col">ACCIONES</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td><strong>#PF-1</strong></td>
-                      <td>Cliente de ejemplo</td>
-                      <td>—</td>
-                      <td>S/ 145.00</td>
-                      <td>RECOJO</td>
-                      <td><span class="adm-badge orange">PENDIENTE</span></td>
-                      <td><button class="adm-text-btn" data-toast="El detalle de pedidos se conectará a MySQL">Ver detalle</button></td>
+                    <tr th:if="${#lists.isEmpty(pedidos)}">
+                      <td colspan="8" style="text-align: center; padding: 32px; color: #9a9ca9">
+                        No se encontraron pedidos con los criterios seleccionados.
+                      </td>
                     </tr>
-                    <tr>
-                      <td><strong>#PF-2</strong></td>
-                      <td>Segundo cliente</td>
-                      <td>—</td>
-                      <td>S/ 169.00</td>
-                      <td>DELIVERY</td>
-                      <td><span class="adm-badge orange">PENDIENTE</span></td>
-                      <td><button class="adm-text-btn" data-toast="La gestión de pedidos se implementará después">Ver detalle</button></td>
+
+                    <tr th:each="pedido : ${pedidos}">
+                      <td>
+                        <strong th:text="${'#PF-' + pedido.idPedido}">#PF-1</strong>
+                        <small th:text="${pedido.tipoComprobante}">BOLETA</small>
+                      </td>
+
+                      <td>
+                        <strong th:text="${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}">Cliente</strong>
+                        <small th:text="${'DNI: ' + pedido.cliente.dni}">DNI</small>
+                      </td>
+
+                      <td class="adm-membership-date">
+                        <strong th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy')}">--</strong>
+                        <small th:text="${#temporals.format(pedido.fechaPedido, 'HH:mm')}">--</small>
+                      </td>
+
+                      <td>
+                        <strong th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 2)}">S/ 0.00</strong>
+                        <small th:text="${pedido.metodoPago == 'YAPE_PLIN' ? 'Yape / Plin' : pedido.metodoPago}">MÉTODO</small>
+                      </td>
+
+                      <td>
+                        <strong th:text="${pedido.metodoEntrega == 'RECOJO' ? 'RECOJO' : 'DELIVERY'}">RECOJO</strong>
+                        <small
+                          th:if="${pedido.metodoEntrega == 'RECOJO' and pedido.sede != null}"
+                          th:text="${pedido.sede.nombre}">
+                          Sede
+                        </small>
+                        <small
+                          th:if="${pedido.metodoEntrega == 'DELIVERY'}"
+                          th:text="${pedido.distrito}">
+                          Distrito
+                        </small>
+                      </td>
+
+                      <td>
+                        <span
+                          class="adm-badge"
+                          th:classappend="${pedido.estado == 'ENTREGADO' ? ' green' : (pedido.estado == 'PENDIENTE' ? ' orange' : (pedido.estado == 'CANCELADO' ? ' red' : ''))}"
+                          th:text="${pedido.estado == 'EN_PROCESO' ? 'EN PROCESO' : pedido.estado}">
+                          PENDIENTE
+                        </span>
+                      </td>
+
+                      <td>
+                        <span
+                          class="adm-badge"
+                          th:classappend="${pedido.estadoPago == 'PAGADO' ? ' green' : (pedido.estadoPago == 'PENDIENTE' or pedido.estadoPago == 'REEMBOLSO_PENDIENTE' ? ' orange' : (pedido.estadoPago == 'CANCELADO' ? ' red' : ''))}"
+                          th:text="${pedido.estadoPago == 'REEMBOLSO_PENDIENTE' ? 'REEMBOLSO PEND.' : (pedido.estadoPago == 'CANCELADO' ? 'SIN PAGO' : pedido.estadoPago)}">
+                          PENDIENTE
+                        </span>
+                      </td>
+
+                      <td>
+                        <div class="adm-order-actions">
+                          <button
+                            type="button"
+                            class="adm-btn adm-btn-edit"
+                            th:attr="onclick=|abrirDetalleAdmin(${pedido.idPedido})|">
+                            DETALLE
+                          </button>
+
+                          <!-- CONFIRMAR PAGO MANUAL -->
+                          <button
+                            th:if="${pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE'}"
+                            type="button"
+                            class="adm-btn adm-btn-success"
+                            th:attr="data-id=${pedido.idPedido}, data-cliente=${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}, data-total=${#numbers.formatDecimal(pedido.total, 1, 2)}"
+                            onclick="abrirConfirmarPagoAdmin(this)">
+                            CONFIRMAR PAGO
+                          </button>
+
+                          <!-- MARCAR ENTREGADO -->
+                          <button
+                            th:if="${pedido.estado == 'EN_PROCESO' and pedido.estadoPago == 'PAGADO'}"
+                            type="button"
+                            class="adm-btn adm-btn-success"
+                            th:attr="data-id=${pedido.idPedido}, data-cliente=${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}"
+                            onclick="abrirEntregarAdmin(this)">
+                            MARCAR ENTREGADO
+                          </button>
+
+                          <!-- PROCESAR REEMBOLSO -->
+                          <button
+                            th:if="${pedido.estado == 'CANCELADO' and pedido.estadoPago == 'REEMBOLSO_PENDIENTE'}"
+                            type="button"
+                            class="adm-btn adm-btn-warning"
+                            th:attr="data-id=${pedido.idPedido}, data-cliente=${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}, data-total=${#numbers.formatDecimal(pedido.total, 1, 2)}, data-metodo=${pedido.metodoPago}"
+                            onclick="abrirReembolsoAdmin(this)">
+                            PROCESAR REEMBOLSO
+                          </button>
+
+                          <!-- CANCELAR PEDIDO -->
+                          <button
+                            th:if="${(pedido.estado == 'PENDIENTE' and pedido.estadoPago == 'PENDIENTE') or (pedido.estado == 'EN_PROCESO' and pedido.estadoPago == 'PAGADO')}"
+                            type="button"
+                            class="adm-btn adm-btn-danger"
+                            th:attr="data-id=${pedido.idPedido}, data-pagado=${pedido.estadoPago == 'PAGADO'}"
+                            onclick="abrirCancelarAdmin(this)">
+                            CANCELAR
+                          </button>
+
+                          <!-- COMPROBANTE PDF -->
+                          <a
+                            th:if="${pedido.estadoPago == 'PAGADO' or pedido.estadoPago == 'REEMBOLSO_PENDIENTE' or pedido.estadoPago == 'REEMBOLSADO'}"
+                            th:href="@{/admin/pedidos/{id}/comprobante(id=${pedido.idPedido})}"
+                            target="_blank"
+                            class="adm-btn adm-btn-ghost">
+                            PDF
+                          </a>
+                        </div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -108,7 +252,149 @@
       </div>
     </div>
 
+    <!-- MODAL DETALLE DEL PEDIDO -->
+    <dialog id="modalDetallePedidoAdmin" class="adm-modal adm-modal-wide">
+      <div class="adm-modal-head">
+        <div>
+          <span class="adm-kicker">TIENDA POWERFIT</span>
+          <h2 id="admDetalleTitulo">DETALLE DEL PEDIDO</h2>
+          <p id="admDetalleSubtitulo">Información registrada en MySQL</p>
+        </div>
+        <button type="button" class="adm-close" data-close-modal>×</button>
+      </div>
+
+      <div id="admDetalleContenido" class="adm-modal-body"></div>
+
+      <div class="adm-modal-footer">
+        <a id="admDetalleBtnPdf" href="#" target="_blank" class="adm-btn adm-btn-primary" hidden>VER COMPROBANTE PDF</a>
+        <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CERRAR</button>
+      </div>
+    </dialog>
+
+    <!-- MODAL CONFIRMAR PAGO -->
+    <dialog id="modalConfirmarPagoPedido" class="adm-modal">
+      <form id="formConfirmarPagoAdmin" method="post" class="adm-modal-form">
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">VERIFICACIÓN DE PAGO</span>
+            <h2 id="admPagoTitulo">CONFIRMAR PAGO</h2>
+          </div>
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <p id="admPagoTexto">¿Confirmas la recepción del pago de este pedido?</p>
+          <p class="adm-note">El estado de pago pasará a <strong>PAGADO</strong>, el pedido cambiará a <strong>EN PROCESO</strong> y se habilitará el comprobante PDF para el cliente.</p>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+          <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR PAGO</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- MODAL MARCAR ENTREGADO -->
+    <dialog id="modalEntregarPedido" class="adm-modal">
+      <form id="formEntregarAdmin" method="post" class="adm-modal-form">
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">LOGÍSTICA DE ENTREGA</span>
+            <h2 id="admEntregarTitulo">MARCAR COMO ENTREGADO</h2>
+          </div>
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <p id="admEntregarTexto">¿Confirmas que este pedido fue entregado al cliente?</p>
+          <p class="adm-note">Una vez marcado como <strong>ENTREGADO</strong>, el pedido quedará cerrado y ya no podrá cancelarse.</p>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>VOLVER</button>
+          <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR ENTREGA</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- MODAL CANCELAR PEDIDO -->
+    <dialog id="modalCancelarPedidoAdmin" class="adm-modal">
+      <form id="formCancelarAdmin" method="post" class="adm-modal-form">
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">GESTIÓN DE PEDIDOS</span>
+            <h2 id="admCancelarTitulo">CANCELAR PEDIDO</h2>
+          </div>
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body">
+          <p id="admCancelarNota" class="adm-note" style="margin-top: 0; margin-bottom: 18px"></p>
+
+          <div class="adm-form-grid">
+            <label class="adm-full">
+              MOTIVO DE CANCELACIÓN (OPCIONAL)
+              <textarea
+                id="admCancelarMotivo"
+                name="motivo"
+                maxlength="180"
+                placeholder="Ej. Solicitud del cliente, falta de confirmación, error en dirección..."></textarea>
+            </label>
+          </div>
+        </div>
+
+        <div class="adm-modal-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>VOLVER</button>
+          <button type="submit" class="adm-btn adm-btn-danger">CONFIRMAR CANCELACIÓN</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- MODAL PROCESAR REEMBOLSO SIMULADO -->
+    <dialog id="modalReembolsoPedido" class="adm-refund-modal">
+      <form id="formReembolsoAdmin" method="post" class="adm-refund-form">
+        <div class="adm-modal-head">
+          <div>
+            <span class="adm-kicker">GESTIÓN DE DEVOLUCIONES</span>
+            <h2 id="admReembolsoTitulo">PROCESAR REEMBOLSO</h2>
+          </div>
+          <button type="button" class="adm-close" data-close-modal>×</button>
+        </div>
+
+        <div class="adm-modal-body adm-refund-body">
+          <div class="adm-refund-summary">
+            <div class="adm-refund-row">
+              <span class="adm-refund-label">Pedido</span>
+              <span id="admReembolsoPedido" class="adm-refund-value">#PF-0</span>
+            </div>
+            <div class="adm-refund-row">
+              <span class="adm-refund-label">Cliente</span>
+              <span id="admReembolsoCliente" class="adm-refund-value">-</span>
+            </div>
+            <div class="adm-refund-row">
+              <span class="adm-refund-label">Método original</span>
+              <span id="admReembolsoMetodo" class="adm-refund-value">-</span>
+            </div>
+            <div class="adm-refund-row">
+              <span class="adm-refund-label">Monto a devolver</span>
+              <span id="admReembolsoMonto" class="adm-refund-value">S/ 0.00</span>
+            </div>
+          </div>
+
+          <div class="adm-refund-note">
+            Esta operación registra un <strong>reembolso simulado</strong> dentro de PowerFit y actualiza el estado de pago a <strong>REEMBOLSADO</strong>. No se ejecuta ninguna transferencia bancaria real.
+          </div>
+        </div>
+
+        <div class="adm-modal-footer adm-refund-footer">
+          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+          <button type="submit" class="adm-btn adm-btn-success">CONFIRMAR REEMBOLSO</button>
+        </div>
+      </form>
+    </dialog>
+
     <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
     <script th:src="@{/js/admin/admin.js}"></script>
+    <script th:src="@{/js/admin/pedidos-admin.js}"></script>
   </body>
 </html>
