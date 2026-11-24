@@ -262,3 +262,38 @@ document.querySelector('[data-open-modal="modalNuevoHorario"]:not([data-id])')?.
 
   filtrarInstructoresPorClase();
 });
+
+// ==========================================
+// NOTIFICACIONES DEL TOPBAR (ADMIN)
+// ==========================================
+
+(() => {
+  const btn = document.getElementById("admNotifBtn");
+  const menu = document.getElementById("admNotifMenu");
+
+  if (!btn || !menu) return;
+
+  const cerrar = () => {
+    menu.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+  };
+
+  btn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const estabaAbierto = !menu.hidden;
+    menu.hidden = estabaAbierto;
+    btn.setAttribute("aria-expanded", String(!estabaAbierto));
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!menu.hidden && !menu.contains(event.target) && !btn.contains(event.target)) {
+      cerrar();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !menu.hidden) {
+      cerrar();
+    }
+  });
+})();

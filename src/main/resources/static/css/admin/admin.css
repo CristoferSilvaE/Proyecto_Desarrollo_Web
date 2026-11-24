@@ -1572,3 +1572,303 @@ html {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================
+   PANEL DE ADMINISTRACIÓN (DASHBOARD)
+========================================== */
+
+.adm-table-compact {
+  min-width: 560px;
+}
+
+a.adm-alert {
+  align-items: center;
+  color: var(--adm-text);
+  transition: background 0.15s;
+}
+
+a.adm-alert:hover {
+  background: #2d2728;
+}
+
+a.adm-alert span {
+  font-size: 12px;
+  color: var(--adm-text);
+  font-weight: 600;
+}
+
+a.adm-alert strong {
+  font: 600 11px "IBM Plex Mono", monospace;
+  color: #f4ac94;
+  white-space: nowrap;
+}
+
+a.adm-alert.is-ok {
+  border-left-color: var(--adm-green);
+  background: #172320;
+}
+
+a.adm-alert.is-ok:hover {
+  background: #1d2d29;
+}
+
+a.adm-alert.is-ok strong {
+  color: #55dfb2;
+}
+
+/* ==========================================
+   GESTIÓN DE PRODUCTOS (ADMIN)
+========================================== */
+
+.adm-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adm-product-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--adm-border);
+  background: #141416;
+  flex: 0 0 auto;
+}
+
+.adm-product-thumb-empty {
+  display: grid;
+  place-items: center;
+  font: 700 12px "IBM Plex Mono", monospace;
+  color: #9a9ca9;
+}
+
+.adm-product-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.adm-stock-low {
+  color: #ffc16e;
+}
+
+.adm-stock-out {
+  color: #ffaaa8;
+}
+
+.adm-product-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--adm-border);
+  border-radius: 5px;
+  background: #171719;
+}
+
+.adm-product-preview[hidden] {
+  display: none;
+}
+
+.adm-product-preview img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--adm-border);
+}
+
+.adm-product-preview strong {
+  display: block;
+  font-size: 12px;
+  color: var(--adm-text);
+}
+
+.adm-product-preview small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--adm-muted);
+}
+
+/* ==========================================
+   NOTIFICACIONES DEL TOPBAR (ADMIN)
+========================================== */
+
+.adm-notif-wrap {
+  position: relative;
+}
+
+button.adm-notification {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid #30323a;
+  background: #17181d;
+  color: #bfc5d5;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+button.adm-notification:hover,
+button.adm-notification[aria-expanded="true"] {
+  background: #222634;
+  border-color: #598dff;
+  color: #ffffff;
+}
+
+.adm-notif-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff6b4a;
+  color: #ffffff;
+  border: 2px solid var(--adm-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 10px "IBM Plex Mono", monospace;
+}
+
+.adm-notif-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  background: #191a1f;
+  border: 1px solid #3c3f4a;
+  border-radius: 8px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.7);
+  z-index: 40;
+  overflow: hidden;
+}
+
+.adm-notif-dropdown[hidden] {
+  display: none;
+}
+
+.adm-notif-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--adm-border);
+  background: #14151a;
+}
+
+.adm-notif-head strong {
+  font: 700 12px "IBM Plex Mono", monospace;
+  letter-spacing: 0.9px;
+  color: #d7deef;
+}
+
+.adm-notif-list {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.adm-notif-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border-bottom: 1px solid #282a31;
+  transition: background 0.15s;
+}
+
+.adm-notif-item:last-child {
+  border-bottom: 0;
+}
+
+.adm-notif-item:hover {
+  background: #232632;
+}
+
+.adm-notif-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.adm-notif-dot.is-red {
+  background: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.55);
+}
+
+.adm-notif-dot.is-orange {
+  background: #ffc16e;
+  box-shadow: 0 0 8px rgba(255, 193, 110, 0.45);
+}
+
+.adm-notif-dot.is-blue {
+  background: #79a3ff;
+  box-shadow: 0 0 8px rgba(121, 163, 255, 0.45);
+}
+
+.adm-notif-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.adm-notif-content strong {
+  display: block;
+  font-size: 12px;
+  color: var(--adm-text);
+}
+
+.adm-notif-content small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--adm-muted);
+  line-height: 1.4;
+}
+
+.adm-notif-pill {
+  min-width: 24px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #262936;
+  border: 1px solid #3d4357;
+  color: #c2d4ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 10px "IBM Plex Mono", monospace;
+}
+
+.adm-notif-empty {
+  padding: 26px 18px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--adm-muted);
+  line-height: 1.5;
+}
+
+.adm-notif-foot {
+  padding: 11px 15px;
+  border-top: 1px solid var(--adm-border);
+  background: #14151a;
+  text-align: center;
+}
+
+.adm-notif-foot a {
+  font: 600 11px "IBM Plex Mono", monospace;
+  color: #abc4ff;
+}
+
+.adm-notif-foot a:hover {
+  text-decoration: underline;
+}

@@ -1,38 +1,77 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <body>
-    <header class="adm-topbar" th:fragment="topbar(section, title, subtitle)">
-      <div>
-        <div class="adm-breadcrumb">
-          SISTEMA /
-          <span th:text="${section}">PANEL</span>
-        </div>
 
-        <h1 th:text="${title}">Panel de administración</h1>
-
-        <p th:text="${subtitle}">Gestión del sistema</p>
+<body>
+  <header class="adm-topbar" th:fragment="topbar(section, title, subtitle)">
+    <div>
+      <div class="adm-breadcrumb">
+        SISTEMA /
+        <span th:text="${section}">PANEL</span>
       </div>
 
-      <div class="adm-top-actions">
-        <span class="adm-notification" title="Notificaciones (próximamente)">
-          <svg class="adm-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <h1 th:text="${title}">Panel de administración</h1>
+
+      <p th:text="${subtitle}">Gestión del sistema</p>
+    </div>
+
+    <div class="adm-top-actions">
+      <div class="adm-notif-wrap"
+        th:with="totalNotif=${totalNotificacionesAdmin != null ? totalNotificacionesAdmin : 0}">
+        <button type="button" id="admNotifBtn" class="adm-notification" aria-label="Abrir notificaciones"
+          aria-expanded="false" aria-controls="admNotifMenu"
+          th:title="${totalNotif > 0 ? totalNotif + ' alerta(s) pendiente(s)' : 'Sin notificaciones pendientes'}">
+          <svg class="adm-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
             <path d="M10 21h4" />
           </svg>
 
-          <i></i>
-        </span>
-
-        <div class="adm-profile">
-          <span class="adm-profile-avatar">PF</span>
-
-          <span>
-            <strong th:text="${usuario != null ? usuario.correo : 'Administrador'}">Administrador</strong>
-
-            <small>ADMINISTRADOR</small>
+          <span th:if="${totalNotif > 0}" class="adm-notif-count" th:text="${totalNotif > 99 ? '99+' : totalNotif}">
+            0
           </span>
+        </button>
+
+        <div id="admNotifMenu" class="adm-notif-dropdown" hidden>
+          <div class="adm-notif-head">
+            <strong>NOTIFICACIONES</strong>
+            <span class="adm-badge" th:classappend="${totalNotif > 0} ? ' orange' : ' green'"
+              th:text="${totalNotif > 0 ? totalNotif + ' pendiente(s)' : 'Al día'}">
+              Al día
+            </span>
+          </div>
+
+          <div th:if="${notificacionesAdmin == null or #lists.isEmpty(notificacionesAdmin)}" class="adm-notif-empty">
+            Todo está al día. No hay alertas pendientes en el sistema.
+          </div>
+
+          <div th:if="${notificacionesAdmin != null and !#lists.isEmpty(notificacionesAdmin)}" class="adm-notif-list">
+            <a th:each="notif : ${notificacionesAdmin}" th:href="@{${notif.url}}" class="adm-notif-item">
+              <span class="adm-notif-dot" th:classappend="' is-' + ${notif.nivel}"></span>
+              <div class="adm-notif-content">
+                <strong th:text="${notif.titulo}">Alerta</strong>
+                <small th:text="${notif.detalle}">Detalle</small>
+              </div>
+              <span class="adm-notif-pill" th:text="${notif.cantidad}">1</span>
+            </a>
+          </div>
+
+          <div class="adm-notif-foot">
+            <a th:href="@{/admin}">Ir al panel general →</a>
+          </div>
         </div>
       </div>
-    </header>
-  </body>
+
+      <div class="adm-profile">
+        <span class="adm-profile-avatar">PF</span>
+
+        <span>
+          <strong th:text="${usuario != null ? usuario.correo : 'Administrador'}">Administrador</strong>
+
+          <small>ADMINISTRADOR</small>
+        </span>
+      </div>
+    </div>
+  </header>
+</body>
+
 </html>
