@@ -224,8 +224,6 @@ http://localhost:8080
 
 ### 🛒 Tienda y pedidos
 
-### 🛒 Tienda y pedidos
-
 - Catálogo de productos conectado a MySQL.
 - Carrito de compras.
 - Checkout con recojo en sede o delivery.

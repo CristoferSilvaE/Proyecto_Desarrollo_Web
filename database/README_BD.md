@@ -41,18 +41,15 @@ Valores permitidos actualmente:
 
 ## Importante
 
-`01_estructura.sql` ya incluye directamente todos los cambios que antes aparecían como `ALTER TABLE`:
+`01_estructura.sql` contiene la estructura base consolidada del sistema e incorpora los cambios correspondientes a varias migraciones realizadas durante etapas anteriores del proyecto.
 
-- `usuarios.cambio_password_pendiente`
-- `clientes.foto_perfil`
-- `clientes.genero`
-- `membresias.fecha_solicitud`
-- `membresias.observacion`
-- `membresias.fecha_inicio` y `fecha_fin` permiten NULL
-- `pedidos.estado_pago`
-- datos de delivery/factura en `pedidos`
-- `horarios_clase.sala`
-- `productos.sku`
-- `clases.imagen`
+Por este motivo, los scripts `05`, `06`, `08` y `09` no deben ejecutarse cuando se realiza una instalación nueva siguiendo el procedimiento actual.
 
-Por eso no se deben volver a ejecutar los ALTER del script antiguo después de crear la base nueva.
+Sin embargo, para obtener la estructura utilizada por la versión final de PowerFit sí deben ejecutarse posteriormente los siguientes scripts:
+
+- `07_actualizar_sedes.sql`
+- `10_agregar_usuario.sql`
+- `11_crear_pagos_clases.sql`
+- `12_actualizar_pedidos_pago.sql`
+
+Estos scripts incorporan las sedes y su relación con los pedidos, el nombre de usuario para autenticación, el registro de pagos y beneficios de clases, y los campos adicionales utilizados en la gestión final de pedidos.
