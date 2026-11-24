@@ -20,4 +20,5 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("SELECT p FROM Pedido p WHERE p.idPedido = :id")
   Optional<Pedido> buscarParaModificar(@Param("id") Long id);
+  List<Pedido> findAllByOrderByFechaPedidoDesc();
 }

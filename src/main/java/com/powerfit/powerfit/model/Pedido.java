@@ -11,10 +11,13 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "pedidos")
 public class Pedido {
+
+  private static final ZoneId ZONA = ZoneId.of("America/Lima");
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,8 +56,11 @@ public class Pedido {
   @Column(name = "estado", nullable = false, length = 30)
   private String estado;
 
-  @Column(name = "estado_pago", nullable = false, length = 20)
+  @Column(name = "estado_pago", nullable = false, length = 30)
   private String estadoPago;
+
+  @Column(name = "fecha_pago")
+  private LocalDateTime fechaPago;
 
   @Column(name = "direccion_entrega", length = 200)
   private String direccionEntrega;
@@ -71,21 +77,20 @@ public class Pedido {
   @Column(name = "razon_social", length = 150)
   private String razonSocial;
 
+  @Column(name = "observacion", length = 255)
+  private String observacion;
+
   @PrePersist
   public void prePersist() {
-
     if (fechaPedido == null) {
-      fechaPedido = LocalDateTime.now();
+      fechaPedido = LocalDateTime.now(ZONA);
     }
-
     if (estado == null || estado.isBlank()) {
       estado = "PENDIENTE";
     }
-
     if (estadoPago == null || estadoPago.isBlank()) {
       estadoPago = "PENDIENTE";
     }
-
     if (costoEnvio == null) {
       costoEnvio = BigDecimal.ZERO;
     }
@@ -105,6 +110,14 @@ public class Pedido {
 
   public void setCliente(Cliente cliente) {
     this.cliente = cliente;
+  }
+
+  public Sede getSede() {
+    return sede;
+  }
+
+  public void setSede(Sede sede) {
+    this.sede = sede;
   }
 
   public LocalDateTime getFechaPedido() {
@@ -179,6 +192,14 @@ public class Pedido {
     this.estadoPago = estadoPago;
   }
 
+  public LocalDateTime getFechaPago() {
+    return fechaPago;
+  }
+
+  public void setFechaPago(LocalDateTime fechaPago) {
+    this.fechaPago = fechaPago;
+  }
+
   public String getDireccionEntrega() {
     return direccionEntrega;
   }
@@ -219,11 +240,11 @@ public class Pedido {
     this.razonSocial = razonSocial;
   }
 
-  public Sede getSede() {
-    return sede;
+  public String getObservacion() {
+    return observacion;
   }
 
-  public void setSede(Sede sede) {
-    this.sede = sede;
+  public void setObservacion(String observacion) {
+    this.observacion = observacion;
   }
 }
