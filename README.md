@@ -39,18 +39,19 @@ git switch verastegui
 
 ## 🗄️ 3. Configurar la base de datos
 
-Los scripts SQL están ubicados en la carpeta `database/`.
-
 Para una instalación desde cero, abre MySQL Workbench y ejecuta los siguientes archivos en este orden:
 
 | Orden | Script | Descripción |
 |---|---|---|
 | 1 | `00_crear_bd.sql` | Crea la base de datos PowerFit. |
-| 2 | `01_estructura.sql` | Crea las tablas, relaciones y restricciones. |
+| 2 | `01_estructura.sql` | Crea la estructura base de tablas, relaciones y restricciones. |
 | 3 | `02_datos_iniciales.sql` | Registra roles, planes, clases, instructores y productos. |
 | 4 | `03_datos_demo.sql` | Registra horarios de demostración. |
-| 5 | `07_actualizar_sedes.sql` | Crea las sedes y relaciona pedidos con ellas. |
+| 5 | `07_actualizar_sedes.sql` | Crea las sedes y relaciona los pedidos con una sede de recojo. |
 | 6 | `10_agregar_usuario.sql` | Agrega el nombre de usuario y su restricción UNIQUE. |
+| 7 | `11_crear_pagos_clases.sql` | Crea el registro de pagos y beneficios utilizados en las reservas de clases. |
+| 8 | `12_actualizar_pedidos_pago.sql` | Agrega la fecha de pago y observaciones necesarias para la gestión final de pedidos. |
+| 9 | `04_consultas_verificacion.sql` | Opcional. Permite verificar la estructura y los datos registrados. |
 
 Para verificar la instalación:
 
@@ -63,11 +64,11 @@ También puedes ejecutar `04_consultas_verificacion.sql` para comprobar las tabl
 
 ### ⚠️ Importante sobre los demás scripts
 
-- Los archivos `05`, `06`, `08` y `09` son migraciones de versiones anteriores. No deben ejecutarse en una instalación nueva, porque sus cambios ya están incorporados en `01_estructura.sql`.
-- Los scripts `07` y `10` sí son necesarios para una instalación nueva.
-- `99_reset_bd.sql` elimina toda la base de datos y su información. Utilízalo únicamente cuando quieras empezar desde cero.
+- Los archivos `05`, `06`, `08` y `09` corresponden a migraciones realizadas durante etapas anteriores del desarrollo y no deben ejecutarse sobre una instalación nueva siguiendo el procedimiento indicado anteriormente.
+- Los scripts `07`, `10`, `11` y `12` sí forman parte de la configuración necesaria para obtener la estructura utilizada por la versión final del sistema.
+- `99_reset_bd.sql` elimina toda la base de datos y su información. Debe utilizarse únicamente cuando se desee iniciar nuevamente desde cero.
 
-No ejecutes dos veces los scripts de creación o migración.
+No ejecutes dos veces los scripts de creación o migración sobre la misma base de datos.
 
 ## 🔌 4. Configurar la conexión a MySQL
 
@@ -223,13 +224,25 @@ http://localhost:8080
 
 ### 🛒 Tienda y pedidos
 
+### 🛒 Tienda y pedidos
+
 - Catálogo de productos conectado a MySQL.
 - Carrito de compras.
 - Checkout con recojo en sede o delivery.
-- Registro de pedidos y detalles.
-- Actualización de stock al confirmar la compra.
-- Consulta del historial de pedidos.
-- Edición y cancelación de pedidos pendientes.
+- Registro de pedidos y detalle de productos adquiridos.
+- Actualización automática del stock al confirmar una compra.
+- Consulta del historial y detalle de pedidos del cliente.
+- Edición de pedidos mientras se encuentran pendientes.
+- Pago digital simulado mediante los métodos disponibles.
+- Cancelación de pedidos pendientes y restitución automática del stock.
+- Gestión administrativa de pedidos.
+- Confirmación administrativa de pagos.
+- Seguimiento de pedidos pendientes, en proceso, entregados y cancelados.
+- Cancelación de pedidos pagados con generación de reembolso pendiente.
+- Procesamiento de reembolsos simulados.
+- Generación de comprobantes de compra en formato PDF.
+- Filtros y búsqueda de pedidos desde el panel administrativo.
+- Exportación del historial de pedidos en formato CSV.
 
 ## 🛠️ 9. Tecnologías utilizadas
 

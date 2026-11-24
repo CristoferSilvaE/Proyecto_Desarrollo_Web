@@ -1,7 +1,9 @@
 -- ============================================================
--- POWERFIT - ESTRUCTURA FINAL DE LA BASE DE DATOS
--- Contiene la estructura consolidada.
--- No necesita ejecutar ALTER TABLE posteriores.
+-- POWERFIT - ESTRUCTURA BASE DE LA BASE DE DATOS
+-- Contiene la estructura principal del sistema.
+-- Para obtener la estructura utilizada por la versión final
+-- deben ejecutarse posteriormente las migraciones indicadas
+-- en README_BD.md, incluyendo los scripts 07, 10, 11 y 12.
 -- ============================================================
 
 USE powerfit;

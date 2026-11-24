@@ -4,11 +4,20 @@ Esta carpeta reemplaza el script antiguo acumulado.
 
 ## Orden recomendado para una instalación limpia
 
+Ejecutar los siguientes scripts en este orden:
+
 1. `00_crear_bd.sql`
 2. `01_estructura.sql`
 3. `02_datos_iniciales.sql`
 4. `03_datos_demo.sql`
-5. `04_consultas_verificacion.sql` (opcional)
+5. `07_actualizar_sedes.sql`
+6. `10_agregar_usuario.sql`
+7. `11_crear_pagos_clases.sql`
+8. `12_actualizar_pedidos_pago.sql`
+9. `04_consultas_verificacion.sql` (opcional)
+
+Los scripts `05`, `06`, `08` y `09` corresponden a migraciones utilizadas durante etapas anteriores del desarrollo y no son necesarias cuando se sigue el procedimiento de instalación final indicado anteriormente.
+
 
 Si existe una base antigua y no hay datos que conservar:
 
