@@ -1,183 +1,379 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PowerFit | GESTIÓN DE PRODUCTOS Y PEDIDOS</title>
-    <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
-  </head>
-  <body class="adm-body">
-    <div class="adm-shell">
-      <div th:replace="~{admin/fragments/sidebar :: sidebar('productos')}"></div>
-      <div class="adm-workspace">
-        <div th:replace="~{admin/fragments/topbar :: topbar('INVENTARIO & TIENDA', 'GESTIÓN DE PRODUCTOS Y PEDIDOS', 'Inventario, stock y seguimiento de compras')}"></div>
-        <main class="adm-main">
-          <div class="adm-demo-banner">
-            <strong>Vista preliminar:</strong>
-            datos ilustrativos. Los formularios aún no guardan información en MySQL.
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PowerFit | GESTIÓN DE PRODUCTOS Y PEDIDOS</title>
+  <link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+</head>
+
+<body class="adm-body">
+  <div class="adm-shell">
+    <div th:replace="~{admin/fragments/sidebar :: sidebar('productos')}"></div>
+
+    <div class="adm-workspace">
+      <div
+        th:replace="~{admin/fragments/topbar :: topbar('INVENTARIO & TIENDA', 'GESTIÓN DE PRODUCTOS Y PEDIDOS', 'Inventario, stock y seguimiento de compras')}">
+      </div>
+
+      <main class="adm-main">
+        <!-- ALERTAS -->
+        <div th:if="${mensaje}" class="adm-flash adm-flash-success" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="adm-flash adm-flash-error" th:text="${error}"></div>
+
+        <div class="adm-tabs">
+          <a th:href="@{/admin/productos}" class="adm-tab is-active">
+            <svg th:replace="~{admin/fragments/icons :: icon('package')}"></svg>
+            PRODUCTOS
+          </a>
+          <a th:href="@{/admin/pedidos}" class="adm-tab">
+            <svg th:replace="~{admin/fragments/icons :: icon('shopping')}"></svg>
+            PEDIDOS
+          </a>
+        </div>
+
+        <!-- INDICADORES REALES -->
+        <div class="adm-stats">
+          <article class="adm-stat">
+            <div class="adm-stat-label">INGRESOS TIENDA</div>
+            <strong th:text="${'S/ ' + #numbers.formatDecimal(ingresosTienda, 1, 2)}">S/ 0.00</strong>
+            <small>Ventas confirmadas acumuladas</small>
+          </article>
+
+          <article class="adm-stat">
+            <div class="adm-stat-label">PEDIDOS TOTALES</div>
+            <strong th:text="${pedidosTotales}">0</strong>
+            <small th:text="${pedidosPendientes + ' por atender'}">0 por atender</small>
+          </article>
+
+          <article class="adm-stat" th:classappend="${stockCritico > 0} ? ' adm-stat-warn' : ''">
+            <div class="adm-stat-label">STOCK CRÍTICO</div>
+            <strong th:text="${stockCritico}">0</strong>
+            <small th:text="${agotados + ' agotado(s)'}">0 agotados</small>
+          </article>
+
+          <article class="adm-stat">
+            <div class="adm-stat-label">ARTÍCULOS EN CATÁLOGO</div>
+            <strong th:text="${totalCatalogo}">0</strong>
+            <small th:text="${productosActivos + ' activo(s) en tienda'}">0 activos</small>
+          </article>
+        </div>
+
+        <!-- BARRA DE FILTROS -->
+        <form class="adm-toolbar" th:action="@{/admin/productos}" method="get">
+          <label class="adm-search">
+            <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
+            <input type="search" name="buscar" th:value="${buscar}" placeholder="Buscar producto, SKU o categoría..." />
+          </label>
+
+          <select name="categoria" onchange="this.form.submit()">
+            <option value="TODAS" th:selected="${categoriaFiltro == 'TODAS'}">Todas las categorías</option>
+            <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}"
+              th:selected="${categoriaFiltro == cat}">
+            </option>
+          </select>
+
+          <select name="estado" onchange="this.form.submit()">
+            <option value="TODOS" th:selected="${estadoFiltro == 'TODOS'}">Todos los estados</option>
+            <option value="ACTIVO" th:selected="${estadoFiltro == 'ACTIVO'}">ACTIVOS</option>
+            <option value="INACTIVO" th:selected="${estadoFiltro == 'INACTIVO'}">INACTIVOS</option>
+            <option value="CRITICO" th:selected="${estadoFiltro == 'CRITICO'}">STOCK CRÍTICO</option>
+          </select>
+
+          <button type="submit" class="adm-btn adm-btn-ghost">FILTRAR</button>
+
+          <a th:href="@{/admin/productos}" class="adm-btn adm-btn-ghost">LIMPIAR</a>
+
+          <button type="button" class="adm-btn adm-btn-primary" onclick="abrirNuevoProducto()">
+            <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
+            NUEVO PRODUCTO
+          </button>
+        </form>
+
+        <!-- CATÁLOGO DE PRODUCTOS -->
+        <section class="adm-panel">
+          <div class="adm-panel-head">
+            <h2>CATÁLOGO DE PRODUCTOS Y CONTROL DE STOCK</h2>
+            <span class="adm-link" th:text="${#lists.size(productos) + ' producto(s)'}">0 productos</span>
           </div>
-          <div class="adm-tabs">
-            <a th:href="@{/admin/productos}" class="adm-tab is-active">
-              <svg th:replace="~{admin/fragments/icons :: icon('package')}"></svg>
-              PRODUCTOS
-            </a>
-            <a th:href="@{/admin/pedidos}" class="adm-tab">
-              <svg th:replace="~{admin/fragments/icons :: icon('shopping')}"></svg>
-              PEDIDOS
-            </a>
+
+          <div id="productosTabla">
+            <div class="adm-table-scroll">
+              <table class="adm-table">
+                <thead>
+                  <tr>
+                    <th scope="col">PRODUCTO</th>
+                    <th scope="col">CATEGORÍA</th>
+                    <th scope="col">PRECIO</th>
+                    <th scope="col">STOCK</th>
+                    <th scope="col">ESTADO</th>
+                    <th scope="col">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:if="${#lists.isEmpty(productos)}">
+                    <td colspan="6" style="text-align: center; padding: 32px; color: #9a9ca9">
+                      No se encontraron productos con los criterios seleccionados.
+                    </td>
+                  </tr>
+
+                  <tr th:each="producto : ${productos}">
+                    <td>
+                      <div class="adm-product-cell">
+                        <img th:if="${producto.imagen != null and !#strings.isEmpty(producto.imagen)}"
+                          th:src="@{/imagenes/{img}(img=${producto.imagen})}" th:alt="${producto.nombre}"
+                          class="adm-product-thumb" />
+                        <div th:if="${producto.imagen == null or #strings.isEmpty(producto.imagen)}"
+                          class="adm-product-thumb adm-product-thumb-empty">
+                          PF
+                        </div>
+                        <div>
+                          <strong th:text="${producto.nombre}">Producto</strong>
+                          <small th:text="${producto.sku != null ? producto.sku : 'Sin SKU'}">SKU</small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td th:text="${producto.categoria}">Categoría</td>
+
+                    <td>
+                      <strong th:text="${'S/ ' + #numbers.formatDecimal(producto.precio, 1, 2)}">S/ 0.00</strong>
+                    </td>
+
+                    <td>
+                      <strong th:text="${producto.stock + ' un.'}"
+                        th:classappend="${producto.stock <= 0 ? ' adm-stock-out' : (producto.stock <= producto.stockMinimo ? ' adm-stock-low' : '')}">
+                        0 un.
+                      </strong>
+                      <small th:text="${'Mínimo: ' + producto.stockMinimo}">Mínimo: 5</small>
+                    </td>
+
+                    <td>
+                      <div class="adm-product-badges">
+                        <span class="adm-badge" th:classappend="${producto.estado == 'ACTIVO' ? ' green' : ' red'}"
+                          th:text="${producto.estado}">
+                          ACTIVO
+                        </span>
+                        <span th:if="${producto.estado == 'ACTIVO' and producto.stock <= 0}" class="adm-badge red">
+                          AGOTADO
+                        </span>
+                        <span
+                          th:if="${producto.estado == 'ACTIVO' and producto.stock > 0 and producto.stock <= producto.stockMinimo}"
+                          class="adm-badge orange">
+                          STOCK CRÍTICO
+                        </span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div class="adm-order-actions">
+                        <button type="button" class="adm-btn adm-btn-edit" th:attr="
+                              data-id=${producto.idProducto},
+                              data-sku=${producto.sku},
+                              data-nombre=${producto.nombre},
+                              data-categoria=${producto.categoria},
+                              data-precio=${#numbers.formatDecimal(producto.precio, 1, 2)},
+                              data-stock=${producto.stock},
+                              data-stock-minimo=${producto.stockMinimo},
+                              data-estado=${producto.estado},
+                              data-descripcion=${producto.descripcion},
+                              data-imagen=${producto.imagen}" onclick="abrirEditarProducto(this)">
+                          EDITAR
+                        </button>
+
+                        <button th:if="${producto.estado == 'ACTIVO'}" type="button" class="adm-btn adm-btn-danger"
+                          th:attr="data-id=${producto.idProducto}, data-nombre=${producto.nombre}, data-estado='INACTIVO'"
+                          onclick="abrirEstadoProducto(this)">
+                          DESACTIVAR
+                        </button>
+
+                        <button th:if="${producto.estado != 'ACTIVO'}" type="button" class="adm-btn adm-btn-success"
+                          th:attr="data-id=${producto.idProducto}, data-nombre=${producto.nombre}, data-estado='ACTIVO'"
+                          onclick="abrirEstadoProducto(this)">
+                          ACTIVAR
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="adm-stats">
-            <article class="adm-stat">
-              <div class="adm-stat-label">INGRESOS TIENDA</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
-            </article>
-            <article class="adm-stat">
-              <div class="adm-stat-label">PEDIDOS TOTALES</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
-            </article>
-            <article class="adm-stat adm-stat-warn">
-              <div class="adm-stat-label">STOCK CRÍTICO</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
-            </article>
-            <article class="adm-stat">
-              <div class="adm-stat-label">ARTÍCULOS EN CATÁLOGO</div>
-              <strong>—</strong>
-              <small>MySQL pendiente</small>
-            </article>
+        </section>
+
+        <!-- PEDIDOS RECIENTES REALES -->
+        <section class="adm-panel">
+          <div class="adm-panel-head">
+            <h2>PEDIDOS RECIENTES</h2>
+            <a class="adm-link" th:href="@{/admin/pedidos}">VER TODOS LOS PEDIDOS →</a>
           </div>
-          <div class="adm-toolbar">
-            <label class="adm-search">
-              <svg th:replace="~{admin/fragments/icons :: icon('search')}"></svg>
-              <input type="search" placeholder="Buscar producto, SKU o categoría..." data-table-search="productosTabla" />
-            </label>
-            <select>
-              <option>Todas las categorías</option>
-              <option>Nutrición Deportiva</option>
-              <option>Equipamiento</option>
+
+          <div class="adm-table-scroll">
+            <table class="adm-table adm-table-compact">
+              <thead>
+                <tr>
+                  <th scope="col">PEDIDO</th>
+                  <th scope="col">CLIENTE</th>
+                  <th scope="col">FECHA</th>
+                  <th scope="col">TOTAL</th>
+                  <th scope="col">ESTADO</th>
+                  <th scope="col">PAGO</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(pedidosRecientes)}">
+                  <td colspan="6" style="text-align: center; padding: 26px; color: #9a9ca9">
+                    Aún no se han registrado pedidos en la tienda.
+                  </td>
+                </tr>
+
+                <tr th:each="pedido : ${pedidosRecientes}">
+                  <td><strong th:text="${'#PF-' + pedido.idPedido}">#PF-1</strong></td>
+                  <td th:text="${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}">Cliente</td>
+                  <td class="adm-membership-date"
+                    th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy HH:mm')}">--</td>
+                  <td><strong th:text="${'S/ ' + #numbers.formatDecimal(pedido.total, 1, 2)}">S/ 0.00</strong></td>
+                  <td>
+                    <span class="adm-badge"
+                      th:classappend="${pedido.estado == 'ENTREGADO' ? ' green' : (pedido.estado == 'PENDIENTE' ? ' orange' : (pedido.estado == 'CANCELADO' ? ' red' : ''))}"
+                      th:text="${pedido.estado == 'EN_PROCESO' ? 'EN PROCESO' : pedido.estado}">
+                      PENDIENTE
+                    </span>
+                  </td>
+                  <td>
+                    <span class="adm-badge"
+                      th:classappend="${pedido.estadoPago == 'PAGADO' ? ' green' : (pedido.estadoPago == 'PENDIENTE' or pedido.estadoPago == 'REEMBOLSO_PENDIENTE' ? ' orange' : (pedido.estadoPago == 'CANCELADO' ? ' red' : ''))}"
+                      th:text="${pedido.estadoPago == 'REEMBOLSO_PENDIENTE' ? 'REEMBOLSO PEND.' : (pedido.estadoPago == 'CANCELADO' ? 'SIN PAGO' : pedido.estadoPago)}">
+                      PENDIENTE
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL CREAR / EDITAR PRODUCTO -->
+  <dialog class="adm-modal adm-modal-wide" id="modalProducto">
+    <form id="formProducto" class="adm-modal-form" th:action="@{/admin/productos/guardar}" method="post"
+      enctype="multipart/form-data">
+      <input type="hidden" id="productoId" name="idProducto" />
+
+      <div class="adm-modal-head">
+        <div>
+          <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
+          <h2 id="tituloModalProducto">NUEVO PRODUCTO</h2>
+          <p>Catálogo, precio, control de stock e imagen del producto.</p>
+        </div>
+        <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+      </div>
+
+      <div class="adm-modal-body">
+        <div class="adm-form-grid">
+          <label>
+            SKU *
+            <input id="productoSku" name="sku" type="text" maxlength="30" placeholder="PF-NUT-004" required />
+          </label>
+
+          <label>
+            NOMBRE *
+            <input id="productoNombre" name="nombre" type="text" maxlength="120" placeholder="Nombre del producto"
+              required />
+          </label>
+
+          <label>
+            CATEGORÍA *
+            <select id="productoCategoria" name="categoria" required>
+              <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}"></option>
             </select>
-            <button class="adm-btn adm-btn-primary" data-open-modal="modalNuevoProducto">
-              <svg th:replace="~{admin/fragments/icons :: icon('plus')}"></svg>
-              NUEVO PRODUCTO
-            </button>
-          </div>
-          <section class="adm-panel">
-            <div class="adm-panel-head"><h2>CATÁLOGO DE PRODUCTOS Y CONTROL DE STOCK</h2></div>
-            <div id="productosTabla">
-              <div class="adm-table-scroll">
-                <table class="adm-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">PRODUCTO</th>
-                      <th scope="col">CATEGORÍA</th>
-                      <th scope="col">PRECIO</th>
-                      <th scope="col">STOCK</th>
-                      <th scope="col">ESTADO</th>
-                      <th scope="col">ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <strong>Premium Whey Protein 2kg</strong>
-                        <small>PF-NUT-001</small>
-                      </td>
-                      <td>Nutrición Deportiva</td>
-                      <td>S/ 169.00</td>
-                      <td>20 un.</td>
-                      <td><span class="adm-badge blue">DISPONIBLE</span></td>
-                      <td><button class="adm-text-btn" data-open-modal="modalNuevoProducto">Editar</button></td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Hyperion Pre-Workout 300g</strong>
-                        <small>PF-NUT-002</small>
-                      </td>
-                      <td>Nutrición Deportiva</td>
-                      <td>S/ 145.00</td>
-                      <td>15 un.</td>
-                      <td><span class="adm-badge blue">DISPONIBLE</span></td>
-                      <td><button class="adm-text-btn" data-open-modal="modalNuevoProducto">Editar</button></td>
-                    </tr>
-                  </tbody>
-                </table>
+          </label>
+
+          <label>
+            PRECIO (S/.) *
+            <input id="productoPrecio" name="precio" type="number" min="0.01" step="0.01" required />
+          </label>
+
+          <label>
+            STOCK *
+            <input id="productoStock" name="stock" type="number" min="0" step="1" required />
+          </label>
+
+          <label>
+            STOCK MÍNIMO *
+            <input id="productoStockMinimo" name="stockMinimo" type="number" min="0" step="1" value="5" required />
+          </label>
+
+          <label>
+            ESTADO *
+            <select id="productoEstado" name="estado" required>
+              <option value="ACTIVO">ACTIVO</option>
+              <option value="INACTIVO">INACTIVO</option>
+            </select>
+          </label>
+
+          <label>
+            IMAGEN DEL PRODUCTO (JPG O PNG, MÁX. 5 MB)
+            <input id="productoImagen" name="imagen" type="file" accept="image/jpeg,image/png"
+              onchange="previsualizarImagenProducto(this)" />
+          </label>
+
+          <div class="adm-full">
+            <div id="previewImagenWrap" class="adm-product-preview" hidden>
+              <img id="previewImagenImg" src="" alt="Vista previa del producto" />
+              <div>
+                <strong id="previewImagenTexto">Imagen actual</strong>
+                <small>Si seleccionas un nuevo archivo, reemplazará la imagen actual.</small>
               </div>
             </div>
-          </section>
-          <section class="adm-panel">
-            <div class="adm-panel-head"><h2>PEDIDOS RECIENTES</h2></div>
-            <p class="adm-muted">Vista previa de pedidos. Se conectará a MySQL en la siguiente etapa.</p>
-            <a class="adm-btn adm-btn-ghost" href="/admin/pedidos" th:href="@{/admin/pedidos}">VER TODOS LOS PEDIDOS →</a>
-          </section>
-        </main>
+          </div>
+
+          <label class="adm-full">
+            DESCRIPCIÓN
+            <textarea id="productoDescripcion" name="descripcion" rows="3" maxlength="255"
+              placeholder="Describe brevemente el producto..."></textarea>
+          </label>
+        </div>
       </div>
-    </div>
-    <dialog class="adm-modal adm-modal-wide" id="modalNuevoProducto">
-      <form class="adm-modal-form" data-demo-form>
-        <div class="adm-modal-head">
-          <div>
-            <span class="adm-kicker">POWERFIT / ADMINISTRACIÓN</span>
-            <h2>NUEVO PRODUCTO</h2>
-            <p>Catálogo, precio y control de stock.</p>
-          </div>
-          <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+
+      <div class="adm-modal-footer">
+        <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+        <button id="btnGuardarProducto" type="submit" class="adm-btn adm-btn-primary">GUARDAR PRODUCTO</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL CONFIRMAR CAMBIO DE ESTADO -->
+  <dialog class="adm-modal" id="modalEstadoProducto">
+    <form id="formEstadoProducto" class="adm-modal-form" method="post">
+      <input type="hidden" id="estadoProductoNuevo" name="estado" />
+
+      <div class="adm-modal-head">
+        <div>
+          <span class="adm-kicker">CONTROL DE CATÁLOGO</span>
+          <h2 id="tituloEstadoProducto">CAMBIAR ESTADO</h2>
         </div>
-        <div class="adm-modal-body">
-          <div class="adm-form-grid">
-            <label>
-              SKU *
-              <input type="text" placeholder="PF-NUT-003" required />
-            </label>
-            <label>
-              NOMBRE *
-              <input type="text" placeholder="Nombre del producto" required />
-            </label>
-            <label>
-              CATEGORÍA *
-              <select>
-                <option>Nutrición Deportiva</option>
-                <option>Equipamiento</option>
-                <option>Accesorios</option>
-              </select>
-            </label>
-            <label>
-              PRECIO (S/.) *
-              <input type="number" min="0.01" step="0.01" required />
-            </label>
-            <label>
-              STOCK *
-              <input type="number" min="0" required />
-            </label>
-            <label>
-              STOCK MÍNIMO *
-              <input type="number" min="0" required />
-            </label>
-            <label>
-              ESTADO
-              <select>
-                <option>ACTIVO</option>
-                <option>INACTIVO</option>
-              </select>
-            </label>
-            <label>
-              IMAGEN
-              <input type="text" placeholder="tienda-producto.jpg" />
-            </label>
-            <label class="adm-full">
-              DESCRIPCIÓN
-              <textarea rows="3"></textarea>
-            </label>
-          </div>
-        </div>
-        <div class="adm-modal-footer">
-          <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>Cancelar</button>
-          <button type="submit" class="adm-btn adm-btn-primary">GUARDAR PRODUCTO</button>
-        </div>
-      </form>
-    </dialog>
-    <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
-    <script th:src="@{/js/admin/admin.js}"></script>
-  </body>
+        <button type="button" class="adm-close" data-close-modal aria-label="Cerrar">×</button>
+      </div>
+
+      <div class="adm-modal-body">
+        <p id="textoEstadoProducto"></p>
+        <p id="notaEstadoProducto" class="adm-note"></p>
+      </div>
+
+      <div class="adm-modal-footer">
+        <button type="button" class="adm-btn adm-btn-ghost" data-close-modal>CANCELAR</button>
+        <button id="btnConfirmarEstadoProducto" type="submit" class="adm-btn adm-btn-primary">CONFIRMAR</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="adm-toast" id="admToast" role="status" aria-live="polite"></div>
+  <script th:src="@{/js/admin/admin.js}"></script>
+  <script th:src="@{/js/admin/productos-admin.js}"></script>
+</body>
+
 </html>

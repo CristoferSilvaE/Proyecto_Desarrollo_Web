@@ -11,11 +11,17 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
+  List<Producto> findAllByOrderByNombreAsc();
+
   List<Producto> findByEstadoOrderByNombreAsc(String estado);
 
   List<Producto> findByCategoriaAndEstadoOrderByNombreAsc(String categoria, String estado);
 
   Optional<Producto> findBySku(String sku);
+
+  boolean existsBySkuIgnoreCase(String sku);
+
+  boolean existsBySkuIgnoreCaseAndIdProductoNot(String sku, Long idProducto);
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("SELECT p FROM Producto p WHERE p.idProducto = :id")

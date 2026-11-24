@@ -19,9 +19,13 @@ public class WebConfig implements WebMvcConfigurer {
         .addResourceLocations(directorioPerfiles.toUri().toString());
 
     Path directorioClases = Paths.get("uploads", "clases").toAbsolutePath().normalize();
+    Path directorioProductos = Paths.get("uploads", "productos").toAbsolutePath().normalize();
 
     registry
         .addResourceHandler("/imagenes/**")
-        .addResourceLocations(directorioClases.toUri().toString(), "classpath:/static/imagenes/");
+        .addResourceLocations(
+            directorioProductos.toUri().toString(),
+            directorioClases.toUri().toString(),
+            "classpath:/static/imagenes/");
   }
 }
